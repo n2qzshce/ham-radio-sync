@@ -7,7 +7,7 @@ from ham.wizard import Wizard
 
 def main():
 	logger = logging.getLogger()
-	formatter = logging.Formatter(fmt='%(asctime)s %(levelname)s %(filename)s:%(lineno)s %(message)s')
+	formatter = logging.Formatter(fmt='%(asctime)s.%(msecs)03d %(levelname)s %(filename).6s:%(lineno)s:  %(message)s', datefmt="%Y-%m-%d %H:%M:%S")
 
 	handler = logging.StreamHandler(stream=sys.stdout)
 	handler.setFormatter(formatter)
