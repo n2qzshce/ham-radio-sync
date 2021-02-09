@@ -1,5 +1,3 @@
-import logging
-
 # styles
 DEFAULT = 0
 

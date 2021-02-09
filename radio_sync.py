@@ -1,6 +1,5 @@
 import argparse
 import logging
-import shutil
 import sys
 
 from ham.wizard import Wizard

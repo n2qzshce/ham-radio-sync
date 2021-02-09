@@ -1,10 +1,10 @@
-import os
 import logging
+import os
 import shutil
 
 import ham.radio_channel as radio_channel
-from ham.radio_channel import RadioChannel
 from ham.radio_channel import Group
+from ham.radio_channel import RadioChannel
 
 
 class Wizard(object):
