@@ -26,7 +26,6 @@ def main():
 		action='store_true',
 		default=False,
 		required=False,
-		nargs='?',
 		help='Destroys `in` and `out` directories along with all their contents.',
 	)
 
@@ -35,7 +34,6 @@ def main():
 		action='store_true',
 		default=False,
 		required=False,
-		nargs='?',
 		help='Runs the setup wizard and creates minimum needed files',
 	)
 
@@ -44,7 +42,6 @@ def main():
 		action='store_true',
 		default=False,
 		required=False,
-		nargs='?',
 		help="Defaults to 'yes' for all prompts (DANGEROUS)",
 	)
 

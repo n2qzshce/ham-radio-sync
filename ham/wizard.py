@@ -13,10 +13,13 @@ class Wizard(object):
 	def bootstrap(self, is_forced):
 		if os.path.exists('in'):
 			logging.warning("INPUT DIRECTORY ALREADY EXISTS!! Continue? (y/n)[n]")
-			prompt = input()
-			if prompt != 'y':
-				logging.info("Wizard cancelled")
-				return
+			if not is_forced:
+				prompt = input()
+				if prompt != 'y':
+					logging.info("Wizard cancelled")
+					return
+			else:
+				logging.warning('FORCED YES')
 
 		self.create_input(is_forced)
 		self.create_output()
@@ -24,16 +27,19 @@ class Wizard(object):
 	def create_input(self, is_forced):
 		self.safe_create_dir('in')
 
-		if os.path.exists('in/input.csv'):
-			logging.info("`input.csv` already exists! Skipping")
-			return
+		if not os.path.exists('in/channels.csv') or is_forced:
+			self.create_channel_file()
+		else:
+			logging.info("`channels.csv` already exists! Skipping")
 
-		self.create_channel_file()
-		self.create_group_file()
+		if not os.path.exists('in/groups.csv') or is_forced:
+			self.create_group_file()
+		else:
+			logging.info("`groups.csv` already exists! Skipping")
 		return
 
 	def create_channel_file(self):
-		channel_file = open('in/input.csv', 'w+')
+		channel_file = open('in/channels.csv', 'w+')
 		first_channel = RadioChannel('1,ColCon Denver,CONDEN,1,145.310,,,,-0.600,88.5,,False,,,,12.5')
 		channel_file.write(first_channel.output(radio_channel.DEFAULT, True)+'\n')
 		channel_file.write(first_channel.output(radio_channel.DEFAULT, False)+'\n')
