@@ -1,5 +1,6 @@
 import argparse
 import logging
+import shutil
 import sys
 
 from ham.wizard import Wizard
@@ -19,22 +20,47 @@ def main():
 		prog='Ham Radio channel wizard',
 		description='''Convert a ham channel list to various radio formats. All of these options can be chained
 					to run multiple steps simultaneously.''')
+
 	parser.add_argument(
-		'wizard',
-		nargs='?',
+		'--clean', '-c',
+		action='store_true',
 		default=False,
+		required=False,
+		nargs='?',
+		help='Destroys `in` and `out` directories along with all their contents.',
+	)
+
+	parser.add_argument(
+		'--wizard', '-w',
+		action='store_true',
+		default=False,
+		required=False,
+		nargs='?',
+		help='Runs the setup wizard and creates minimum needed files',
+	)
+
+	parser.add_argument(
+		'--force', '-f',
+		action='store_true',
+		default=False,
+		required=False,
+		nargs='?',
+		help="Defaults to 'yes' for all prompts (DANGEROUS)",
 	)
 
 	arg_values = parser.parse_args()
-	run_wizard = arg_values.wizard is not False
 
-	logger.info("Wizard!")
+	if arg_values.force:
+		logging.warning("FORCE HAS BEEN SET. ALL PROMPTS WILL DEFAULT YES. Files may be destroyed.")
 
-	if run_wizard:
+	if arg_values.clean:
 		wizard = Wizard()
-		wizard.bootstrap()
+		wizard.cleanup()
+
+	if arg_values.wizard:
+		wizard = Wizard()
+		wizard.bootstrap(arg_values.force)
 
 	return
-
 
 main()
