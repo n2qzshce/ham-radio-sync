@@ -13,19 +13,20 @@ class RadioGenerator:
 	def generate_all_declared(self):
 		feed = open("in/input.csv", "r")
 
-		headers = feed.readline().split(',')
+		headers = feed.readline().replace('\n', '').split(',')
 
 		radio_files = dict()
 		headers_gen = RadioChannel.make_empty()
 		for radio in self.radio_list:
 			logging.info(f"Generating for radio type `{radio}`")
 			output = open(f"out/{radio}.csv", "w+")
-			output.write(headers_gen.headers(radio))
+			file_headers = headers_gen.headers(radio)
+			output.write(file_headers+'\n')
 			radio_files[radio] = output
 
 		for line in feed.readlines():
 			col_vals = dict()
-			cols = line.split(",")
+			cols = line.replace('\n', '').split(",")
 			for i in range(0, len(headers) - 1):
 				col_vals[headers[i]] = cols[i]
 

@@ -4,6 +4,7 @@ import logging
 DEFAULT = 'default'
 BAOFENG = 'baofeng'
 
+
 class DataColumn:
 	alias_names = dict()
 	fmt_val = None
@@ -130,24 +131,24 @@ class RadioChannel:
 
 	def headers_baofeng(self):
 		return \
-			f"{self.number.get_alias(BAOFENG)}"\
-			f"{self.short_name.get_alias(BAOFENG)}"\
-			f"{self.rx_freq.get_alias(BAOFENG)}"\
-			f"Duplex"\
-			f"{self.tx_offset.get_alias(BAOFENG)}"\
-			f"{'Tone'}"\
-			f"{self.rx_ctcss.get_alias(BAOFENG)}"\
-			f"{self.tx_ctcss.get_alias(BAOFENG)}"\
-			f"{self.rx_dcs.get_alias(BAOFENG)}"\
-			f"'DtcsPolarity'"\
-			f"'Mode'"\
-			f"TStep"\
-			f"Skip"\
-			f"Comment"\
-			f"URCALL"\
-			f"RPT1CALL"\
-			f"RPT2CALL"\
-			f"DVCODE"
+			f"{self.number.get_alias(BAOFENG)},"\
+			f"{self.short_name.get_alias(BAOFENG)},"\
+			f"{self.rx_freq.get_alias(BAOFENG)},"\
+			f"Duplex,"\
+			f"{self.tx_offset.get_alias(BAOFENG)},"\
+			f"{'Tone'},"\
+			f"{self.rx_ctcss.get_alias(BAOFENG)},"\
+			f"{self.tx_ctcss.get_alias(BAOFENG)},"\
+			f"{self.rx_dcs.get_alias(BAOFENG)},"\
+			f"DtcsPolarity,"\
+			f"Mode,"\
+			f"TStep,"\
+			f"Skip,"\
+			f"Comment,"\
+			f"URCALL,"\
+			f"RPT1CALL,"\
+			f"RPT2CALL,"\
+			f"DVCODE,"
 
 	def output_default(self):
 		return \
@@ -165,3 +166,24 @@ class RadioChannel:
 			f"{self.digital_timeslot.fmt_val}," \
 			f"{self.digital_color.fmt_val}," \
 			f"{self.digital_contact.fmt_val}," \
+
+	def output_baofeng(self):
+		return \
+			f"{self.number.fmt_val},"\
+			f"{self.short_name.fmt_val},"\
+			f"{self.rx_freq.fmt_val},"\
+			f"Duplex,"\
+			f"{self.tx_offset.fmt_val},"\
+			f"{'Tone'},"\
+			f"{self.rx_ctcss.fmt_val},"\
+			f"{self.tx_ctcss.fmt_val},"\
+			f"{self.rx_dcs.fmt_val},"\
+			f"'DtcsPolarity',"\
+			f"'Mode',"\
+			f"TStep,"\
+			f"Skip,"\
+			f"Comment,"\
+			f"URCALL,"\
+			f"RPT1CALL,"\
+			f"RPT2CALL,"\
+			f"DVCODE,"
