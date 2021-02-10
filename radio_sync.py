@@ -2,6 +2,7 @@ import argparse
 import logging
 import sys
 
+from ham.radio_generator import RadioGenerator
 from ham.wizard import Wizard
 
 
@@ -44,18 +45,41 @@ def main():
 		help="Defaults to 'yes' for all prompts (DANGEROUS)",
 	)
 
+	parser.add_argument(
+		'--radios', '-r',
+		choices=['default', 'baofeng'],
+		default=[],
+		nargs='+',
+		help="Name of target radios to create."
+	)
+
 	arg_values = parser.parse_args()
+
+	op_performed = False
 
 	if arg_values.force:
 		logging.warning("FORCE HAS BEEN SET. ALL PROMPTS WILL DEFAULT YES. Files may be destroyed.")
 
 	if arg_values.clean:
+		logging.info("Running cleanup.")
 		wizard = Wizard()
 		wizard.cleanup()
+		op_performed = True
 
 	if arg_values.wizard:
+		logging.info("Running wizard.")
 		wizard = Wizard()
 		wizard.bootstrap(arg_values.force)
+		op_performed = True
+
+	if len(arg_values.radios) > 0:
+		logging.info("Running radio generator.")
+		radio_generator = RadioGenerator(arg_values.radios)
+		radio_generator.generate_all_declared()
+		op_performed = True
+
+	if not op_performed:
+		parser.print_usage()
 
 	return
 

@@ -1,6 +1,6 @@
 # styles
-DEFAULT = 0
-
+DEFAULT = 'default'
+BAOFENG = 'baofeng'
 
 class DataColumn:
 	fmt_name = None
