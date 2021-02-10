@@ -33,23 +33,56 @@ class Wizard(object):
 			logging.info("`channels.csv` already exists! Skipping")
 
 		if not os.path.exists('in/groups.csv') or is_forced:
-			self.create_group_file()
+			''
+			# self.create_group_file()
 		else:
 			logging.info("`groups.csv` already exists! Skipping")
 		return
 
 	def create_channel_file(self):
-		channel_file = open('in/channels.csv', 'w+')
-		first_channel = RadioChannel('1,ColCon Denver,CONDEN,1,145.310,,,,-0.600,88.5,,False,,,,12.5')
-		channel_file.write(first_channel.output(radio_channel.DEFAULT, True)+'\n')
-		channel_file.write(first_channel.output(radio_channel.DEFAULT, False)+'\n')
+		channel_file = open('in/input.csv', 'w+')
+		first_channel = RadioChannel({
+			'number': '1',
+			'name': 'National 2m',
+			'short_name': 'NATL 2M',
+			'group_id': '1',
+			'rx_freq': '146.520',
+			'rx_ctcss': '',
+			'rx_dcs': '',
+			'rx_dcs_invert': '',
+			'tx_offset': '',
+			'tx_ctcss': '',
+			'tx_dcs_invert': '',
+			'digital_timeslot': '',
+			'digital_color': '',
+			'digital_contact': '',
+		})
+		second_channel = RadioChannel({
+			'number': '2',
+			'name': 'Colcon Denver',
+			'short_name': 'CONDENV',
+			'group_id': '1',
+			'rx_freq': '145.310',
+			'rx_ctcss': '',
+			'rx_dcs': '',
+			'rx_dcs_invert': '',
+			'tx_offset': '-0.600',
+			'tx_ctcss': '88.5',
+			'tx_dcs_invert': '',
+			'digital_timeslot': '',
+			'digital_color': '',
+			'digital_contact': '',
+		})
+		channel_file.write(RadioChannel.make_empty().headers(radio_channel.DEFAULT)+'\n')
+		channel_file.write(first_channel.output(radio_channel.DEFAULT)+'\n')
+		channel_file.write(second_channel.output(radio_channel.DEFAULT)+'\n')
 		channel_file.close()
 
 	def create_group_file(self):
 		group_file = open('in/groups.csv', 'w+')
 		first_group = Group('1,My First Group')
-		group_file.write(first_group.output(radio_channel.DEFAULT, True)+'\n')
-		group_file.write(first_group.output(radio_channel.DEFAULT, False)+'\n')
+		group_file.write(first_group.output(radio_channel.DEFAULT)+'\n')
+		group_file.write(first_group.output(radio_channel.DEFAULT)+'\n')
 		group_file.close()
 
 	def create_output(self):

@@ -40,10 +40,10 @@ class Group:
 
 		return switch[style](is_header)
 
-	def output_default(self, is_header):
+	def output_default(self):
 		return \
-			f"{self.group.output(is_header)}," \
-			f"{self.name.output(is_header)}"
+			f"{self.group}," \
+			f"{self.name}"
 
 
 class RadioChannel:
