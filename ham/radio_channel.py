@@ -42,7 +42,7 @@ class Group:
 
 	def output_default(self, is_header):
 		return \
-			f"{self.group.output(is_header)},"\
+			f"{self.group.output(is_header)}," \
 			f"{self.name.output(is_header)}"
 
 
@@ -114,40 +114,40 @@ class RadioChannel:
 
 	def headers_default(self):
 		return \
-			f"{self.number.get_alias(DEFAULT)},"\
-			f"{self.name.get_alias(DEFAULT)},"\
-			f"{self.short_name.get_alias(DEFAULT)},"\
-			f"{self.group_id.get_alias(DEFAULT)},"\
-			f"{self.rx_freq.get_alias(DEFAULT)},"\
-			f"{self.rx_ctcss.get_alias(DEFAULT)},"\
-			f"{self.rx_dcs.get_alias(DEFAULT)},"\
-			f"{self.rx_dcs_invert.get_alias(DEFAULT)},"\
-			f"{self.tx_offset.get_alias(DEFAULT)},"\
-			f"{self.tx_ctcss.get_alias(DEFAULT)},"\
-			f"{self.tx_dcs_invert.get_alias(DEFAULT)},"\
-			f"{self.digital_timeslot.get_alias(DEFAULT)},"\
-			f"{self.digital_color.get_alias(DEFAULT)},"\
+			f"{self.number.get_alias(DEFAULT)}," \
+			f"{self.name.get_alias(DEFAULT)}," \
+			f"{self.short_name.get_alias(DEFAULT)}," \
+			f"{self.group_id.get_alias(DEFAULT)}," \
+			f"{self.rx_freq.get_alias(DEFAULT)}," \
+			f"{self.rx_ctcss.get_alias(DEFAULT)}," \
+			f"{self.rx_dcs.get_alias(DEFAULT)}," \
+			f"{self.rx_dcs_invert.get_alias(DEFAULT)}," \
+			f"{self.tx_offset.get_alias(DEFAULT)}," \
+			f"{self.tx_ctcss.get_alias(DEFAULT)}," \
+			f"{self.tx_dcs_invert.get_alias(DEFAULT)}," \
+			f"{self.digital_timeslot.get_alias(DEFAULT)}," \
+			f"{self.digital_color.get_alias(DEFAULT)}," \
 			f"{self.digital_contact.get_alias(DEFAULT)},"
 
 	def headers_baofeng(self):
 		return \
-			f"{self.number.get_alias(BAOFENG)},"\
-			f"{self.short_name.get_alias(BAOFENG)},"\
-			f"{self.rx_freq.get_alias(BAOFENG)},"\
-			f"Duplex,"\
-			f"{self.tx_offset.get_alias(BAOFENG)},"\
-			f"{'Tone'},"\
-			f"{self.rx_ctcss.get_alias(BAOFENG)},"\
-			f"{self.tx_ctcss.get_alias(BAOFENG)},"\
-			f"{self.rx_dcs.get_alias(BAOFENG)},"\
-			f"DtcsPolarity,"\
-			f"Mode,"\
-			f"TStep,"\
-			f"Skip,"\
-			f"Comment,"\
-			f"URCALL,"\
-			f"RPT1CALL,"\
-			f"RPT2CALL,"\
+			f"{self.number.get_alias(BAOFENG)}," \
+			f"{self.short_name.get_alias(BAOFENG)}," \
+			f"{self.rx_freq.get_alias(BAOFENG)}," \
+			f"Duplex," \
+			f"{self.tx_offset.get_alias(BAOFENG)}," \
+			f"{'Tone'}," \
+			f"{self.rx_ctcss.get_alias(BAOFENG)}," \
+			f"{self.tx_ctcss.get_alias(BAOFENG)}," \
+			f"{self.rx_dcs.get_alias(BAOFENG)}," \
+			f"DtcsPolarity," \
+			f"Mode," \
+			f"TStep," \
+			f"Skip," \
+			f"Comment," \
+			f"URCALL," \
+			f"RPT1CALL," \
+			f"RPT2CALL," \
 			f"DVCODE,"
 
 	def output_default(self):
@@ -168,22 +168,65 @@ class RadioChannel:
 			f"{self.digital_contact.fmt_val}," \
 
 	def output_baofeng(self):
+		number = int(self.number.fmt_val) - 1
+		rx_freq = float(self.rx_freq.fmt_val)
+		tx_offset = 0
+		if self.tx_offset.fmt_val != '':
+			tx_offset = float(self.tx_offset.fmt_val)
+
+		duplex = ''
+		if tx_offset != 0:
+			if tx_offset < 0:
+				duplex = '-'
+			else:
+				duplex = '+'
+
+		tone = ''
+		if self.tx_ctcss.fmt_val != '':
+			tone = 'Tone'
+			if self.rx_ctcss.fmt_val != '':
+				tone = 'TSQL'
+		if self.rx_dcs.fmt_val != '':
+			tone = 'DTCS'
+
+		rx_ctcss = 67.0
+		if self.rx_ctcss.fmt_val != '':
+			rx_ctcss = float(self.rx_ctcss.fmt_val)
+
+		tx_ctcss = 67.0
+		if self.tx_ctcss.fmt_val != '':
+			tx_ctcss = float(self.tx_ctcss.fmt_val)
+
+		rx_dcs = 23
+		if self.rx_dcs.fmt_val != '':
+			rx_dcs = int(self.rx_dcs.fmt_val)
+
+		dtcs_polarity = 'NN'
+		if self.rx_dcs_invert != '':
+			invert_rx = self.rx_dcs_invert == 'true'
+			if invert_rx:
+				dtcs_polarity = 'R' + dtcs_polarity[1]
+
+			invert_tx = self.tx_dcs_invert == 'true'
+			if invert_tx:
+				dtcs_polarity = dtcs_polarity[0] + 'R'
+
 		return \
-			f"{self.number.fmt_val},"\
-			f"{self.short_name.fmt_val},"\
-			f"{self.rx_freq.fmt_val},"\
-			f"Duplex,"\
-			f"{self.tx_offset.fmt_val},"\
-			f"{'Tone'},"\
-			f"{self.rx_ctcss.fmt_val},"\
-			f"{self.tx_ctcss.fmt_val},"\
-			f"{self.rx_dcs.fmt_val},"\
-			f"'DtcsPolarity',"\
-			f"'Mode',"\
-			f"TStep,"\
-			f"Skip,"\
-			f"Comment,"\
-			f"URCALL,"\
-			f"RPT1CALL,"\
-			f"RPT2CALL,"\
-			f"DVCODE,"
+			f"{number}," \
+			f"{self.short_name.fmt_val.upper():.7s}," \
+			f"{rx_freq:.6f}," \
+			f"{duplex}," \
+			f"{abs(tx_offset):.6f}," \
+			f"{tone}," \
+			f"{rx_ctcss:.1f}," \
+			f"{tx_ctcss:.1f}," \
+			f"{str(rx_dcs).zfill(3)}," \
+			f"{dtcs_polarity}," \
+			f"FM," \
+			f"{5.0:0.2f}," \
+			f"," \
+			f"," \
+			f"," \
+			f"," \
+			f"," \
+			f","
