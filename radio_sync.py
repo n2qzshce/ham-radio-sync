@@ -53,9 +53,20 @@ def main():
 		help="Name of target radios to create."
 	)
 
+	parser.add_argument(
+		'--debug',
+		action='store_true',
+		default=False,
+		required=False,
+		help='Enable debug logging.',
+	)
+
 	arg_values = parser.parse_args()
 
 	op_performed = False
+
+	if arg_values.debug:
+		logger.setLevel(logging.DEBUG)
 
 	if arg_values.force:
 		logging.warning("FORCE HAS BEEN SET. ALL PROMPTS WILL DEFAULT YES. Files may be destroyed.")

@@ -11,27 +11,41 @@ class RadioGenerator:
 		self.radio_list = radio_list
 
 	def generate_all_declared(self):
-		switch = {
-			'default': radio_channel.DEFAULT,
-			'baofeng': radio_channel.BAOFENG
-		}
+		feed = open("in/input.csv", "r")
 
+		headers = feed.readline().split(',')
+
+		radio_files = dict()
+		headers_gen = RadioChannel.make_empty()
 		for radio in self.radio_list:
 			logging.info(f"Generating for radio type `{radio}`")
-			self.generate(switch[radio])
+			output = open(f"out/{radio}.csv", "w+")
+			output.write(headers_gen.headers(radio))
+			radio_files[radio] = output
+
+		for line in feed.readlines():
+			col_vals = dict()
+			cols = line.split(",")
+			for i in range(0, len(headers) - 1):
+				col_vals[headers[i]] = cols[i]
+
+			radio_cls = RadioChannel(col_vals)
+
+			for radio in self.radio_list:
+				input_data = radio_cls.output(radio)
+				radio_files[radio].write(input_data+'\n')
 		return
 
 	def generate(self, radio_type):
 		output = open(f"out/{radio_type}.csv", "w+")
-		feed = open("in/input.csv", "r")
 
-		headers = feed.readline()
-		file_headers = RadioChannel(headers).output(radio_type, True)
+		# throw headers away
+		file_headers = feed.readline().split(",")
 		output.write(file_headers+'\n')
 
 		for feed_line in feed.readlines():
 			channel = RadioChannel(feed_line)
-			feed_out = channel.output(radio_type, False)
+			feed_out = channel.output(radio_type)
 			output.write(feed_out+'\n')
 		output.close()
 		return
