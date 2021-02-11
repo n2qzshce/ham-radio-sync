@@ -2,6 +2,7 @@ import argparse
 import logging
 import sys
 
+from ham import radio_channel
 from ham.radio_generator import RadioGenerator
 from ham.wizard import Wizard
 
@@ -47,10 +48,13 @@ def main():
 
 	parser.add_argument(
 		'--radios', '-r',
-		choices=['default', 'baofeng'],
+		choices=[radio_channel.DEFAULT, radio_channel.BAOFENG, radio_channel.FTM400],
 		default=[],
 		nargs='+',
-		help="Name of target radios to create."
+		help="""Name of target radios to create.
+		default -- This is a replication of the input, primarily used for validation/testing.
+		baofeng -- Baofeng UV-5R and F8-HP via CHiRP
+		ftm400 -- For use with RT Systems for the Yaesu FTM-400"""
 	)
 
 	parser.add_argument(

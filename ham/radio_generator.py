@@ -1,6 +1,5 @@
 import logging
 
-from ham import radio_channel
 from ham.radio_channel import RadioChannel
 
 
@@ -25,28 +24,14 @@ class RadioGenerator:
 			radio_files[radio] = output
 
 		for line in feed.readlines():
-			col_vals = dict()
+			column_values = dict()
 			cols = line.replace('\n', '').split(",")
 			for i in range(0, len(headers) - 1):
-				col_vals[headers[i]] = cols[i]
+				column_values[headers[i]] = cols[i]
 
-			radio_cls = RadioChannel(col_vals)
+			radio_channel = RadioChannel(column_values)
 
 			for radio in self.radio_list:
-				input_data = radio_cls.output(radio)
+				input_data = radio_channel.output(radio)
 				radio_files[radio].write(input_data+'\n')
-		return
-
-	def generate(self, radio_type):
-		output = open(f"out/{radio_type}.csv", "w+")
-
-		# throw headers away
-		file_headers = feed.readline().split(",")
-		output.write(file_headers+'\n')
-
-		for feed_line in feed.readlines():
-			channel = RadioChannel(feed_line)
-			feed_out = channel.output(radio_type)
-			output.write(feed_out+'\n')
-		output.close()
 		return
