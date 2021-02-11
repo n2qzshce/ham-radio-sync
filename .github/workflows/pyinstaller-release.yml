@@ -10,7 +10,6 @@ on:
 jobs:
   release:
     runs-on: windows-2019
-    needs: [ build ]
     if: $${{ github.ref == 'refs/heads/ftm400' }}
     steps:
     - name: Upload windows executable
