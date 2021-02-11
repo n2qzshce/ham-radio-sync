@@ -37,6 +37,7 @@ jobs:
         name: radio_sync-${{ github.run_number }}
         path: dist/radio_sync-${{ github.run_number }}.exe
   release:
+    if: $${{ github.ref == 'refs/heads/ftm400' }}
     runs-on: ubuntu-latest
     needs: build
     steps:
@@ -47,7 +48,6 @@ jobs:
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
-      if: $${{ github.ref == 'refs/heads/ftm400' }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
       with:
@@ -60,7 +60,6 @@ jobs:
         prerelease: false
     - name: Upload Release Asset
       uses: actions/upload-release-asset@v1
-      if: $${{ github.ref == 'refs/heads/ftm400' }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
