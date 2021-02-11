@@ -33,5 +33,5 @@ jobs:
       uses: actions/upload-artifact@v2
       if: $${{ github.ref == 'refs/heads/ftm400' }}
       with:
-        name: radio_sync-${{ github.job }}
+        name: radio_sync-${{ github.run_number }}
         path: dist/radio_sync.exe
