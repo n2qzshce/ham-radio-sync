@@ -5,7 +5,7 @@ name: Build executeable
 
 env:
   semver: 1.0.0
-  python-version: [3.8]
+  python-version: 3.8
 
 on:
   pull_request:
