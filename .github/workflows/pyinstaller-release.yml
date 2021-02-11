@@ -1,0 +1,22 @@
+
+name: Build executeable
+
+on:
+  pull_request:
+    branches: [ master ]
+  push:
+    branches: [ master ]
+
+jobs:
+  release:
+    runs-on: windows-2019
+    needs: [ build ]
+    if: $${{ github.ref == 'refs/heads/ftm400' }}
+    steps:
+    - name: Upload windows executable
+      uses: actions/upload-artifact@v2
+    - name: Use build
+      uses: ./.github/workflows/pyinstaller-build
+      with:
+        name: radio_sync-${{ github.job }}
+        path: dist/radio_sync.exe
