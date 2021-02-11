@@ -45,7 +45,7 @@ jobs:
         tag_name: radio_sync-v${{ env.semver }}.${{ github.run_number }}
         release_name: Release ${{ env.semver }}.${{ github.run_number }}
         body: |
-          release $${ github.run_number }} description
+          release ${{ github.run_number }} description
           Changelog:
         draft: true
         prerelease: false
