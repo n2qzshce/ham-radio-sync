@@ -36,6 +36,7 @@ jobs:
         name: radio_sync-${{ github.run_number }}
         path: dist/radio_sync.exe
     - name: Create Release
+      id: create_release
       uses: actions/create-release@v1
       if: $${{ github.ref == 'refs/heads/ftm400' }}
       env:
