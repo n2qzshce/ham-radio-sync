@@ -10,16 +10,24 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows
     strategy:
       matrix:
-        python-version: [3.7, 3.8, 3.9]
+        python-version: [3.8]
 
     steps:
-    - name: PyInstaller Windows
-      uses: JackMcKew/pyinstaller-action-windows@v0.1.2
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
       with:
-        path: .
-        pypi_url: https://pypi.python.org/
-        pypi_index_url: https://pypi.python.org/simple
-        spec: --onefile ./radio_sync.py
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller
+    - name: Output dir
+      run: |
+        dir
+    - name: Build exe
+      run: |
+        pyinstaller -F radio_sync.py
