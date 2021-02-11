@@ -29,3 +29,9 @@ jobs:
     - name: Build windows executable
       run: |
         pyinstaller -F radio_sync.py
+    - name: Upload windows executable
+      uses: actions/upload-artifact@v2
+      if: $${{ github.ref == 'refs/heads/ftm400' }}
+      with:
+        name: radio_sync-${{ github.job }}
+        path: dist/radio_sync.exe
