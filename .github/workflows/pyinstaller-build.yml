@@ -41,11 +41,20 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
       with:
-        tag_name: ${{ github.ref }}
-        release_name: Release ${{ github.run_number }}
+        tag_name: release-v${{ github.run_number }}
+        release_name: Release v${{ github.run_number }}
         body: |
-          Changes in this Release
-          - First Change
-          - Second Change
+          Link to artifact:
+          https://www.github.com/${{ github.repository }}
         draft: true
         prerelease: false
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      if: $${{ github.ref == 'refs/heads/ftm400' }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./radio_sync-v${{ github.run_number }}.zip
+        asset_name: radio sync
+        asset_content_type: application/zip
