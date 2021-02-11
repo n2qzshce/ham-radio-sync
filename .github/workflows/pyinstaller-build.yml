@@ -32,7 +32,7 @@ jobs:
   release:
     runs-on: windows-2019
     needs: [ build ]
-    if: github.ref == 'refs/heads/ftm400'
+    if: $${{ github.ref == 'refs/heads/ftm400' }}
     steps:
     - name: Upload windows executable
       uses: actions/upload-artifact@v2
