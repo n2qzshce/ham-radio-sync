@@ -6,10 +6,11 @@ name: Pyinstaller
 on:
   pull_request:
     branches: [ master ]
+  push:
+    branches: [ master ]
 
 jobs:
   build:
-
     runs-on: windows-2019
     strategy:
       matrix:
@@ -17,17 +18,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python ${{ matrix.python-version }} on Windows
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
+    - name: Install dependencies on Windows
       run: |
         python -m pip install --upgrade pip
         pip install pyinstaller
-    - name: Output dir
-      run: |
-        dir
-    - name: Build exe
+    - name: Build windows executable
       run: |
         pyinstaller -F radio_sync.py
