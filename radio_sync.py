@@ -56,10 +56,12 @@ def main():
 		],
 		default=[],
 		nargs='+',
-		help="""Name of target radios to create.
-		default -- This is a replication of the input, primarily used for validation/testing.
-		baofeng -- Baofeng UV-5R and F8-HP via CHiRP
-		ftm400 -- For use with RT Systems for the Yaesu FTM-400"""
+		help=f"""Name of target radios to create.
+		{radio_channel.DEFAULT} -- This is a replication of the input, primarily used for validation/testing.
+		{radio_channel.BAOFENG} -- Baofeng UV-5R and F8-HP via CHiRP
+		{radio_channel.FTM400} -- Yaesu FTM-400 via RT Systems app 
+		{radio_channel.D878} --Anytone D878
+		"""
 	)
 
 	parser.add_argument(
