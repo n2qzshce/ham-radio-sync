@@ -68,18 +68,21 @@ class RadioChannel:
 		self.number = DataColumn(fmt_name='number', fmt_val=col_vals['number'], shape=int)
 		self.number.set_alias(BAOFENG, 'Location')
 		self.number.set_alias(FTM400, 'Channel Number')
+		self.number.set_alias(D878, 'No.')
 
 		self.name = DataColumn(fmt_name='name', fmt_val=col_vals['name'], shape=str)
+		self.name.set_alias(D878, 'Channel Name')
+
 		self.medium_name = DataColumn(fmt_name='medium_name', fmt_val=col_vals['medium_name'], shape=str)
 		self.medium_name.set_alias(FTM400, 'Name')
 
 		self.short_name = DataColumn(fmt_name='short_name', fmt_val=col_vals['short_name'], shape=str)
 		self.short_name.set_alias(BAOFENG, 'Name')
 
-		self.group_id = DataColumn(fmt_name='group_id', fmt_val=col_vals['group_id'], shape=int)
 		self.rx_freq = DataColumn(fmt_name='rx_freq', fmt_val=col_vals['rx_freq'], shape=float)
 		self.rx_freq.set_alias(BAOFENG, 'Frequency')
 		self.rx_freq.set_alias(FTM400, 'Receive Frequency')
+		self.rx_freq.set_alias(D878, 'Receive Frequency')
 
 		self.rx_ctcss = DataColumn(fmt_name='rx_ctcss', fmt_val=col_vals['rx_ctcss'], shape=float)
 		self.rx_ctcss.set_alias(BAOFENG, 'rToneFreq')
@@ -97,13 +100,21 @@ class RadioChannel:
 		self.tx_ctcss = DataColumn(fmt_name='tx_ctcss', fmt_val=col_vals['tx_ctcss'], shape=float)
 		self.tx_ctcss.set_alias(BAOFENG, 'cToneFreq')
 
+		self.tx_dcs = DataColumn(fmt_name='tx_dcs', fmt_val=col_vals['tx_dcs'], shape=float)
+
 		self.tx_dcs_invert = DataColumn(fmt_name='tx_dcs_invert', fmt_val=col_vals['tx_dcs_invert'], shape=bool)
+
 		self.digital_timeslot = DataColumn(fmt_name='digital_timeslot', fmt_val=col_vals['digital_timeslot'], shape=int)
+		self.digital_timeslot.set_alias(D878, 'Slot')
+
 		self.digital_color = DataColumn(fmt_name='digital_color', fmt_val=col_vals['digital_color'], shape=int)
-		self.digital_contact = DataColumn(fmt_name='digital_contact', fmt_val=col_vals['digital_contact'], shape=int)
+		self.digital_color.set_alias(D878, 'Color Code')
+
+		self.digital_contact = DataColumn(fmt_name='digital_contact_id', fmt_val=col_vals['digital_contact_id'], shape=int)
 
 		self.tx_power = DataColumn(fmt_name='tx_power', fmt_val=col_vals['tx_power'], shape=str)
 		self.tx_power.set_alias(FTM400, 'Tx Power')
+		self.tx_power.set_alias(D878, 'Transmit Power')
 
 	@classmethod
 	def make_empty(cls):
@@ -112,18 +123,18 @@ class RadioChannel:
 		col_vals['name'] = ''
 		col_vals['medium_name'] = ''
 		col_vals['short_name'] = ''
-		col_vals['group_id'] = ''
 		col_vals['rx_freq'] = ''
 		col_vals['rx_ctcss'] = ''
 		col_vals['rx_dcs'] = ''
 		col_vals['rx_dcs_invert'] = ''
+		col_vals['tx_power'] = ''
 		col_vals['tx_offset'] = ''
 		col_vals['tx_ctcss'] = ''
+		col_vals['tx_dcs'] = ''
 		col_vals['tx_dcs_invert'] = ''
 		col_vals['digital_timeslot'] = ''
 		col_vals['digital_color'] = ''
-		col_vals['digital_contact'] = ''
-		col_vals['tx_power'] = ''
+		col_vals['digital_contact_id'] = ''
 		return RadioChannel(col_vals)
 
 	def headers(self, style):
@@ -131,6 +142,7 @@ class RadioChannel:
 			DEFAULT: self._headers_default,
 			BAOFENG: self._headers_baofeng,
 			FTM400: self._headers_ftm400,
+			D878: self._headers_d878,
 		}
 
 		return switch[style]()
@@ -140,6 +152,7 @@ class RadioChannel:
 			DEFAULT: self._output_default,
 			BAOFENG: self._output_baofeng,
 			FTM400: self._output_ftm400,
+			D878: self._output_d878,
 		}
 
 		return switch[style]()
@@ -150,13 +163,14 @@ class RadioChannel:
 		output += f"{self.name.get_alias(DEFAULT)},"
 		output += f"{self.medium_name.get_alias(DEFAULT)},"
 		output += f"{self.short_name.get_alias(DEFAULT)},"
-		output += f"{self.group_id.get_alias(DEFAULT)},"
+		output += f"{self.tx_power.get_alias(DEFAULT)},"
 		output += f"{self.rx_freq.get_alias(DEFAULT)},"
 		output += f"{self.rx_ctcss.get_alias(DEFAULT)},"
 		output += f"{self.rx_dcs.get_alias(DEFAULT)},"
 		output += f"{self.rx_dcs_invert.get_alias(DEFAULT)},"
 		output += f"{self.tx_offset.get_alias(DEFAULT)},"
 		output += f"{self.tx_ctcss.get_alias(DEFAULT)},"
+		output += f"{self.tx_dcs.get_alias(DEFAULT)},"
 		output += f"{self.tx_dcs_invert.get_alias(DEFAULT)},"
 		output += f"{self.digital_timeslot.get_alias(DEFAULT)},"
 		output += f"{self.digital_color.get_alias(DEFAULT)},"
@@ -169,13 +183,14 @@ class RadioChannel:
 		output += f"{self.name.fmt_val('')},"
 		output += f"{self.medium_name.fmt_val('')},"
 		output += f"{self.short_name.fmt_val('')},"
-		output += f"{self.group_id.fmt_val('')},"
+		output += f"{self.tx_power.fmt_val('')},"
 		output += f"{self.rx_freq.fmt_val('')},"
 		output += f"{self.rx_ctcss.fmt_val('')},"
 		output += f"{self.rx_dcs.fmt_val('')},"
 		output += f"{self.rx_dcs_invert.fmt_val('')},"
 		output += f"{self.tx_offset.fmt_val('')},"
 		output += f"{self.tx_ctcss.fmt_val('')},"
+		output += f"{self.tx_dcs.fmt_val('')},"
 		output += f"{self.tx_dcs_invert.fmt_val('')},"
 		output += f"{self.digital_timeslot.fmt_val('')},"
 		output += f"{self.digital_color.fmt_val('')},"
@@ -326,8 +341,136 @@ class RadioChannel:
 
 	def _headers_d878(self):
 		output = ''
+		output += f"{self.number.get_alias(D878)}," #"No.,"
+		output += f"{self.name.get_alias(D878)}," #"Channel Name,"
+		output += f"{self.rx_freq.get_alias(D878)}," #"Receive Frequency,"
+		output += f"Transmit Frequency," #"Transmit Frequency,"
+		output += f"Channel Type," #"Channel Type,"
+		output += f"{self.tx_power.get_alias(D878)}," #"Transmit Power,"
+		output += f"Band Width," #"Band Width,"
+		output += f"CTCSS/DCS Decode," #"CTCSS/DCS Decode,"
+		output += f"CTCSS/DCS Encode," #"CTCSS/DCS Encode,"
+		output += f"," #"Contact," #todo DMR contacts
+		output += f"Contact Call Type," #"Contact Call Type,"
+		output += f"," #"Contact TG/DMR ID," #todo DMR contacts
+		output += f"Radio ID," #"Radio ID,"
+		output += f"Busy Lock/TX Permit," #"Busy Lock/TX Permit,"
+		output += f"Squelch Mode," #"Squelch Mode,"
+		output += f"Optional Signal," #"Optional Signal,"
+		output += f"DTMF ID," #"DTMF ID,"
+		output += f"2Tone ID," #"2Tone ID,"
+		output += f"5Tone ID," #"5Tone ID,"
+		output += f"PTT ID," #"PTT ID,"
+		output += f"{self.digital_color.get_alias(D878)}," #"Color Code,"
+		output += f"{self.digital_timeslot.get_alias(D878)}," #"Slot,"
+		output += f"Scan List," #"Scan List,"
+		output += f"Receive Group List," #"Receive Group List,"
+		output += f"PTT Prohibit," #"PTT Prohibit,"
+		output += f"Reverse," #"Reverse,"
+		output += f"Simplex TDMA," #"Simplex TDMA,"
+		output += f"Slot Suit," #"Slot Suit,"
+		output += f"AES Digital Encryption," #"AES Digital Encryption,"
+		output += f"Digital Encryption," #"Digital Encryption,"
+		output += f"Call Confirmation," #"Call Confirmation,"
+		output += f"," #"Talk Around(Simplex)," #todo dmr talkaround
+		output += f"Work Alone," #"Work Alone,"
+		output += f"Custom CTCSS," #"Custom CTCSS,"
+		output += f"2TONE Decode," #"2TONE Decode,"
+		output += f"Ranging," #"Ranging,"
+		output += f"Through Mode," #"Through Mode,"
+		output += f"Digi APRS RX," #"Digi APRS RX,"
+		output += f"Analog APRS PTT Mode," #"Analog APRS PTT Mode,"
+		output += f"Digital APRS PTT Mode," #"Digital APRS PTT Mode,"
+		output += f"APRS Report Type," #"APRS Report Type,"
+		output += f"Digital APRS Report Channel," #"Digital APRS Report Channel,"
+		output += f"Correct Frequency[Hz]," #"Correct Frequency[Hz],"
+		output += f"SMS Confirmation," #"SMS Confirmation,"
+		output += f"Exclude channel from roaming," #"Exclude channel from roaming,"
+		output += f"DMR MODE," #"DMR MODE,"
+		output += f"DataACK Disable," #"DataACK Disable,"
+		output += f"R5toneBot," #"R5toneBot,"
+		output += f"R5ToneEot," #"R5ToneEot,"
 		return output
 
 	def _output_d878(self):
+		tx_frequency = self.rx_freq.fmt_val() + self.tx_offset.fmt_val(0)
+
+		channel_type = 'A-Analog'
+		busy_lock = 'Off'
+		dmr_mode = 0
+		if self.digital_timeslot.fmt_val() is not None:
+			channel_type = 'D-Digital'
+			busy_lock = 'Always'
+			dmr_mode = 1
+
+		ctcs_dcs_decode = 'Off'
+		if self.rx_ctcss.fmt_val() is not None or self.rx_dcs.fmt_val() is not None:
+			if self.rx_ctcss.fmt_val() is not None:
+				ctcs_dcs_decode = f"{self.rx_ctcss.fmt_val():.1f}"
+			if self.rx_dcs.fmt_val() is not None:
+				polarity = 'N'
+				if self.rx_dcs_invert.fmt_val(False):
+					polarity = 'I'
+				ctcs_dcs_decode = f"D{str(self.rx_dcs.fmt_val()).zfill(3)}{polarity}"
+
+		ctcs_dcs_encode = 'Off'
+		if self.tx_ctcss.fmt_val() is not None or self.tx_dcs.fmt_val() is not None:
+			if self.tx_ctcss.fmt_val() is not None:
+				ctcs_dcs_encode = f"{self.tx_ctcss.fmt_val():.1f}"
+			if self.tx_dcs.fmt_val() is not None:
+				polarity = 'N'
+				if self.tx_dcs_invert.fmt_val(False):
+					polarity = 'I'
+				ctcs_dcs_encode = f"D{str(self.tx_dcs.fmt_val()).zfill(3)}{polarity}"
+
 		output = ''
+		output += f"{self.number.fmt_val()},"  # "No.,"
+		output += f"{self.name.fmt_val():.16s},"  # "Channel Name,"
+		output += f"{self.rx_freq.fmt_val():.5f},"  # "Receive Frequency,"
+		output += f"{tx_frequency},"  # "Transmit Frequency,"
+		output += f"{channel_type},"  # "Channel Type,"
+		output += f"{self.tx_power.fmt_val()},"  # "Transmit Power,"
+		output += f"12.5K,"  # "Band Width,"
+		output += f"{ctcs_dcs_decode},"  # "CTCSS/DCS Decode,"
+		output += f"{ctcs_dcs_encode},"  # "CTCSS/DCS Encode,"
+		output += f","  # "Contact," #todo DMR contacts
+		output += f","  # "Contact Call Type," #todo DMR contacts
+		output += f","  # "Contact TG/DMR ID," #todo DMR contacts
+		output += f"DMR,"  # "Radio ID,"
+		output += f"{busy_lock},"  # "Busy Lock/TX Permit,"
+		output += f"Carrier,"  # "Squelch Mode,"
+		output += f"Off,"  # "Optional Signal,"
+		output += f"1,"  # "DTMF ID,"
+		output += f"1,"  # "2Tone ID,"
+		output += f"1,"  # "5Tone ID,"
+		output += f"Off,"  # "PTT ID,"
+		output += f"{self.digital_color.fmt_val('')},"  # "Color Code,"
+		output += f"{self.digital_timeslot.fmt_val('')},"  # "Slot,"
+		output += f"None,"  # "Scan List,"
+		output += f"None,"  # "Receive Group List,"
+		output += f"{busy_lock},"  # "PTT Prohibit,"
+		output += f"Off,"  # "Reverse,"
+		output += f"Off,"  # "Simplex TDMA,"
+		output += f"Off,"  # "Slot Suit,"
+		output += f"Normal Encryption,"  # "AES Digital Encryption,"
+		output += f"Off,"  # "Digital Encryption,"
+		output += f"Off,"  # "Call Confirmation,"
+		output += f","  # "Talk Around(Simplex)," #todo DMR talkaround
+		output += f"Off,"  # "Work Alone,"
+		output += f"251.1,"  # "Custom CTCSS,"
+		output += f"0,"  # "2TONE Decode,"
+		output += f"Off,"  # "Ranging,"
+		output += f"Off,"  # "Through Mode,"
+		output += f"Off,"  # "Digi APRS RX,"
+		output += f"Off,"  # "Analog APRS PTT Mode,"
+		output += f"Off,"  # "Digital APRS PTT Mode,"
+		output += f"Off,"  # "APRS Report Type,"
+		output += f"1,"  # "Digital APRS Report Channel,"
+		output += f"0,"  # "Correct Frequency[Hz],"
+		output += f"Off,"  # "SMS Confirmation,"
+		output += f"0,"  # "Exclude channel from roaming,"
+		output += f"{dmr_mode},"  # "DMR MODE,"
+		output += f"0,"  # "DataACK Disable,"
+		output += f"0,"  # "R5toneBot,"
+		output += f"0,"  # "R5ToneEot,"
 		return output
