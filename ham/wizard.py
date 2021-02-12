@@ -2,8 +2,7 @@ import logging
 import os
 import shutil
 
-import ham.radio_channel as radio_channel
-from ham.radio_channel import Group
+import ham.radio_types
 from ham.radio_channel import RadioChannel
 
 
@@ -77,17 +76,10 @@ class Wizard(object):
 			'digital_color': '',
 			'digital_contact_id': '',
 		})
-		channel_file.write(RadioChannel.make_empty().headers(radio_channel.DEFAULT)+'\n')
-		channel_file.write(first_channel.output(radio_channel.DEFAULT)+'\n')
-		channel_file.write(second_channel.output(radio_channel.DEFAULT)+'\n')
+		channel_file.write(RadioChannel.make_empty().headers(ham.radio_types.DEFAULT) + '\n')
+		channel_file.write(first_channel.output(ham.radio_types.DEFAULT) + '\n')
+		channel_file.write(second_channel.output(ham.radio_types.DEFAULT) + '\n')
 		channel_file.close()
-
-	def create_group_file(self):
-		group_file = open('in/groups.csv', 'w+')
-		first_group = Group('1,My First Group')
-		group_file.write(first_group.output(radio_channel.DEFAULT)+'\n')
-		group_file.write(first_group.output(radio_channel.DEFAULT)+'\n')
-		group_file.close()
 
 	def create_output(self):
 		self.safe_create_dir('out')

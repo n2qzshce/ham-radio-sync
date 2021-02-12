@@ -1,120 +1,59 @@
-# styles
-import logging
-
-DEFAULT = 'default'
-BAOFENG = 'baofeng'
-FTM400 = 'ftm400'
-D878 = 'd878'
-
-class DataColumn:
-	_alias_names = dict()
-	_fmt_val = None
-	_shape = None
-
-	def __init__(self, fmt_name=None, fmt_val=None, shape=None):
-		self._fmt_val = fmt_val
-		self._alias_names = dict()
-		self._alias_names[DEFAULT] = fmt_name
-		self._shape = shape
-
-	def set_alias(self, style, name):
-		self._alias_names[style] = name
-
-	def get_alias(self, style):
-		if style not in self._alias_names.keys():
-			logging.error(f"Cannot find alias for style: `{style}` of `{self._alias_names[DEFAULT]}`")
-		return self._alias_names[style]
-	
-	def fmt_val(self, none_val=None):
-		if self._fmt_val == '':
-			return none_val
-
-		return self._shape(self._fmt_val)
-
-
-class Group:
-	def __init__(self, row_str):
-		cols = row_str.split(',')
-		self.group_id = DataColumn(fmt_name='Group ID', fmt_val=cols[0])
-		self.name = DataColumn(fmt_name='Name', fmt_val=cols[1])
-
-	def header(self, style):
-		switch = {
-			DEFAULT: self.header_default,
-		}
-
-		return switch[style]()
-
-	def header_default(self):
-		return \
-			f"{self.group_id.get_alias(DEFAULT)}," \
-			f"{self.name.get_alias(DEFAULT)}"
-
-	def output(self, style):
-		switch = {
-			DEFAULT: self.output_default,
-		}
-
-		return switch[style]()
-
-	def output_default(self):
-		return \
-			f"{self.group_id.fmt_val()}," \
-			f"{self.name.fmt_val()}"
+import ham.radio_types as radio_types
+from ham.data_column import DataColumn
 
 
 class RadioChannel:
-	def __init__(self, col_vals):
-		self.number = DataColumn(fmt_name='number', fmt_val=col_vals['number'], shape=int)
-		self.number.set_alias(BAOFENG, 'Location')
-		self.number.set_alias(FTM400, 'Channel Number')
-		self.number.set_alias(D878, 'No.')
+	def __init__(self, cols):
+		self.number = DataColumn(fmt_name='number', fmt_val=cols['number'], shape=int)
+		self.number.set_alias(radio_types.BAOFENG, 'Location')
+		self.number.set_alias(radio_types.FTM400, 'Channel Number')
+		self.number.set_alias(radio_types.D878, 'No.')
 
-		self.name = DataColumn(fmt_name='name', fmt_val=col_vals['name'], shape=str)
-		self.name.set_alias(D878, 'Channel Name')
+		self.name = DataColumn(fmt_name='name', fmt_val=cols['name'], shape=str)
+		self.name.set_alias(radio_types.D878, 'Channel Name')
 
-		self.medium_name = DataColumn(fmt_name='medium_name', fmt_val=col_vals['medium_name'], shape=str)
-		self.medium_name.set_alias(FTM400, 'Name')
+		self.medium_name = DataColumn(fmt_name='medium_name', fmt_val=cols['medium_name'], shape=str)
+		self.medium_name.set_alias(radio_types.FTM400, 'Name')
 
-		self.short_name = DataColumn(fmt_name='short_name', fmt_val=col_vals['short_name'], shape=str)
-		self.short_name.set_alias(BAOFENG, 'Name')
+		self.short_name = DataColumn(fmt_name='short_name', fmt_val=cols['short_name'], shape=str)
+		self.short_name.set_alias(radio_types.BAOFENG, 'Name')
 
-		self.rx_freq = DataColumn(fmt_name='rx_freq', fmt_val=col_vals['rx_freq'], shape=float)
-		self.rx_freq.set_alias(BAOFENG, 'Frequency')
-		self.rx_freq.set_alias(FTM400, 'Receive Frequency')
-		self.rx_freq.set_alias(D878, 'Receive Frequency')
+		self.rx_freq = DataColumn(fmt_name='rx_freq', fmt_val=cols['rx_freq'], shape=float)
+		self.rx_freq.set_alias(radio_types.BAOFENG, 'Frequency')
+		self.rx_freq.set_alias(radio_types.FTM400, 'Receive Frequency')
+		self.rx_freq.set_alias(radio_types.D878, 'Receive Frequency')
 
-		self.rx_ctcss = DataColumn(fmt_name='rx_ctcss', fmt_val=col_vals['rx_ctcss'], shape=float)
-		self.rx_ctcss.set_alias(BAOFENG, 'rToneFreq')
-		self.rx_ctcss.set_alias(FTM400, 'CTCSS')
+		self.rx_ctcss = DataColumn(fmt_name='rx_ctcss', fmt_val=cols['rx_ctcss'], shape=float)
+		self.rx_ctcss.set_alias(radio_types.BAOFENG, 'rToneFreq')
+		self.rx_ctcss.set_alias(radio_types.FTM400, 'CTCSS')
 
-		self.rx_dcs = DataColumn(fmt_name='rx_dcs', fmt_val=col_vals['rx_dcs'], shape=float)
-		self.rx_dcs.set_alias(BAOFENG, 'DtcsCode')
-		self.rx_dcs.set_alias(FTM400, 'DCS')
+		self.rx_dcs = DataColumn(fmt_name='rx_dcs', fmt_val=cols['rx_dcs'], shape=float)
+		self.rx_dcs.set_alias(radio_types.BAOFENG, 'DtcsCode')
+		self.rx_dcs.set_alias(radio_types.FTM400, 'DCS')
 
-		self.rx_dcs_invert = DataColumn(fmt_name='rx_dcs_invert', fmt_val=col_vals['rx_dcs_invert'], shape=bool)
-		self.tx_offset = DataColumn(fmt_name='tx_offset', fmt_val=col_vals['tx_offset'], shape=float)
-		self.tx_offset.set_alias(BAOFENG, 'Offset')
-		self.tx_offset.set_alias(FTM400, 'Offset Frequency')
+		self.rx_dcs_invert = DataColumn(fmt_name='rx_dcs_invert', fmt_val=cols['rx_dcs_invert'], shape=bool)
+		self.tx_offset = DataColumn(fmt_name='tx_offset', fmt_val=cols['tx_offset'], shape=float)
+		self.tx_offset.set_alias(radio_types.BAOFENG, 'Offset')
+		self.tx_offset.set_alias(radio_types.FTM400, 'Offset Frequency')
 
-		self.tx_ctcss = DataColumn(fmt_name='tx_ctcss', fmt_val=col_vals['tx_ctcss'], shape=float)
-		self.tx_ctcss.set_alias(BAOFENG, 'cToneFreq')
+		self.tx_ctcss = DataColumn(fmt_name='tx_ctcss', fmt_val=cols['tx_ctcss'], shape=float)
+		self.tx_ctcss.set_alias(radio_types.BAOFENG, 'cToneFreq')
 
-		self.tx_dcs = DataColumn(fmt_name='tx_dcs', fmt_val=col_vals['tx_dcs'], shape=float)
+		self.tx_dcs = DataColumn(fmt_name='tx_dcs', fmt_val=cols['tx_dcs'], shape=float)
 
-		self.tx_dcs_invert = DataColumn(fmt_name='tx_dcs_invert', fmt_val=col_vals['tx_dcs_invert'], shape=bool)
+		self.tx_dcs_invert = DataColumn(fmt_name='tx_dcs_invert', fmt_val=cols['tx_dcs_invert'], shape=bool)
 
-		self.digital_timeslot = DataColumn(fmt_name='digital_timeslot', fmt_val=col_vals['digital_timeslot'], shape=int)
-		self.digital_timeslot.set_alias(D878, 'Slot')
+		self.digital_timeslot = DataColumn(fmt_name='digital_timeslot', fmt_val=cols['digital_timeslot'], shape=int)
+		self.digital_timeslot.set_alias(radio_types.D878, 'Slot')
 
-		self.digital_color = DataColumn(fmt_name='digital_color', fmt_val=col_vals['digital_color'], shape=int)
-		self.digital_color.set_alias(D878, 'Color Code')
+		self.digital_color = DataColumn(fmt_name='digital_color', fmt_val=cols['digital_color'], shape=int)
+		self.digital_color.set_alias(radio_types.D878, 'Color Code')
 
-		self.digital_contact = DataColumn(fmt_name='digital_contact_id', fmt_val=col_vals['digital_contact_id'], shape=int)
+		self.digital_contact = DataColumn(fmt_name='digital_contact_id', fmt_val=cols['digital_contact_id'], shape=int)
 
-		self.tx_power = DataColumn(fmt_name='tx_power', fmt_val=col_vals['tx_power'], shape=str)
-		self.tx_power.set_alias(FTM400, 'Tx Power')
-		self.tx_power.set_alias(D878, 'Transmit Power')
+		self.tx_power = DataColumn(fmt_name='tx_power', fmt_val=cols['tx_power'], shape=str)
+		self.tx_power.set_alias(radio_types.FTM400, 'Tx Power')
+		self.tx_power.set_alias(radio_types.D878, 'Transmit Power')
 
 	@classmethod
 	def make_empty(cls):
@@ -139,42 +78,42 @@ class RadioChannel:
 
 	def headers(self, style):
 		switch = {
-			DEFAULT: self._headers_default,
-			BAOFENG: self._headers_baofeng,
-			FTM400: self._headers_ftm400,
-			D878: self._headers_d878,
+			radio_types.DEFAULT: self._headers_default,
+			radio_types.BAOFENG: self._headers_baofeng,
+			radio_types.FTM400: self._headers_ftm400,
+			radio_types.D878: self._headers_d878,
 		}
 
 		return switch[style]()
 
 	def output(self, style):
 		switch = {
-			DEFAULT: self._output_default,
-			BAOFENG: self._output_baofeng,
-			FTM400: self._output_ftm400,
-			D878: self._output_d878,
+			radio_types.DEFAULT: self._output_default,
+			radio_types.BAOFENG: self._output_baofeng,
+			radio_types.FTM400: self._output_ftm400,
+			radio_types.D878: self._output_d878,
 		}
 
 		return switch[style]()
 
 	def _headers_default(self):
 		output = ''
-		output += f"{self.number.get_alias(DEFAULT)},"
-		output += f"{self.name.get_alias(DEFAULT)},"
-		output += f"{self.medium_name.get_alias(DEFAULT)},"
-		output += f"{self.short_name.get_alias(DEFAULT)},"
-		output += f"{self.tx_power.get_alias(DEFAULT)},"
-		output += f"{self.rx_freq.get_alias(DEFAULT)},"
-		output += f"{self.rx_ctcss.get_alias(DEFAULT)},"
-		output += f"{self.rx_dcs.get_alias(DEFAULT)},"
-		output += f"{self.rx_dcs_invert.get_alias(DEFAULT)},"
-		output += f"{self.tx_offset.get_alias(DEFAULT)},"
-		output += f"{self.tx_ctcss.get_alias(DEFAULT)},"
-		output += f"{self.tx_dcs.get_alias(DEFAULT)},"
-		output += f"{self.tx_dcs_invert.get_alias(DEFAULT)},"
-		output += f"{self.digital_timeslot.get_alias(DEFAULT)},"
-		output += f"{self.digital_color.get_alias(DEFAULT)},"
-		output += f"{self.digital_contact.get_alias(DEFAULT)},"
+		output += f"{self.number.get_alias(radio_types.DEFAULT)},"
+		output += f"{self.name.get_alias(radio_types.DEFAULT)},"
+		output += f"{self.medium_name.get_alias(radio_types.DEFAULT)},"
+		output += f"{self.short_name.get_alias(radio_types.DEFAULT)},"
+		output += f"{self.tx_power.get_alias(radio_types.DEFAULT)},"
+		output += f"{self.rx_freq.get_alias(radio_types.DEFAULT)},"
+		output += f"{self.rx_ctcss.get_alias(radio_types.DEFAULT)},"
+		output += f"{self.rx_dcs.get_alias(radio_types.DEFAULT)},"
+		output += f"{self.rx_dcs_invert.get_alias(radio_types.DEFAULT)},"
+		output += f"{self.tx_offset.get_alias(radio_types.DEFAULT)},"
+		output += f"{self.tx_ctcss.get_alias(radio_types.DEFAULT)},"
+		output += f"{self.tx_dcs.get_alias(radio_types.DEFAULT)},"
+		output += f"{self.tx_dcs_invert.get_alias(radio_types.DEFAULT)},"
+		output += f"{self.digital_timeslot.get_alias(radio_types.DEFAULT)},"
+		output += f"{self.digital_color.get_alias(radio_types.DEFAULT)},"
+		output += f"{self.digital_contact.get_alias(radio_types.DEFAULT)},"
 		return output
 
 	def _output_default(self):
@@ -199,15 +138,15 @@ class RadioChannel:
 
 	def _headers_baofeng(self):
 		output = ''
-		output += f"{self.number.get_alias(BAOFENG)},"
-		output += f"{self.short_name.get_alias(BAOFENG)},"
-		output += f"{self.rx_freq.get_alias(BAOFENG)},"
+		output += f"{self.number.get_alias(radio_types.BAOFENG)},"
+		output += f"{self.short_name.get_alias(radio_types.BAOFENG)},"
+		output += f"{self.rx_freq.get_alias(radio_types.BAOFENG)},"
 		output += f"Duplex,"
-		output += f"{self.tx_offset.get_alias(BAOFENG)},"
+		output += f"{self.tx_offset.get_alias(radio_types.BAOFENG)},"
 		output += f"{'Tone'},"
-		output += f"{self.rx_ctcss.get_alias(BAOFENG)},"
-		output += f"{self.tx_ctcss.get_alias(BAOFENG)},"
-		output += f"{self.rx_dcs.get_alias(BAOFENG)},"
+		output += f"{self.rx_ctcss.get_alias(radio_types.BAOFENG)},"
+		output += f"{self.tx_ctcss.get_alias(radio_types.BAOFENG)},"
+		output += f"{self.rx_dcs.get_alias(radio_types.BAOFENG)},"
 		output += f"DtcsPolarity,"
 		output += f"Mode,"
 		output += f"TStep,"
@@ -270,18 +209,18 @@ class RadioChannel:
 
 	def _headers_ftm400(self):
 		return \
-			f"{self.number.get_alias(FTM400)},"\
-			f"{self.rx_freq.get_alias(FTM400)},"\
+			f"{self.number.get_alias(radio_types.FTM400)},"\
+			f"{self.rx_freq.get_alias(radio_types.FTM400)},"\
 			f"Transmit Frequency,"\
-			f"{self.tx_offset.get_alias(FTM400)},"\
+			f"{self.tx_offset.get_alias(radio_types.FTM400)},"\
 			f"Offset Direction,"\
 			f"Operating Mode,"\
-			f"{self.medium_name.get_alias(FTM400)},"\
+			f"{self.medium_name.get_alias(radio_types.FTM400)},"\
 			f"Show Name,"\
 			f"Tone Mode,"\
-			f"{self.rx_ctcss.get_alias(FTM400)},"\
-			f"{self.rx_dcs.get_alias(FTM400)},"\
-			f"{self.tx_power.get_alias(FTM400)},"\
+			f"{self.rx_ctcss.get_alias(radio_types.FTM400)},"\
+			f"{self.rx_dcs.get_alias(radio_types.FTM400)},"\
+			f"{self.tx_power.get_alias(radio_types.FTM400)},"\
 			f"Skip,"\
 			f"Step,"\
 			f"Clock Shift,"\
@@ -296,7 +235,7 @@ class RadioChannel:
 
 		abs_tx_offset = abs(self.tx_offset.fmt_val(0))
 		if abs_tx_offset > 0:
-			tx_units = ' kHz' #That whitespace is intentional and important
+			tx_units = ' kHz'  # That whitespace is intentional and important
 			tx_offset = f'{abs_tx_offset * 1000:.3f}'
 			if abs_tx_offset > 1:
 				tx_units = ' mHz'
@@ -341,12 +280,12 @@ class RadioChannel:
 
 	def _headers_d878(self):
 		output = ''
-		output += f"{self.number.get_alias(D878)}," #"No.,"
-		output += f"{self.name.get_alias(D878)}," #"Channel Name,"
-		output += f"{self.rx_freq.get_alias(D878)}," #"Receive Frequency,"
+		output += f"{self.number.get_alias(radio_types.D878)}," #"No.,"
+		output += f"{self.name.get_alias(radio_types.D878)}," #"Channel Name,"
+		output += f"{self.rx_freq.get_alias(radio_types.D878)}," #"Receive Frequency,"
 		output += f"Transmit Frequency," #"Transmit Frequency,"
 		output += f"Channel Type," #"Channel Type,"
-		output += f"{self.tx_power.get_alias(D878)}," #"Transmit Power,"
+		output += f"{self.tx_power.get_alias(radio_types.D878)}," #"Transmit Power,"
 		output += f"Band Width," #"Band Width,"
 		output += f"CTCSS/DCS Decode," #"CTCSS/DCS Decode,"
 		output += f"CTCSS/DCS Encode," #"CTCSS/DCS Encode,"
@@ -361,8 +300,8 @@ class RadioChannel:
 		output += f"2Tone ID," #"2Tone ID,"
 		output += f"5Tone ID," #"5Tone ID,"
 		output += f"PTT ID," #"PTT ID,"
-		output += f"{self.digital_color.get_alias(D878)}," #"Color Code,"
-		output += f"{self.digital_timeslot.get_alias(D878)}," #"Slot,"
+		output += f"{self.digital_color.get_alias(radio_types.D878)}," #"Color Code,"
+		output += f"{self.digital_timeslot.get_alias(radio_types.D878)}," #"Slot,"
 		output += f"Scan List," #"Scan List,"
 		output += f"Receive Group List," #"Receive Group List,"
 		output += f"PTT Prohibit," #"PTT Prohibit,"
