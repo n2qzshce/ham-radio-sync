@@ -48,7 +48,12 @@ def main():
 
 	parser.add_argument(
 		'--radios', '-r',
-		choices=[radio_channel.DEFAULT, radio_channel.BAOFENG, radio_channel.FTM400],
+		choices=[
+			radio_channel.DEFAULT,
+			radio_channel.BAOFENG,
+			radio_channel.FTM400,
+			radio_channel.D878,
+		],
 		default=[],
 		nargs='+',
 		help="""Name of target radios to create.

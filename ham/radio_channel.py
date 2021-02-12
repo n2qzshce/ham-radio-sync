@@ -4,7 +4,7 @@ import logging
 DEFAULT = 'default'
 BAOFENG = 'baofeng'
 FTM400 = 'ftm400'
-
+D878 = 'd878'
 
 class DataColumn:
 	_alias_names = dict()
@@ -128,23 +128,23 @@ class RadioChannel:
 
 	def headers(self, style):
 		switch = {
-			DEFAULT: self.headers_default,
-			BAOFENG: self.headers_baofeng,
-			FTM400: self.headers_ftm400,
+			DEFAULT: self._headers_default,
+			BAOFENG: self._headers_baofeng,
+			FTM400: self._headers_ftm400,
 		}
 
 		return switch[style]()
 
 	def output(self, style):
 		switch = {
-			DEFAULT: self.output_default,
-			BAOFENG: self.output_baofeng,
-			FTM400: self.output_ftm400,
+			DEFAULT: self._output_default,
+			BAOFENG: self._output_baofeng,
+			FTM400: self._output_ftm400,
 		}
 
 		return switch[style]()
 
-	def headers_default(self):
+	def _headers_default(self):
 		output = ''
 		output += f"{self.number.get_alias(DEFAULT)},"
 		output += f"{self.name.get_alias(DEFAULT)},"
@@ -163,7 +163,26 @@ class RadioChannel:
 		output += f"{self.digital_contact.get_alias(DEFAULT)},"
 		return output
 
-	def headers_baofeng(self):
+	def _output_default(self):
+		output = ''
+		output += f"{self.number.fmt_val('')},"
+		output += f"{self.name.fmt_val('')},"
+		output += f"{self.medium_name.fmt_val('')},"
+		output += f"{self.short_name.fmt_val('')},"
+		output += f"{self.group_id.fmt_val('')},"
+		output += f"{self.rx_freq.fmt_val('')},"
+		output += f"{self.rx_ctcss.fmt_val('')},"
+		output += f"{self.rx_dcs.fmt_val('')},"
+		output += f"{self.rx_dcs_invert.fmt_val('')},"
+		output += f"{self.tx_offset.fmt_val('')},"
+		output += f"{self.tx_ctcss.fmt_val('')},"
+		output += f"{self.tx_dcs_invert.fmt_val('')},"
+		output += f"{self.digital_timeslot.fmt_val('')},"
+		output += f"{self.digital_color.fmt_val('')},"
+		output += f"{self.digital_contact.fmt_val('')},"
+		return output
+
+	def _headers_baofeng(self):
 		output = ''
 		output += f"{self.number.get_alias(BAOFENG)},"
 		output += f"{self.short_name.get_alias(BAOFENG)},"
@@ -185,46 +204,7 @@ class RadioChannel:
 		output += f"DVCODE,"
 		return output
 
-	def headers_ftm400(self):
-		return \
-			f"{self.number.get_alias(FTM400)},"\
-			f"{self.rx_freq.get_alias(FTM400)},"\
-			f"Transmit Frequency,"\
-			f"{self.tx_offset.get_alias(FTM400)},"\
-			f"Offset Direction,"\
-			f"Operating Mode,"\
-			f"{self.medium_name.get_alias(FTM400)},"\
-			f"Show Name,"\
-			f"Tone Mode,"\
-			f"{self.rx_ctcss.get_alias(FTM400)},"\
-			f"{self.rx_dcs.get_alias(FTM400)},"\
-			f"{self.tx_power.get_alias(FTM400)},"\
-			f"Skip,"\
-			f"Step,"\
-			f"Clock Shift,"\
-			f"Comment,"\
-			f"User CTCSS,"
-
-	def output_default(self):
-		output = ''
-		output += f"{self.number.fmt_val('')},"
-		output += f"{self.name.fmt_val('')},"
-		output += f"{self.medium_name.fmt_val('')},"
-		output += f"{self.short_name.fmt_val('')},"
-		output += f"{self.group_id.fmt_val('')},"
-		output += f"{self.rx_freq.fmt_val('')},"
-		output += f"{self.rx_ctcss.fmt_val('')},"
-		output += f"{self.rx_dcs.fmt_val('')},"
-		output += f"{self.rx_dcs_invert.fmt_val('')},"
-		output += f"{self.tx_offset.fmt_val('')},"
-		output += f"{self.tx_ctcss.fmt_val('')},"
-		output += f"{self.tx_dcs_invert.fmt_val('')},"
-		output += f"{self.digital_timeslot.fmt_val('')},"
-		output += f"{self.digital_color.fmt_val('')},"
-		output += f"{self.digital_contact.fmt_val('')},"
-		return output
-
-	def output_baofeng(self):
+	def _output_baofeng(self):
 		number = self.number.fmt_val() - 1
 
 		duplex = ''
@@ -273,7 +253,27 @@ class RadioChannel:
 		output += f","
 		return output
 
-	def output_ftm400(self):
+	def _headers_ftm400(self):
+		return \
+			f"{self.number.get_alias(FTM400)},"\
+			f"{self.rx_freq.get_alias(FTM400)},"\
+			f"Transmit Frequency,"\
+			f"{self.tx_offset.get_alias(FTM400)},"\
+			f"Offset Direction,"\
+			f"Operating Mode,"\
+			f"{self.medium_name.get_alias(FTM400)},"\
+			f"Show Name,"\
+			f"Tone Mode,"\
+			f"{self.rx_ctcss.get_alias(FTM400)},"\
+			f"{self.rx_dcs.get_alias(FTM400)},"\
+			f"{self.tx_power.get_alias(FTM400)},"\
+			f"Skip,"\
+			f"Step,"\
+			f"Clock Shift,"\
+			f"Comment,"\
+			f"User CTCSS,"
+
+	def _output_ftm400(self):
 		tx_freq = self.rx_freq.fmt_val() + self.tx_offset.fmt_val(0)
 
 		tx_units = ''
@@ -322,4 +322,12 @@ class RadioChannel:
 		output += f","
 		output += f"300 Hz,"
 
+		return output
+
+	def _headers_d878(self):
+		output = ''
+		return output
+
+	def _output_d878(self):
+		output = ''
 		return output
