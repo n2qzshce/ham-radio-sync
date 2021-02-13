@@ -9,6 +9,8 @@ class DataColumn:
 	_shape = None
 
 	def __init__(self, fmt_name=None, fmt_val=None, shape=None):
+		if shape is None:
+			logging.error("Shape is null! Bad things will happen.")
 		self._fmt_val = fmt_val
 		self._alias_names = dict()
 		self._alias_names[radio_types.DEFAULT] = fmt_name
