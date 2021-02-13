@@ -2,7 +2,9 @@ import logging
 import os
 import shutil
 
-import ham.radio_types
+from ham import radio_types
+from ham.dmr.dmr_contact import DmrContact
+from ham.dmr.dmr_id import DmrId
 from ham.radio_channel import RadioChannel
 
 
@@ -11,7 +13,7 @@ class Wizard(object):
 
 	def bootstrap(self, is_forced):
 		if os.path.exists('in'):
-			logging.warning("INPUT DIRECTORY ALREADY EXISTS!! Continue? (y/n)[n]")
+			logging.warning("INPUT DIRECTORY ALREADY EXISTS!! Input files will be overwritten. Continue? (y/n)[n]")
 			if not is_forced:
 				prompt = input()
 				if prompt != 'y':
@@ -31,9 +33,8 @@ class Wizard(object):
 		else:
 			logging.info("`channels.csv` already exists! Skipping")
 
-		if not os.path.exists('in/groups.csv') or is_forced:
-			''
-			# self.create_group_file()
+		if not os.path.exists('in/digital_contacts.csv') or is_forced:
+			self.create_dmr_data()
 		else:
 			logging.info("`groups.csv` already exists! Skipping")
 		return
@@ -57,7 +58,7 @@ class Wizard(object):
 			'digital_timeslot': '',
 			'digital_color': '',
 			'digital_contact_id': '',
-		})
+		}, None)
 		second_channel = RadioChannel({
 			'number': '2',
 			'name': 'Colcon Denver',
@@ -75,11 +76,40 @@ class Wizard(object):
 			'digital_timeslot': '',
 			'digital_color': '',
 			'digital_contact_id': '',
-		})
-		channel_file.write(RadioChannel.make_empty().headers(ham.radio_types.DEFAULT) + '\n')
-		channel_file.write(first_channel.output(ham.radio_types.DEFAULT) + '\n')
-		channel_file.write(second_channel.output(ham.radio_types.DEFAULT) + '\n')
+		}, None)
+		channel_file.write(RadioChannel.make_empty().headers(radio_types.DEFAULT) + '\n')
+		channel_file.write(first_channel.output(radio_types.DEFAULT) + '\n')
+		channel_file.write(second_channel.output(radio_types.DEFAULT) + '\n')
 		channel_file.close()
+
+	def create_dmr_data(self):
+		dmr_id_file = open('in/dmr_id.csv', 'w+')
+		dmr_id = DmrId({
+			'number': 1,
+			'radio_id': '00000',
+			'name': 'DMR',
+		})
+		dmr_id_file.write(DmrId.create_empty().headers(radio_types.DEFAULT)+'\n')
+		dmr_id_file.write(dmr_id.output(radio_types.DEFAULT)+'\n')
+		dmr_id_file.close()
+
+		digital_contacts_file = open('in/digital_contacts.csv', 'w+')
+		analog_contact = DmrContact({
+			'number': 1,
+			'digital_id':  dmr_id.radio_id.fmt_val(),
+			'name': 'Analog',
+			'call_type': 'all',
+		})
+		group_contact = DmrContact({
+			'number': 101,
+			'digital_id':  dmr_id.radio_id.fmt_val(),
+			'name': 'Some Repeater',
+			'call_type': 'group',
+		})
+		digital_contacts_file.write(DmrContact.create_empty().headers(radio_types.DEFAULT) + '\n')
+		digital_contacts_file.write(analog_contact.output(radio_types.DEFAULT) + '\n')
+		digital_contacts_file.write(group_contact.output(radio_types.DEFAULT) + '\n')
+		digital_contacts_file.close()
 
 	def create_output(self):
 		self.safe_create_dir('out')

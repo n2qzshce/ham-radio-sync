@@ -1,6 +1,6 @@
 import logging
 
-import ham.radio_types
+from ham import radio_types
 
 
 class DataColumn:
@@ -11,7 +11,7 @@ class DataColumn:
 	def __init__(self, fmt_name=None, fmt_val=None, shape=None):
 		self._fmt_val = fmt_val
 		self._alias_names = dict()
-		self._alias_names[ham.radio_types.DEFAULT] = fmt_name
+		self._alias_names[radio_types.DEFAULT] = fmt_name
 		self._shape = shape
 
 	def set_alias(self, style, name):
@@ -19,7 +19,7 @@ class DataColumn:
 
 	def get_alias(self, style):
 		if style not in self._alias_names.keys():
-			logging.error(f"Cannot find alias for style: `{style}` of `{self._alias_names[ham.radio_types.DEFAULT]}`")
+			logging.error(f"Cannot find alias for style: `{style}` of `{self._alias_names[radio_types.DEFAULT]}`")
 		return self._alias_names[style]
 
 	def fmt_val(self, none_val=None):

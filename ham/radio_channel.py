@@ -1,9 +1,9 @@
-import ham.radio_types as radio_types
+from ham import radio_types
 from ham.data_column import DataColumn
 
 
 class RadioChannel:
-	def __init__(self, cols):
+	def __init__(self, cols, digital_contacts):
 		self.number = DataColumn(fmt_name='number', fmt_val=cols['number'], shape=int)
 		self.number.set_alias(radio_types.BAOFENG, 'Location')
 		self.number.set_alias(radio_types.FTM400, 'Channel Number')
@@ -55,6 +55,8 @@ class RadioChannel:
 		self.tx_power.set_alias(radio_types.FTM400, 'Tx Power')
 		self.tx_power.set_alias(radio_types.D878, 'Transmit Power')
 
+		self.digital_contacts = digital_contacts
+
 	@classmethod
 	def make_empty(cls):
 		col_vals = dict()
@@ -74,7 +76,7 @@ class RadioChannel:
 		col_vals['digital_timeslot'] = ''
 		col_vals['digital_color'] = ''
 		col_vals['digital_contact_id'] = ''
-		return RadioChannel(col_vals)
+		return RadioChannel(col_vals, None)
 
 	def headers(self, style):
 		switch = {
