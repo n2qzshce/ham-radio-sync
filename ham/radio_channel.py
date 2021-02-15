@@ -1,9 +1,10 @@
 from ham import radio_types
 from ham.data_column import DataColumn
+from ham.dmr.dmr_id import DmrId
 
 
 class RadioChannel:
-	def __init__(self, cols, digital_contacts):
+	def __init__(self, cols, digital_contacts, dmr_ids):
 		self.number = DataColumn(fmt_name='number', fmt_val=cols['number'], shape=int)
 		self.number.set_alias(radio_types.BAOFENG, 'Location')
 		self.number.set_alias(radio_types.FTM400, 'Channel Number')
@@ -56,6 +57,7 @@ class RadioChannel:
 		self.tx_power.set_alias(radio_types.D878, 'Transmit Power')
 
 		self.digital_contacts = digital_contacts
+		self.dmr_ids = dmr_ids
 
 	@classmethod
 	def make_empty(cls):
@@ -76,7 +78,10 @@ class RadioChannel:
 		col_vals['digital_timeslot'] = ''
 		col_vals['digital_color'] = ''
 		col_vals['digital_contact_id'] = ''
-		return RadioChannel(col_vals, None)
+		return RadioChannel(col_vals, digital_contacts=None, dmr_ids=None)
+
+	def is_digital(self):
+		return self.digital_color.fmt_val() is not None
 
 	def headers(self, style):
 		switch = {
@@ -88,7 +93,7 @@ class RadioChannel:
 
 		return switch[style]()
 
-	def output(self, style):
+	def output(self, style, channel_number):
 		switch = {
 			radio_types.DEFAULT: self._output_default,
 			radio_types.BAOFENG: self._output_baofeng,
@@ -96,7 +101,7 @@ class RadioChannel:
 			radio_types.D878: self._output_d878,
 		}
 
-		return switch[style]()
+		return switch[style](channel_number)
 
 	def _headers_default(self):
 		output = ''
@@ -118,9 +123,9 @@ class RadioChannel:
 		output += f"{self.digital_contact.get_alias(radio_types.DEFAULT)},"
 		return output
 
-	def _output_default(self):
+	def _output_default(self, channel_number):
 		output = ''
-		output += f"{self.number.fmt_val('')},"
+		output += f"{channel_number},"
 		output += f"{self.name.fmt_val('')},"
 		output += f"{self.medium_name.fmt_val('')},"
 		output += f"{self.short_name.fmt_val('')},"
@@ -160,8 +165,8 @@ class RadioChannel:
 		output += f"DVCODE,"
 		return output
 
-	def _output_baofeng(self):
-		number = self.number.fmt_val() - 1
+	def _output_baofeng(self, channel_number):
+		number = channel_number - 1
 
 		duplex = ''
 		if self.tx_offset.fmt_val() is not None:
@@ -229,7 +234,7 @@ class RadioChannel:
 			f"Comment,"\
 			f"User CTCSS,"
 
-	def _output_ftm400(self):
+	def _output_ftm400(self, channel_number):
 		tx_freq = self.rx_freq.fmt_val() + self.tx_offset.fmt_val(0)
 
 		tx_units = ''
@@ -260,7 +265,7 @@ class RadioChannel:
 			tone_mode = 'DCS'
 
 		output = ''
-		output += f"{self.number.fmt_val()},"
+		output += f"{channel_number},"
 		output += f"{self.rx_freq.fmt_val():.5f},"
 		output += f"{tx_freq:.5f},"
 		output += f"{tx_offset}{tx_units},"
@@ -291,9 +296,9 @@ class RadioChannel:
 		output += f"Band Width," #"Band Width,"
 		output += f"CTCSS/DCS Decode," #"CTCSS/DCS Decode,"
 		output += f"CTCSS/DCS Encode," #"CTCSS/DCS Encode,"
-		output += f"," #"Contact," #todo DMR contacts
+		output += f"Contact," #"Contact,"
 		output += f"Contact Call Type," #"Contact Call Type,"
-		output += f"," #"Contact TG/DMR ID," #todo DMR contacts
+		output += f"Contact TG/DMR ID," #"Contact TG/DMR ID,"
 		output += f"Radio ID," #"Radio ID,"
 		output += f"Busy Lock/TX Permit," #"Busy Lock/TX Permit,"
 		output += f"Squelch Mode," #"Squelch Mode,"
@@ -313,7 +318,7 @@ class RadioChannel:
 		output += f"AES Digital Encryption," #"AES Digital Encryption,"
 		output += f"Digital Encryption," #"Digital Encryption,"
 		output += f"Call Confirmation," #"Call Confirmation,"
-		output += f"," #"Talk Around(Simplex)," #todo dmr talkaround
+		output += f"Talk Around(Simplex)," #"Talk Around(Simplex)," #todo dmr talkaround
 		output += f"Work Alone," #"Work Alone,"
 		output += f"Custom CTCSS," #"Custom CTCSS,"
 		output += f"2TONE Decode," #"2TONE Decode,"
@@ -333,16 +338,20 @@ class RadioChannel:
 		output += f"R5ToneEot," #"R5ToneEot,"
 		return output
 
-	def _output_d878(self):
+	def _output_d878(self, channel_number):
 		tx_frequency = self.rx_freq.fmt_val() + self.tx_offset.fmt_val(0)
 
 		channel_type = 'A-Analog'
 		busy_lock = 'Off'
 		dmr_mode = 0
+		contact_call_type = 'All Call'
+		contact = self.digital_contacts[self.digital_contact.fmt_val(0)]
+		dmr_id = self.dmr_ids[1].name.fmt_val()
 		if self.digital_timeslot.fmt_val() is not None:
 			channel_type = 'D-Digital'
 			busy_lock = 'Always'
 			dmr_mode = 1
+			contact_call_type = 'Group Call'
 
 		ctcs_dcs_decode = 'Off'
 		if self.rx_ctcss.fmt_val() is not None or self.rx_dcs.fmt_val() is not None:
@@ -365,18 +374,18 @@ class RadioChannel:
 				ctcs_dcs_encode = f"D{str(self.tx_dcs.fmt_val()).zfill(3)}{polarity}"
 
 		output = ''
-		output += f"{self.number.fmt_val()},"  # "No.,"
+		output += f"{channel_number},"  # "No.,"
 		output += f"{self.name.fmt_val():.16s},"  # "Channel Name,"
 		output += f"{self.rx_freq.fmt_val():.5f},"  # "Receive Frequency,"
-		output += f"{tx_frequency},"  # "Transmit Frequency,"
+		output += f"{tx_frequency:.5f},"  # "Transmit Frequency,"
 		output += f"{channel_type},"  # "Channel Type,"
 		output += f"{self.tx_power.fmt_val()},"  # "Transmit Power,"
 		output += f"12.5K,"  # "Band Width,"
 		output += f"{ctcs_dcs_decode},"  # "CTCSS/DCS Decode,"
 		output += f"{ctcs_dcs_encode},"  # "CTCSS/DCS Encode,"
-		output += f","  # "Contact," #todo DMR contacts
-		output += f","  # "Contact Call Type," #todo DMR contacts
-		output += f","  # "Contact TG/DMR ID," #todo DMR contacts
+		output += f"{contact.name.fmt_val()},"  # "Contact,"
+		output += f"{contact_call_type},"  # "Contact Call Type,"
+		output += f"{dmr_id},"  # "Contact TG/DMR ID,"
 		output += f"DMR,"  # "Radio ID,"
 		output += f"{busy_lock},"  # "Busy Lock/TX Permit,"
 		output += f"Carrier,"  # "Squelch Mode,"
@@ -385,8 +394,8 @@ class RadioChannel:
 		output += f"1,"  # "2Tone ID,"
 		output += f"1,"  # "5Tone ID,"
 		output += f"Off,"  # "PTT ID,"
-		output += f"{self.digital_color.fmt_val('')},"  # "Color Code,"
-		output += f"{self.digital_timeslot.fmt_val('')},"  # "Slot,"
+		output += f"{self.digital_color.fmt_val(1)},"  # "Color Code,"
+		output += f"{self.digital_timeslot.fmt_val(1)},"  # "Slot,"
 		output += f"None,"  # "Scan List,"
 		output += f"None,"  # "Receive Group List,"
 		output += f"{busy_lock},"  # "PTT Prohibit,"
@@ -396,7 +405,7 @@ class RadioChannel:
 		output += f"Normal Encryption,"  # "AES Digital Encryption,"
 		output += f"Off,"  # "Digital Encryption,"
 		output += f"Off,"  # "Call Confirmation,"
-		output += f","  # "Talk Around(Simplex)," #todo DMR talkaround
+		output += f"Off,"  # "Talk Around(Simplex)," #todo DMR talkaround
 		output += f"Off,"  # "Work Alone,"
 		output += f"251.1,"  # "Custom CTCSS,"
 		output += f"0,"  # "2TONE Decode,"
@@ -415,3 +424,4 @@ class RadioChannel:
 		output += f"0,"  # "R5toneBot,"
 		output += f"0,"  # "R5ToneEot,"
 		return output
+

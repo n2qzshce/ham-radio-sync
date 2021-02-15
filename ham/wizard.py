@@ -58,7 +58,7 @@ class Wizard(object):
 			'digital_timeslot': '',
 			'digital_color': '',
 			'digital_contact_id': '',
-		}, None)
+		}, digital_contacts=None, dmr_ids=None)
 		second_channel = RadioChannel({
 			'number': '2',
 			'name': 'Colcon Denver',
@@ -76,7 +76,7 @@ class Wizard(object):
 			'digital_timeslot': '',
 			'digital_color': '',
 			'digital_contact_id': '',
-		}, None)
+		}, digital_contacts=None, dmr_ids=None)
 		channel_file.write(RadioChannel.make_empty().headers(radio_types.DEFAULT) + '\n')
 		channel_file.write(first_channel.output(radio_types.DEFAULT) + '\n')
 		channel_file.write(second_channel.output(radio_types.DEFAULT) + '\n')
@@ -101,8 +101,8 @@ class Wizard(object):
 			'call_type': 'all',
 		})
 		group_contact = DmrContact({
-			'number': 101,
-			'digital_id':  dmr_id.radio_id.fmt_val(),
+			'number': 2,
+			'digital_id':  99999,
 			'name': 'Some Repeater',
 			'call_type': 'group',
 		})
