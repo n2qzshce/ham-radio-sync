@@ -1,6 +1,5 @@
-from ham.data_column import DataColumn
-
 from ham import radio_types
+from ham.data_column import DataColumn
 
 
 class DmrContact:

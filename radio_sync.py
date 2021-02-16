@@ -3,7 +3,6 @@ import logging
 import sys
 
 import ham.radio_types
-from ham import radio_channel
 from ham.radio_generator import RadioGenerator
 from ham.wizard import Wizard
 

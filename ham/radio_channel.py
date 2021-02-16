@@ -1,6 +1,5 @@
 from ham import radio_types
 from ham.data_column import DataColumn
-from ham.dmr.dmr_id import DmrId
 
 
 class RadioChannel:
@@ -351,12 +350,16 @@ class RadioChannel:
 		dmr_mode = 0
 		contact_call_type = 'All Call'
 		contact = self.digital_contacts[self.digital_contact.fmt_val(0)]
-		dmr_id = self.dmr_ids[1].name.fmt_val()
-		if self.digital_timeslot.fmt_val() is not None:
+		dmr_name = self.dmr_ids[1].name.fmt_val()
+		contact_id = self.dmr_ids[1].radio_id.fmt_val()
+		call_confirmation = 'Off'
+		if self.is_digital():
 			channel_type = 'D-Digital'
 			busy_lock = 'Always'
 			dmr_mode = 1
 			contact_call_type = 'Group Call'
+			contact_id = contact.radio_id.fmt_val()
+			call_confirmation = 'On'
 
 		ctcs_dcs_decode = 'Off'
 		if self.rx_ctcss.fmt_val() is not None or self.rx_dcs.fmt_val() is not None:
@@ -392,8 +395,8 @@ class RadioChannel:
 		output += f"{ctcs_dcs_encode},"  # "CTCSS/DCS Encode,"
 		output += f"{contact.name.fmt_val()},"  # "Contact,"
 		output += f"{contact_call_type},"  # "Contact Call Type,"
-		output += f"{dmr_id},"  # "Contact TG/DMR ID,"
-		output += f"DMR,"  # "Radio ID,"
+		output += f"{contact_id},"  # "Contact TG/DMR ID,"
+		output += f"{dmr_name},"  # "Radio ID,"
 		output += f"{busy_lock},"  # "Busy Lock/TX Permit,"
 		output += f"Carrier,"  # "Squelch Mode,"
 		output += f"Off,"  # "Optional Signal,"
@@ -405,13 +408,13 @@ class RadioChannel:
 		output += f"{self.digital_timeslot.fmt_val(1)},"  # "Slot,"
 		output += f"None,"  # "Scan List,"
 		output += f"None,"  # "Receive Group List,"
-		output += f"{busy_lock},"  # "PTT Prohibit,"
+		output += f"Off,"  # "PTT Prohibit,"
 		output += f"Off,"  # "Reverse,"
 		output += f"Off,"  # "Simplex TDMA,"
 		output += f"Off,"  # "Slot Suit,"
 		output += f"Normal Encryption,"  # "AES Digital Encryption,"
 		output += f"Off,"  # "Digital Encryption,"
-		output += f"Off,"  # "Call Confirmation,"
+		output += f"{call_confirmation},"  # "Call Confirmation,"
 		output += f"Off,"  # "Talk Around(Simplex)," #todo DMR talkaround
 		output += f"Off,"  # "Work Alone,"
 		output += f"251.1,"  # "Custom CTCSS,"
