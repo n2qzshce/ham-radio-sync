@@ -3,12 +3,14 @@ import logging
 from ham import radio_types
 from ham.dmr.dmr_contact import DmrContact
 from ham.dmr.dmr_id import DmrId
+from ham.radio_zone import RadioZone
 
 
 class RadioAdditionalData:
-	def __init__(self, dmr_ids, digital_contacts):
+	def __init__(self, dmr_ids, digital_contacts, zones):
 		self.dmr_ids = dmr_ids
 		self.digital_contacts = digital_contacts
+		self.zones = zones
 		return
 
 	def output(self, style):
@@ -24,6 +26,7 @@ class RadioAdditionalData:
 	def _output_default(self, style):
 		self._output_radioids_default(style)
 		self._output_contacts_default(style)
+		self._output_zones_default(style)
 
 	def _output_radioids_default(self, style):
 		if self.dmr_ids is None:
@@ -56,6 +59,7 @@ class RadioAdditionalData:
 	def _output_d878(self, style):
 		self._output_radioids_d878(style)
 		self._output_contacts_d878(style)
+		self._output_zones_d878(style)
 
 	def _output_radioids_d878(self, style):
 		if self.dmr_ids is None:
@@ -84,3 +88,30 @@ class RadioAdditionalData:
 			dmr_contact_file.write(dmr_contact.output(style) + '\n')
 
 		dmr_contact_file.close()
+
+	def _output_zones_default(self, style):
+		if self.zones is None:
+			logging.error(f"No zones list found for {style}.")
+			return
+
+		zone_file = open(f'out/{style}/{style}_zone.csv', 'w+')
+		headers = RadioZone.create_empty()
+		zone_file.write(headers.headers(style) + '\n')
+		for zone in self.zones.values():
+			zone_file.write(zone.output(style) + '\n')
+
+		zone_file.close()
+
+	def _output_zones_d878(self, style):
+		if self.zones is None:
+			logging.error(f"No zones list found for {style}.")
+			return
+
+		zone_file = open(f'out/{style}/{style}_zone.csv', 'w+')
+		headers = RadioZone.create_empty()
+		zone_file.write(headers.headers(style) + '\n')
+		for zone in self.zones.values():
+			zone_file.write(zone.output(style) + '\n')
+
+		zone_file.close()
+

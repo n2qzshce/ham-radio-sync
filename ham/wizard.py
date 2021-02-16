@@ -6,6 +6,7 @@ from ham import radio_types
 from ham.dmr.dmr_contact import DmrContact
 from ham.dmr.dmr_id import DmrId
 from ham.radio_channel import RadioChannel
+from ham.radio_zone import RadioZone
 
 
 class Wizard(object):
@@ -36,7 +37,12 @@ class Wizard(object):
 		if not os.path.exists('in/digital_contacts.csv') or is_forced:
 			self.create_dmr_data()
 		else:
-			logging.info("`groups.csv` already exists! Skipping")
+			logging.info("`digital_contacts.csv` already exists! Skipping")
+
+		if not os.path.exists('in/zones.csv') or is_forced:
+			self.create_zone_data()
+		else:
+			logging.info("`zone.csv` already exists! Skipping")
 		return
 
 	def create_channel_file(self):
@@ -46,6 +52,7 @@ class Wizard(object):
 			'name': 'National 2m',
 			'medium_name': 'Natl 2m',
 			'short_name': 'NATL 2M',
+			'zone_id': '',
 			'rx_freq': '146.520',
 			'rx_ctcss': '',
 			'rx_dcs': '',
@@ -64,6 +71,7 @@ class Wizard(object):
 			'name': 'Colcon Denver',
 			'medium_name': 'ConDenvr',
 			'short_name': 'CONDENV',
+			'zone_id': '1',
 			'rx_freq': '145.310',
 			'rx_ctcss': '',
 			'rx_dcs': '',
@@ -77,9 +85,9 @@ class Wizard(object):
 			'digital_color': '',
 			'digital_contact_id': '',
 		}, digital_contacts=None, dmr_ids=None)
-		channel_file.write(RadioChannel.make_empty().headers(radio_types.DEFAULT) + '\n')
-		channel_file.write(first_channel.output(radio_types.DEFAULT) + '\n')
-		channel_file.write(second_channel.output(radio_types.DEFAULT) + '\n')
+		channel_file.write(RadioChannel.create_empty().headers(radio_types.DEFAULT) + '\n')
+		channel_file.write(first_channel.output(radio_types.DEFAULT, 1) + '\n')
+		channel_file.write(second_channel.output(radio_types.DEFAULT, 2) + '\n')
 		channel_file.close()
 
 	def create_dmr_data(self):
@@ -110,6 +118,16 @@ class Wizard(object):
 		digital_contacts_file.write(analog_contact.output(radio_types.DEFAULT) + '\n')
 		digital_contacts_file.write(group_contact.output(radio_types.DEFAULT) + '\n')
 		digital_contacts_file.close()
+
+	def create_zone_data(self):
+		zone_id_file = open('in/zones.csv', 'w+')
+		zone = RadioZone({
+			'number': 1,
+			'name': 'Zone 1',
+		})
+		zone_id_file.write(RadioZone.create_empty().headers(radio_types.DEFAULT)+'\n')
+		zone_id_file.write(zone.output(radio_types.DEFAULT)+'\n')
+		zone_id_file.close()
 
 	def create_output(self):
 		self.safe_create_dir('out')

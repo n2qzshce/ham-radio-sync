@@ -19,6 +19,8 @@ class RadioChannel:
 		self.short_name = DataColumn(fmt_name='short_name', fmt_val=cols['short_name'], shape=str)
 		self.short_name.set_alias(radio_types.BAOFENG, 'Name')
 
+		self.zone_id = DataColumn(fmt_name='zone_id', fmt_val=cols['zone_id'], shape=int)
+
 		self.rx_freq = DataColumn(fmt_name='rx_freq', fmt_val=cols['rx_freq'], shape=float)
 		self.rx_freq.set_alias(radio_types.BAOFENG, 'Frequency')
 		self.rx_freq.set_alias(radio_types.FTM400, 'Receive Frequency')
@@ -60,12 +62,13 @@ class RadioChannel:
 		self.dmr_ids = dmr_ids
 
 	@classmethod
-	def make_empty(cls):
+	def create_empty(cls):
 		col_vals = dict()
 		col_vals['number'] = ''
 		col_vals['name'] = ''
 		col_vals['medium_name'] = ''
 		col_vals['short_name'] = ''
+		col_vals['zone_id'] = ''
 		col_vals['rx_freq'] = ''
 		col_vals['rx_ctcss'] = ''
 		col_vals['rx_dcs'] = ''
@@ -109,6 +112,7 @@ class RadioChannel:
 		output += f"{self.name.get_alias(radio_types.DEFAULT)},"
 		output += f"{self.medium_name.get_alias(radio_types.DEFAULT)},"
 		output += f"{self.short_name.get_alias(radio_types.DEFAULT)},"
+		output += f"{self.zone_id.get_alias(radio_types.DEFAULT)},"
 		output += f"{self.tx_power.get_alias(radio_types.DEFAULT)},"
 		output += f"{self.rx_freq.get_alias(radio_types.DEFAULT)},"
 		output += f"{self.rx_ctcss.get_alias(radio_types.DEFAULT)},"
@@ -129,6 +133,7 @@ class RadioChannel:
 		output += f"{self.name.fmt_val('')},"
 		output += f"{self.medium_name.fmt_val('')},"
 		output += f"{self.short_name.fmt_val('')},"
+		output += f"{self.zone_id.fmt_val('')},"
 		output += f"{self.tx_power.fmt_val('')},"
 		output += f"{self.rx_freq.fmt_val('')},"
 		output += f"{self.rx_ctcss.fmt_val('')},"

@@ -5,6 +5,7 @@ from ham.dmr.dmr_contact import DmrContact
 from ham.dmr.dmr_id import DmrId
 from ham.radio_additional import RadioAdditionalData
 from ham.radio_channel import RadioChannel
+from ham.radio_zone import RadioZone
 from ham.wizard import Wizard
 
 
@@ -17,12 +18,13 @@ class RadioGenerator:
 	def generate_all_declared(self):
 		digital_contacts = self._generate_digital_contact_data()
 		dmr_ids = self._generate_dmr_id_data()
+		zones = self._generate_zone_data()
 
 		feed = open("in/input.csv", "r")
 		headers = feed.readline().replace('\n', '').split(',')
 
 		radio_files = dict()
-		headers_gen = RadioChannel.make_empty()
+		headers_gen = RadioChannel.create_empty()
 		wizard = Wizard()
 		wizard.safe_create_dir('out')
 
@@ -40,6 +42,8 @@ class RadioGenerator:
 			column_values = self._line_to_dict(line, headers)
 
 			radio_channel = RadioChannel(column_values, digital_contacts, dmr_ids)
+			if radio_channel.zone_id.fmt_val(None) is not None:
+				zones[radio_channel.zone_id.fmt_val()].add_channel(radio_channel)
 			for radio in self.radio_list:
 				if not radio_types.supports_dmr(radio) and radio_channel.is_digital():
 					continue
@@ -48,7 +52,7 @@ class RadioGenerator:
 				radio_files[radio].write(input_data+'\n')
 				channel_numbers[radio] += 1
 
-		additional_data = RadioAdditionalData(dmr_ids, digital_contacts)
+		additional_data = RadioAdditionalData(dmr_ids, digital_contacts, zones)
 		for radio in self.radio_list:
 			additional_data.output(radio)
 		return
@@ -74,6 +78,17 @@ class RadioGenerator:
 			dmr_ids[dmr_id.number.fmt_val()] = dmr_id
 
 		return dmr_ids
+
+	def _generate_zone_data(self):
+		feed = open('in/zones.csv', 'r')
+		headers = feed.readline().replace('\n', '').split(',')
+		zones = dict()
+		for line in feed.readlines():
+			cols = self._line_to_dict(line, headers)
+			zone = RadioZone(cols)
+			zones[zone.number.fmt_val()] = zone
+
+		return zones
 
 	def _line_to_dict(self, line, headers):
 		column_values = dict()
