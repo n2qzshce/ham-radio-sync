@@ -12,6 +12,7 @@ Currently supported radios:
 * Default output: Digests the input, should expose errors
 * Baofeng uploads via CHiRP
 * Yaesu FTM400 via RT systems application
+* Anytone D8787 via D878UV software
 
 ### How it works
 This is a command line tool that will get you setting up your radios as quickly

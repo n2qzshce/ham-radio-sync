@@ -5,25 +5,45 @@ Please fill out only required info for each radio channel.
 Leave unused fields blank. Filling additional columns may cause
 unpredictable behavior.
 
-At the moment, all fields are case-sensitive.
+At the moment, all fields are case-sensitive and all csv's are required.
 
+###input.csv
 | **Column Name** | Description |
 |---|---|
 |number|The sequence in your radio, starts at 1.|
 |name|What you would like to call your channel, unlimited characters|
-|medium name| Name (truncated to 8 characters) `FFO ElDorado -> FFO Eldo`
-|short name| Name (truncated to 7 characters) `FFO Eldorado -> FFO ELD`
-|group id| Channel preset group ID |
-|rx freq| Receive frequency |
-|rx ctcss| Receive PL tone |
-|rx dcs | Receive DCS code |
-|rx dcs invert |  `True` or `False` if your tx DCS code is inverted |
-|tx offset| Difference from receive channel, in MHz ex:`0.6` |
-|tx ctcss | Transmit PL tone|
-|tx dcs invert | `True` or `False` if your tx DCS code is inverted |
-|digital timeslot | DMR Timeslot, should be either 1 or 2 |
-|digital color | Color parameter of DMR channel |
-|tx power| Low, Medium, High |
+|medium_name| Name (truncated to 8 characters) `FFO ElDorado -> FFO Eldo`
+|short_name| Name (truncated to 7 characters) `FFO Eldorado -> FFO ELD`
+|zone_id| Channel preset zone ID |
+|rx_freq| Receive frequency |
+|rx_ctcss| Receive PL tone |
+|rx_dcs | Receive DCS code |
+|rx_dcs_invert |  `True` or `False` if your tx DCS code is inverted |
+|tx power| Low, Medium, High transmit power |
+|tx_offset| Difference from receive channel, in MHz ex:`0.6` |
+|tx_ctcss | Transmit PL tone|
+|tx_dcs_invert | `True` or `False` if your tx DCS code is inverted |
+|digital_timeslot | DMR Timeslot, should be either 1 or 2 |
+|digital_color | Color parameter of DMR channel |
+|digital_contact_id | Contact to call on DMR channel |
+###zones.csv
+| **Column Name** | Description |
+|---|---|
+|number| Number of the zone, starting at 1|
+|name| Zone name |
+###dmr_id.csv
+| **Column Name** | Description |
+|---|---|
+|number | number of DMR ID, starting at 1|
+|radio_id | ID number from radioid.net
+|name | nickname of DMR ID|
+###digital_contacts.csv
+| **Column Name** | Description |
+|---|---|
+|number|Number of talkgroup/zone, starting at 1|
+|digital_id|Talkgroup or contact ID|
+|name|Name of contact|
+|call_type|Either `group` or `all`
 
 ### Yaesu FTM-400
 This is the "RT Systems" branded sync software.
@@ -39,6 +59,11 @@ This is the "RT Systems" branded sync software.
 1. Import baofeng.csv
 1. Final user touchup.
 
+### Anytone 878
+1. Create/open your rdt file.
+1. Import Channel, Radio ID List, Zone, Talk Groups CSVs
+1. Final user touchup
+
 ***
 # Known radio issues:
 
@@ -48,3 +73,5 @@ This is the "RT Systems" branded sync software.
 * The `step` column is not parsed correctly by the RT app.
 ###Baofeng:
 * `power` column does not sync.
+###Anytone 878:
+* Talkaround not supported.
