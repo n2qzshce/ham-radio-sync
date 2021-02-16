@@ -93,6 +93,8 @@ class RadioGenerator:
 	def _line_to_dict(self, line, headers):
 		column_values = dict()
 		cols = line.replace('\n', '').split(",")
+		if len(headers) != len(cols):
+			logging.error(f"Mismatch between lines! Headers: `{','.join(headers)}` Columns: `{','.join(cols)}` Line: `{line}`")
 		for i in range(0, len(headers) - 1):
 			column_values[headers[i]] = cols[i]
 		return column_values

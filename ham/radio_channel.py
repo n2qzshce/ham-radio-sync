@@ -366,7 +366,8 @@ class RadioChannel:
 				polarity = 'N'
 				if self.rx_dcs_invert.fmt_val(False):
 					polarity = 'I'
-				ctcs_dcs_decode = f"D{str(self.rx_dcs.fmt_val()).zfill(3)}{polarity}"
+				dcs_code = int(self.rx_dcs.fmt_val())
+				ctcs_dcs_decode = f"D{str(dcs_code).zfill(3)}{polarity}"
 
 		ctcs_dcs_encode = 'Off'
 		if self.tx_ctcss.fmt_val() is not None or self.tx_dcs.fmt_val() is not None:
@@ -376,7 +377,8 @@ class RadioChannel:
 				polarity = 'N'
 				if self.tx_dcs_invert.fmt_val(False):
 					polarity = 'I'
-				ctcs_dcs_encode = f"D{str(self.tx_dcs.fmt_val()).zfill(3)}{polarity}"
+				dcs_code = int(self.rx_dcs.fmt_val())
+				ctcs_dcs_encode = f"D{str(dcs_code).zfill(3)}{polarity}"
 
 		output = ''
 		output += f"{channel_number},"  # "No.,"
