@@ -51,7 +51,32 @@ class RadioZone:
 		return output
 
 	def output(self, style):
+		zone_channel_member = list()
+		zone_channel_rx = list()
+		zone_channel_tx = list()
+
+		for channel in self._associated_channels:
+			zone_channel_member.append(f"{channel.name.fmt_val():.16s}")
+			zone_channel_rx.append(f"{channel.rx_freq.fmt_val():.5f}")
+			tx_freq = channel.rx_freq.fmt_val() + channel.tx_offset.fmt_val(0)
+			zone_channel_tx.append(f"{tx_freq:.5f}")
+
+		a_channel = self._associated_channels[0]
+		b_channel = self._associated_channels[0]
+
+		if len(self._associated_channels) > 1:
+			b_channel = self._associated_channels[1]
+
 		output = ''
-		output += f"{self.number.fmt_val()},"
-		output += f"{self.name.fmt_val()},"
+		output += f"{self.number.fmt_val()},"  # "No.",
+		output += f"{self.name.fmt_val()},"  # "Zone Name",
+		output += f"{'|'.join(zone_channel_member)},"  # "Zone Channel Member",
+		output += f"{'|'.join(zone_channel_rx)},"  # "Zone Channel Member RX Frequency",
+		output += f"{'|'.join(zone_channel_tx)},"  # "Zone Channel Member TX Frequency",
+		output += f"{a_channel.name.fmt_val():.16s},"  # "A Channel",
+		output += f"{a_channel.rx_freq.fmt_val():.5f},"  # "A Channel RX Frequency",
+		output += f"{a_channel.rx_freq.fmt_val() + a_channel.tx_offset.fmt_val(0):.5f},"  # "A Channel TX Frequency",
+		output += f"{b_channel.name.fmt_val():.16s},"   # "B Channel",
+		output += f"{b_channel.rx_freq.fmt_val():.5f},"  # "B Channel RX Frequency",
+		output += f"{b_channel.rx_freq.fmt_val() + b_channel.tx_offset.fmt_val(0):.5f},"  # "B Channel TX Frequency"
 		return output
