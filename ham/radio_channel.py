@@ -435,7 +435,7 @@ class RadioChannel:
 		output += f"Normal Encryption,"  # "AES Digital Encryption,"
 		output += f"Off,"  # "Digital Encryption,"
 		output += f"{call_confirmation},"  # "Call Confirmation,"
-		output += f"Off,"  # "Talk Around(Simplex)," #todo DMR talkaround
+		output += f"Off,"  # "Talk Around(Simplex),"
 		output += f"Off,"  # "Work Alone,"
 		output += f"251.1,"  # "Custom CTCSS,"
 		output += f"0,"  # "2TONE Decode,"
