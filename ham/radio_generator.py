@@ -26,6 +26,7 @@ class RadioGenerator:
 		headers = feed.readline().replace('\n', '').split(',')
 
 		radio_files = dict()
+		radio_channels = dict()
 		headers_gen = RadioChannel.create_empty()
 		FileUtil.safe_create_dir('out')
 
@@ -47,6 +48,7 @@ class RadioGenerator:
 			column_values = FileUtil.line_to_dict(line, headers)
 
 			radio_channel = RadioChannel(column_values, digital_contacts, dmr_ids)
+			radio_channels[radio_channel.number] = radio_channel
 			if radio_channel.zone_id.fmt_val(None) is not None:
 				zones[radio_channel.zone_id.fmt_val()].add_channel(radio_channel)
 			for radio in self.radio_list:
@@ -59,7 +61,7 @@ class RadioGenerator:
 				radio_files[radio].write(input_data+'\n')
 				channel_numbers[radio] += 1
 
-		additional_data = RadioAdditionalData(None, dmr_ids, digital_contacts, zones, user)
+		additional_data = RadioAdditionalData(radio_channels, dmr_ids, digital_contacts, zones, user)
 		for radio in self.radio_list:
 			additional_data.output(radio)
 		return
