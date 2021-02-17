@@ -85,6 +85,18 @@ class RadioChannel:
 	def is_digital(self):
 		return self.digital_color.fmt_val() is not None
 
+	@classmethod
+	def skip_radio_csv(cls, style):
+		switch = {
+			radio_types.DEFAULT: False,
+			radio_types.BAOFENG: False,
+			radio_types.FTM400: False,
+			radio_types.D878: False,
+			radio_types.CS800: True,
+		}
+
+		return switch[style]
+
 	def headers(self, style):
 		switch = {
 			radio_types.DEFAULT: self._headers_default,

@@ -33,6 +33,10 @@ class RadioGenerator:
 		for radio in self.radio_list:
 			FileUtil.safe_create_dir(f'out/{radio}')
 			logging.info(f"Generating for radio type `{radio}`")
+
+			if RadioChannel.skip_radio_csv(radio):
+				logging.info(f"`{radio}` uses special output style. Skipping channels csv")
+				continue
 			output = open(f"out/{radio}/{radio}_channels.csv", "w+")
 			file_headers = headers_gen.headers(radio)
 			output.write(file_headers+'\n')
@@ -47,6 +51,8 @@ class RadioGenerator:
 				zones[radio_channel.zone_id.fmt_val()].add_channel(radio_channel)
 			for radio in self.radio_list:
 				if not radio_types.supports_dmr(radio) and radio_channel.is_digital():
+					continue
+				if radio not in radio_files.keys():
 					continue
 
 				input_data = radio_channel.output(radio, channel_numbers[radio])

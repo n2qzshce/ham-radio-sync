@@ -21,6 +21,7 @@ class RadioAdditionalData:
 			radio_types.BAOFENG: lambda x: False,
 			radio_types.FTM400: lambda x: False,
 			radio_types.D878: self._output_d878,
+			radio_types.CS800: self._output_cs800
 		}
 
 		return switch[style](style)
@@ -146,4 +147,7 @@ class RadioAdditionalData:
 			users_file.write(zone.output(style) + '\n')
 
 		users_file.close()
+
+	def _output_cs800(self, style):
+		return
 
