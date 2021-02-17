@@ -15,7 +15,6 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [windows-2019, macos-10.15]
@@ -28,6 +27,7 @@ jobs:
             exe-name: radio_sync-osx-${{ github.run_number }}
             short-name: osx
             move-command: mv
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ env.python-version }}
