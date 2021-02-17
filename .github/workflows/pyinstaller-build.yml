@@ -29,13 +29,14 @@ jobs:
     - name: Build windows executable
       run: |
         pyinstaller -F radio_sync.py -n radio_sync-win-${{ github.run_number }}.exe
+        7z a -tzip dis/radio_sync-win-${{ github.run_number}}.zip dist/radio_sync-win-${{ github.run_number }}.exe
     - name: Upload windows executable
       id: upload_executable
       uses: actions/upload-artifact@v2
       if: $${{ github.ref == 'refs/heads/ftm400' }}
       with:
         name: radio_sync-win-${{ github.run_number }}
-        path: dist/radio_sync-win-${{ github.run_number }}.exe
+        path: dist/radio_sync-win-${{ github.run_number }}.zip
   build-mac:
     runs-on: macos-10.15
     steps:
@@ -51,13 +52,14 @@ jobs:
       - name: Build Mac executable
         run: |
           pyinstaller -F radio_sync.py -n radio_sync-osx-${{ github.run_number }}
+          7z a -tzip dis/radio_sync-osx-${{ github.run_number}}.zip dist/radio_sync-win-${{ github.run_number }}
       - name: Upload Mac executable
         id: upload_executable
         uses: actions/upload-artifact@v2
         if: $${{ github.ref == 'refs/heads/ftm400' }}
         with:
           name: radio_sync-osx-${{ github.run_number }}
-          path: dist/radio_sync-osx-${{ github.run_number }}
+          path: dist/radio_sync-osx-${{ github.run_number }}.zip
   release:
     #if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
