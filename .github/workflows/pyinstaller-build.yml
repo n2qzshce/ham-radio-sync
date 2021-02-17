@@ -28,8 +28,6 @@ jobs:
             exe-extension:
             short-name: osx
             move-command: mv
-    env:
-      exe-name: radio_sync-${{ matrix.short-name}}-${{ env.semver }}
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ env.python-version }}
@@ -42,9 +40,9 @@ jobs:
         pip install pyinstaller
     - name: Build executable
       run: |
-        pyinstaller -F radio_sync.py -n ${{ env.exe-name }}${{ matrix.exe-extension }}
-        ${{ matrix.move-command }} dist/${{ env.exe-name}}${{ matrix.exe-extension }} ./
-        7z a -tzip radio_sync-${{ matrix.short-name }}-${{ env.semver }}.zip ${{ env.exe-name }}${{ matrix.exe-extension }}
+        pyinstaller -F radio_sync.py -n radio_sync-${{ matrix.short-name }}-${{ env.semver }}${{ matrix.exe-extension }}
+        ${{ matrix.move-command }} dist/radio_sync-${{ matrix.short-name }}-${{ env.semver }}${{ matrix.exe-extension }} ./
+        7z a -tzip radio_sync-${{ matrix.short-name }}-${{ env.semver }}.zip radio_sync-${{ matrix.short-name }}-${{ env.semver }}${{ matrix.exe-extension }}
     - name: Upload executable
       id: upload_executable
       uses: actions/upload-artifact@v2
