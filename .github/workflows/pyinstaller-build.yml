@@ -93,7 +93,7 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./radio_sync-win-${{ github.run_number }}.exe
-        asset_name: radio_sync-win-v${{ env.semver }}.${{ github.run_number }}.exe
+        asset_name: radio_sync-win-v${{ env.semver }}.${{ github.run_number }}.zip
         asset_content_type: application/zip
     - name: Upload Mac Release Asset
       uses: actions/upload-release-asset@v1
@@ -102,5 +102,5 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./radio_sync-osx-${{ github.run_number }}
-        asset_name: radio_sync-osx-v${{ env.semver }}.${{ github.run_number }}
+        asset_name: radio_sync-osx-v${{ env.semver }}.${{ github.run_number }}.zip
         asset_content_type: application/zip
