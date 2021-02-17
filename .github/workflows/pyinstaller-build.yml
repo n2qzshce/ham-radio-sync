@@ -37,14 +37,14 @@ jobs:
         name: radio_sync-${{ github.run_number }}
         path: dist/radio_sync-${{ github.run_number }}.exe
   build-mac:
-    runs-on: macos-11.0
+    runs-on: macos-10.15
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ env.python-version }} on Mac 11
         uses: actions/setup-python@v2
         with:
           python-version: ${{ env.python-version }}
-      - name: Install dependencies on Windows
+      - name: Install dependencies on Mac
         run: |
           python -m pip install --upgrade pip
           pip install pyinstaller
@@ -57,7 +57,7 @@ jobs:
         if: $${{ github.ref == 'refs/heads/ftm400' }}
         with:
           name: radio_sync-${{ github.run_number }}
-          path: dist/radio_sync-${{ github.run_number }}.exe
+          path: dist/radio_sync-${{ github.run_number }}
   release:
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
@@ -73,7 +73,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
       with:
-        tag_name: radio_sync-v${{ env.semver }}.${{ github.run_number }}
+        tag_name: ${{ env.semver }}.${{ github.run_number }}
         release_name: Release ${{ env.semver }}.${{ github.run_number }}
         body: |
           release ${{ github.run_number }} description
