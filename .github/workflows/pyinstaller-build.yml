@@ -38,6 +38,7 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install pyinstaller
+        pip install -r requirements.txt
     - name: Build executable
       run: |
         pyinstaller -F radio_sync.py -n radio_sync-${{ matrix.short-name }}-${{ env.semver }}${{ matrix.exe-extension }}
