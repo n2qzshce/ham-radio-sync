@@ -70,11 +70,11 @@ jobs:
     - name: Download Windows artifact
       uses: actions/download-artifact@v2
       with:
-        name: radio_sync-win-${{ github.run_number }}
+        name: radio_sync-win-${{ env.semver }}.${{ github.run_number }}
     - name: Download OSX artifact
       uses: actions/download-artifact@v2
       with:
-        name: radio_sync-osx-${{ github.run_number }}
+        name: radio_sync-osx-${{ env.semver }}.${{ github.run_number }}
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
@@ -94,7 +94,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./radio_sync-win-${{ github.run_number }}.zip
+        asset_path: ./radio_sync-win-${{ env.semver }}.${{ github.run_number }}.zip
         asset_name: radio_sync-win-v${{ env.semver }}.${{ github.run_number }}.zip
         asset_content_type: application/zip
     - name: Upload OSX Release Asset
@@ -103,6 +103,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./radio_sync-osx-${{ github.run_number }}.zip
+        asset_path: ./radio_sync-osx-${{ env.semver }}.${{ github.run_number }}.zip
         asset_name: radio_sync-osx-v${{ env.semver }}.${{ github.run_number }}.zip
         asset_content_type: application/zip
