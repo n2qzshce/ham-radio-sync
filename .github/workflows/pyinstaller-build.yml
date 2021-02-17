@@ -21,11 +21,13 @@ jobs:
         os: [windows-2019, macos-10.15]
         include:
           - os: windows-2019
-            exe-name: radio_sync-win-${{ github.event.deployment.environment.semver }}.exe
+            exe-name: radio_sync-win-${{ env.semver }}.exe
             short-name: win
+            move-command: move
           - os: macos-10.15
-            exe-name: radio_sync-osx-${{ github.event.deployment.environment.semver }}
+            exe-name: radio_sync-osx-${{ env.semver }}
             short-name: osx
+            move-command: mv
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ env.python-version }}
@@ -39,7 +41,7 @@ jobs:
     - name: Build executable
       run: |
         pyinstaller -F radio_sync.py -n ${{ matrix.exe-name }}
-        move dist/${{ matrix.exe-name}} ./
+        ${{ matrix.move-command }} dist/${{ matrix.exe-name}} ./
         7z a -tzip radio_sync-${{ matrix.short-name }}-${{ env.semver }}.zip ${{ matrix.exe-name }}
     - name: Upload executable
       id: upload_executable
