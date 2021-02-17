@@ -52,7 +52,7 @@ jobs:
       - name: Build Mac executable
         run: |
           pyinstaller -F radio_sync.py -n radio_sync-osx-${{ github.run_number }}
-          7z a -tzip dis/radio_sync-osx-${{ github.run_number}}.zip dist/radio_sync-win-${{ github.run_number }}
+          7z a -tzip dis/radio_sync-osx-${{ github.run_number}}.zip dist/radio_sync-osx-${{ github.run_number }}
       - name: Upload Mac executable
         id: upload_executable
         uses: actions/upload-artifact@v2
