@@ -52,8 +52,8 @@ jobs:
           pip install pyinstaller
       - name: Build OSX executable
         run: |
-          pyinstaller -F radio_sync.py -n radio_sync-osx-${{ github.run_number }}
-          mv dist/radio_sync-osx-${{ github.run_number }} ./
+          pyinstaller -F radio_sync.py -n radio_sync-osx-${{ env.semver }}.${{ github.run_number }}
+          mv dist/radio_sync-osx-${{ env.semver }}.${{ github.run_number }} ./
           7z a -tzip radio_sync-osx-${{ env.semver }}.${{ github.run_number }}.zip radio_sync-osx-${{ env.semver }}.${{ github.run_number }}
       - name: Upload OSX executable
         id: upload_executable
