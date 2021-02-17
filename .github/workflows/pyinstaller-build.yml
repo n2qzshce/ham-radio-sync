@@ -6,7 +6,6 @@ name: Build executeable
 env:
   semver: 1.1.0
   python-version: 3.8
-  release-version: ${{ semver }}.${{ github.run_number }}
 
 on:
   pull_request:
@@ -29,16 +28,16 @@ jobs:
         pip install pyinstaller
     - name: Build windows executable
       run: |
-        pyinstaller -F radio_sync.py -n radio_sync-win-${{ env.release-version }}.exe
-        move dist/radio_sync-win-${{ env.release-version }}.exe ./
-        7z a -tzip radio_sync-win-${{ env.release-version }}.zip radio_sync-win-${{ env.release-version }}.exe
+        pyinstaller -F radio_sync.py -n radio_sync-win-${{ env.semver }}.${{ github.run_number }}.exe
+        move dist/radio_sync-win-${{ env.semver }}.${{ github.run_number }}.exe ./
+        7z a -tzip radio_sync-win-${{ env.semver }}.${{ github.run_number }}.zip radio_sync-win-${{ env.semver }}.${{ github.run_number }}.exe
     - name: Upload windows executable
       id: upload_executable
       uses: actions/upload-artifact@v2
       if: $${{ github.ref == 'refs/heads/ftm400' }}
       with:
-        name: radio_sync-win-${{ env.release-version }}
-        path: radio_sync-win-${{ env.release-version }}.zip
+        name: radio_sync-win-${{ env.semver }}.${{ github.run_number }}
+        path: radio_sync-win-${{ env.semver }}.${{ github.run_number }}.zip
   build-osx:
     runs-on: macos-10.15
     steps:
@@ -55,14 +54,14 @@ jobs:
         run: |
           pyinstaller -F radio_sync.py -n radio_sync-osx-${{ github.run_number }}
           mv dist/radio_sync-osx-${{ github.run_number }} ./
-          7z a -tzip radio_sync-osx-${{ env.release-version }}.zip radio_sync-osx-${{ env.release-version }}
+          7z a -tzip radio_sync-osx-${{ env.semver }}.${{ github.run_number }}.zip radio_sync-osx-${{ env.semver }}.${{ github.run_number }}
       - name: Upload OSX executable
         id: upload_executable
         uses: actions/upload-artifact@v2
         if: $${{ github.ref == 'refs/heads/ftm400' }}
         with:
-          name: radio_sync-osx-${{ env.release-version }}
-          path: radio_sync-osx-${{ env.release-version }}.zip
+          name: radio_sync-osx-${{ env.semver }}.${{ github.run_number }}
+          path: radio_sync-osx-${{ env.semver }}.${{ github.run_number }}.zip
   release:
     #if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
