@@ -152,6 +152,10 @@ class RadioAdditionalData:
 		users_file.close()
 
 	def _output_cs800(self, style):
+		self._output_cs800_channels(style)
+		self._output_cs800_user(style)
+
+	def _output_cs800_channels(self, style):
 		channels_workbook = openpyxl.Workbook()
 		analog_sheet = channels_workbook.create_sheet('Analog Channel', 0)
 		digital_sheet = channels_workbook.create_sheet('Digital Channel', 1)
@@ -174,5 +178,30 @@ class RadioAdditionalData:
 				analog_num += 1
 		channels_workbook.save(f'out/{style}/{style}_channels.xlsx')
 		channels_workbook.close()
+		return
+
+	def _output_cs800_user(self, style):
+		user_workbook = openpyxl.Workbook()
+		dmr_contacts_sheet = user_workbook.create_sheet('DMR_Contacts', 0)
+		user_workbook.remove_sheet(user_workbook.get_sheet_by_name('Sheet'))
+
+		headers = DmrContact.create_empty().headers(radio_types.CS800)
+		dmr_contacts_sheet.append(headers)
+
+		number = 1
+		for dmr_contact in self._digital_contacts.values():
+			if dmr_contact.name.fmt_val() == 'Analog':
+				continue
+			dmr_contact.number._fmt_val = number
+			dmr_contacts_sheet.append(dmr_contact.output(radio_types.CS800))
+			number += 1
+
+		for dmr_user in self._users.values():
+			dmr_user.number._fmt_val = number
+			dmr_contacts_sheet.append(dmr_user.output(radio_types.CS800))
+			number += 1
+
+		user_workbook.save(f'out/{style}/{style}_user.xlsx')
+		user_workbook.close()
 		return
 
