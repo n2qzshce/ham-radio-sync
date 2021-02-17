@@ -14,6 +14,9 @@ class RadioZone:
 	def add_channel(self, radio_channel):
 		self._associated_channels.append(radio_channel)
 
+	def has_channels(self):
+		return len(self._associated_channels) > 0
+
 	@classmethod
 	def create_empty(cls):
 		col_vals = dict()
@@ -51,6 +54,20 @@ class RadioZone:
 		return output
 
 	def output(self, style):
+		switch = {
+			radio_types.DEFAULT: self._output_default,
+			radio_types.D878: self._output_d878,
+		}
+
+		return switch[style]()
+
+	def _output_default(self):
+		output = ''
+		output += f"{self.number.fmt_val('')},"
+		output += f"{self.name.fmt_val('')},"
+		return output
+
+	def _output_d878(self):
 		zone_channel_member = list()
 		zone_channel_rx = list()
 		zone_channel_tx = list()
