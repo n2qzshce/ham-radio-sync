@@ -70,6 +70,7 @@ jobs:
         prerelease: false
   release-assets:
     runs-on: ubuntu-20.04
+    needs: release
     strategy:
       matrix:
         short-name: [win, osx]
