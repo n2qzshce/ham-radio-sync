@@ -6,7 +6,7 @@ name: Build executeable
 env:
   semver: 1.1.0
   python-version: 3.8
-  release-version: ${{ env.semver }}.${{ github.run_number }}
+  release-version: ${{ semver }}.${{ github.run_number }}
 
 on:
   pull_request:
