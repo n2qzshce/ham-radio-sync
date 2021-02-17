@@ -59,7 +59,7 @@ class RadioGenerator:
 				radio_files[radio].write(input_data+'\n')
 				channel_numbers[radio] += 1
 
-		additional_data = RadioAdditionalData(dmr_ids, digital_contacts, zones, user)
+		additional_data = RadioAdditionalData(None, dmr_ids, digital_contacts, zones, user)
 		for radio in self.radio_list:
 			additional_data.output(radio)
 		return

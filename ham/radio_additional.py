@@ -1,14 +1,17 @@
 import logging
+import openpyxl
 
 from ham import radio_types
 from ham.dmr.dmr_contact import DmrContact
 from ham.dmr.dmr_id import DmrId
 from ham.dmr.dmr_user import DmrUser
+from ham.radio_channel import RadioChannel
 from ham.radio_zone import RadioZone
 
 
 class RadioAdditionalData:
-	def __init__(self, dmr_ids, digital_contacts, zones, users):
+	def __init__(self, channels, dmr_ids, digital_contacts, zones, users):
+		self.channels = channels
 		self.dmr_ids = dmr_ids
 		self.digital_contacts = digital_contacts
 		self.zones = zones
@@ -149,5 +152,17 @@ class RadioAdditionalData:
 		users_file.close()
 
 	def _output_cs800(self, style):
+		channels = openpyxl.Workbook()
+		analog_sheet = channels.create_sheet('Analog Channel', 0)
+		digital_sheet = channels.create_sheet('Digital Channel', 1)
+		channels.remove_sheet(channels.get_sheet_by_name('Sheet'))
+
+		header = RadioChannel.create_empty()
+		header.is_digital = lambda: False
+		analog_sheet.append(header.headers(radio_types.CS800))
+		header.is_digital = lambda: True
+		digital_sheet.append(header.headers(radio_types.CS800))
+
+		channels.save(f'out/{style}/{style}_channels.xlsx')
 		return
 

@@ -8,9 +8,11 @@ class RadioChannel:
 		self.number.set_alias(radio_types.BAOFENG, 'Location')
 		self.number.set_alias(radio_types.FTM400, 'Channel Number')
 		self.number.set_alias(radio_types.D878, 'No.')
+		self.number.set_alias(radio_types.CS800, 'No')
 
 		self.name = DataColumn(fmt_name='name', fmt_val=cols['name'], shape=str)
 		self.name.set_alias(radio_types.D878, 'Channel Name')
+		self.name.set_alias(radio_types.CS800, 'Channel Alias')
 
 		self.medium_name = DataColumn(fmt_name='medium_name', fmt_val=cols['medium_name'], shape=str)
 		self.medium_name.set_alias(radio_types.FTM400, 'Name')
@@ -24,6 +26,7 @@ class RadioChannel:
 		self.rx_freq.set_alias(radio_types.BAOFENG, 'Frequency')
 		self.rx_freq.set_alias(radio_types.FTM400, 'Receive Frequency')
 		self.rx_freq.set_alias(radio_types.D878, 'Receive Frequency')
+		self.rx_freq.set_alias(radio_types.CS800, 'Receive Frequency')
 
 		self.rx_ctcss = DataColumn(fmt_name='rx_ctcss', fmt_val=cols['rx_ctcss'], shape=float)
 		self.rx_ctcss.set_alias(radio_types.BAOFENG, 'rToneFreq')
@@ -47,15 +50,18 @@ class RadioChannel:
 
 		self.digital_timeslot = DataColumn(fmt_name='digital_timeslot', fmt_val=cols['digital_timeslot'], shape=int)
 		self.digital_timeslot.set_alias(radio_types.D878, 'Slot')
+		self.digital_timeslot.set_alias(radio_types.CS800, 'Time Slot')
 
 		self.digital_color = DataColumn(fmt_name='digital_color', fmt_val=cols['digital_color'], shape=int)
 		self.digital_color.set_alias(radio_types.D878, 'Color Code')
+		self.digital_color.set_alias(radio_types.CS800, 'Color Code')
 
 		self.digital_contact = DataColumn(fmt_name='digital_contact_id', fmt_val=cols['digital_contact_id'], shape=int)
 
 		self.tx_power = DataColumn(fmt_name='tx_power', fmt_val=cols['tx_power'], shape=str)
 		self.tx_power.set_alias(radio_types.FTM400, 'Tx Power')
 		self.tx_power.set_alias(radio_types.D878, 'Transmit Power')
+		self.tx_power.set_alias(radio_types.CS800, 'Power Level')
 
 		self.digital_contacts = digital_contacts
 		self.dmr_ids = dmr_ids
@@ -103,6 +109,7 @@ class RadioChannel:
 			radio_types.BAOFENG: self._headers_baofeng,
 			radio_types.FTM400: self._headers_ftm400,
 			radio_types.D878: self._headers_d878,
+			radio_types.CS800: self._headers_cs800,
 		}
 
 		return switch[style]()
@@ -113,6 +120,7 @@ class RadioChannel:
 			radio_types.BAOFENG: self._output_baofeng,
 			radio_types.FTM400: self._output_ftm400,
 			radio_types.D878: self._output_d878,
+			radio_types.CS800: self._output_cs800,
 		}
 
 		return switch[style](channel_number)
@@ -447,3 +455,78 @@ class RadioChannel:
 		output += f"0,"  # "R5ToneEot,"
 		return output
 
+	def _headers_cs800(self):
+		if self.is_digital():
+			return self._headers_cs800_digital()
+		else:
+			return self._headers_cs800_analog()
+
+	def _headers_cs800_digital(self):
+		output = list()
+		output.append(self.number.get_alias(radio_types.CS800))  # No
+		output.append(self.name.get_alias(radio_types.CS800))  # Channel Alias
+		output.append('Digital Id')  # Digital Id
+		output.append(self.digital_color.get_alias(radio_types.CS800))  # Color Code
+		output.append(self.digital_timeslot.get_alias(radio_types.CS800))  # Time Slot
+		output.append('Scan List')  # Scan List
+		output.append('Auto Scan Start')  # Auto Scan Start
+		output.append('Rx Only')  # Rx Only
+		output.append('Talk Around')  # Talk Around
+		output.append('Lone Worker')  # Lone Worker
+		output.append('VOX')  # VOX
+		output.append(self.rx_freq.get_alias(radio_types.CS800))  # Receive Frequency
+		output.append('RX Ref Frequency')  # RX Ref Frequency
+		output.append('RX Group List')  # RX Group List
+		output.append('Emergency Alarm Indication')  # Emergency Alarm Indication
+		output.append('Emergency Alarm Ack')  # Emergency Alarm Ack
+		output.append('Emergency Call Indication')  # Emergency Call Indication
+		output.append('Transmit Frequency')  # Transmit Frequency
+		output.append('TX Ref Frequency')  # TX Ref Frequency
+		output.append('TX Contact')  # TX Contact
+		output.append('Emergency System')  # Emergency System
+		output.append('Power Level')  # Power Level
+		output.append('TX Admit')  # TX Admit
+		output.append('TX Time-out Time[s]')  # TX Time-out Time[s]
+		output.append('TOT Re-key Time[s]')  # TOT Re-key Time[s]
+		output.append('TOT Pre-Alert Time[s]')  # TOT Pre-Alert Time[s]
+		output.append('Private Call Confirmed')  # Private Call Confirmed
+		output.append('Data Call Confirmed')  # Data Call Confirmed
+		output.append('Encrypt')  # Encrypt
+
+		return output
+
+	def _headers_cs800_analog(self):
+		output = list()
+		output.append(self.number.get_alias(radio_types.CS800))  # No
+		output.append(self.name.get_alias(radio_types.CS800))  # Channel Alias
+		output.append('Squelch Level')  # Squelch Level
+		output.append('Channel Band[KHz]')  # Channel Band[KHz]
+		output.append('Personality List')  # Personality List
+		output.append('Scan List')  # Scan List
+		output.append('Auto Scan Start')  # Auto Scan Start
+		output.append('Rx Only')  # Rx Only
+		output.append('Talk Around')  # Talk Around
+		output.append('Lone Worker')  # Lone Worker
+		output.append('VOX')  # VOX
+		output.append('Scrambler')  # Scrambler
+		output.append('Emp De-emp')  # Emp De-emp
+		output.append(self.rx_freq.get_alias(radio_types.CS800))  # Receive Frequency
+		output.append('RX CTCSS/CDCSS Type')  # RX CTCSS/CDCSS Type
+		output.append('CTCSS/CDCSS')  # CTCSS/CDCSS
+		output.append('RX Ref Frequency')  # RX Ref Frequency
+		output.append('Rx Squelch Mode')  # Rx Squelch Mode
+		output.append('Monitor Squelch Mode')  # Monitor Squelch Mode
+		output.append('Channel Switch Squelch Mode')  # Channel Switch Squelch Mode
+		output.append('Transmit Frequency')  # Transmit Frequency
+		output.append('TX CTCSS/CDCSS Type')  # TX CTCSS/CDCSS Type
+		output.append('CTCSS/CDCSS')  # CTCSS/CDCSS
+		output.append('TX Ref Frequency')  # TX Ref Frequency
+		output.append('Power Level')  # Power Level
+		output.append('Tx Admit')  # Tx Admit
+		output.append('Reverse Burst/Turn off code')  # Reverse Burst/Turn off code
+		output.append('TX Time-out Time[s]')  # TX Time-out Time[s]
+		output.append('TOT Re-key Time[s]')  # TOT Re-key Time[s]
+		output.append('TOT Pre-Alert Time[s]')  # TOT Pre-Alert Time[s]
+		output.append('CTCSS Tail Revert Option')  # CTCSS Tail Revert Option
+
+		return output
