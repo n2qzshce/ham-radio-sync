@@ -54,6 +54,8 @@ jobs:
     #if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-20.04
     needs: build
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
     - name: Create Release
       id: create_release
@@ -69,6 +71,7 @@ jobs:
         draft: true
         prerelease: false
   release-assets:
+    #if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-20.04
     needs: release
     strategy:
@@ -84,7 +87,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ needs.release.steps.create_release.outputs.upload_url }}
+        upload_url: ${{ needs.release.outputs.upload_url }}
         asset_path: ./radio_sync-${{ matrix.short-name }}-${{ env.semver }}.zip
         asset_name: radio_sync-${{ matrix.short-name }}-${{ env.semver }}.zip
         asset_content_type: application/zip
