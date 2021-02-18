@@ -60,14 +60,14 @@ class DmrUser:
 
 	def _output_default(self):
 		output = list()
-		output.append(f"{self.radio_id.fmt_val()}")
-		output.append(f"{self.callsign.fmt_val()}")
-		output.append(f"{self.first_name.fmt_val()}")
-		output.append(f"{self.last_name.fmt_val()}")
-		output.append(f"{self.city.fmt_val()}")
-		output.append(f"{self.state.fmt_val()}")
-		output.append(f"{self.country.fmt_val()}")
-		output.append(f"{self.remarks.fmt_val()}")
+		output.append(f"{self.radio_id.fmt_val('')}")
+		output.append(f"{self.callsign.fmt_val('')}")
+		output.append(f"{self.first_name.fmt_val('')}")
+		output.append(f"{self.last_name.fmt_val('')}")
+		output.append(f"{self.city.fmt_val('')}")
+		output.append(f"{self.state.fmt_val('')}")
+		output.append(f"{self.country.fmt_val('')}")
+		output.append(f"{self.remarks.fmt_val('')}")
 		return output
 
 	def _headers_cs800(self):

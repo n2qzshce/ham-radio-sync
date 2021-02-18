@@ -109,7 +109,7 @@ class RadioAdditionalData:
 			logging.error(f"No DMR ids found for {style}.")
 			return
 		writer = open(f'out/{style}/{style}_radioid.csv', 'w+', encoding='utf-8')
-		radio_id_file = csv.writer(writer, lineterminator='\n')
+		radio_id_file = csv.writer(writer)
 
 		headers = DmrId.create_empty()
 		radio_id_file.writerow(headers.headers(style))
