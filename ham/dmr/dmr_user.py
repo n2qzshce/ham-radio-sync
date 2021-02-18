@@ -47,27 +47,27 @@ class DmrUser:
 		return switch[style]()
 
 	def _headers_default(self):
-		output = ''
-		output += f"{self.radio_id.get_alias(radio_types.DEFAULT)},"
-		output += f"{self.callsign.get_alias(radio_types.DEFAULT)},"
-		output += f"{self.first_name.get_alias(radio_types.DEFAULT)},"
-		output += f"{self.last_name.get_alias(radio_types.DEFAULT)},"
-		output += f"{self.city.get_alias(radio_types.DEFAULT)},"
-		output += f"{self.state.get_alias(radio_types.DEFAULT)},"
-		output += f"{self.country.get_alias(radio_types.DEFAULT)},"
-		output += f"{self.remarks.get_alias(radio_types.DEFAULT)},"
+		output = list()
+		output.append(f"{self.radio_id.get_alias(radio_types.DEFAULT)}")
+		output.append(f"{self.callsign.get_alias(radio_types.DEFAULT)}")
+		output.append(f"{self.first_name.get_alias(radio_types.DEFAULT)}")
+		output.append(f"{self.last_name.get_alias(radio_types.DEFAULT)}")
+		output.append(f"{self.city.get_alias(radio_types.DEFAULT)}")
+		output.append(f"{self.state.get_alias(radio_types.DEFAULT)}")
+		output.append(f"{self.country.get_alias(radio_types.DEFAULT)}")
+		output.append(f"{self.remarks.get_alias(radio_types.DEFAULT)}")
 		return output
 
 	def _output_default(self):
-		output = ''
-		output += f"{self.radio_id.fmt_val()},"
-		output += f"{self.callsign.fmt_val()},"
-		output += f"{self.first_name.fmt_val()},"
-		output += f"{self.last_name.fmt_val()},"
-		output += f"{self.city.fmt_val()},"
-		output += f"{self.state.fmt_val()},"
-		output += f"{self.country.fmt_val()},"
-		output += f"{self.remarks.fmt_val()},"
+		output = list()
+		output.append(f"{self.radio_id.fmt_val()}")
+		output.append(f"{self.callsign.fmt_val()}")
+		output.append(f"{self.first_name.fmt_val()}")
+		output.append(f"{self.last_name.fmt_val()}")
+		output.append(f"{self.city.fmt_val()}")
+		output.append(f"{self.state.fmt_val()}")
+		output.append(f"{self.country.fmt_val()}")
+		output.append(f"{self.remarks.fmt_val()}")
 		return output
 
 	def _headers_cs800(self):

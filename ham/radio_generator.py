@@ -40,7 +40,7 @@ class RadioGenerator:
 				logging.info(f"`{radio}` uses special output style. Skipping channels csv")
 				continue
 			output_file = open(f"out/{radio}/{radio}_channels.csv", "w+")
-			output = csv.writer(output_file, delimiter=',')
+			output = csv.writer(output_file, delimiter=',', lineterminator='\n')
 			file_headers = headers_gen.headers(radio)
 			output.writerow(file_headers)
 			radio_files[radio] = output
