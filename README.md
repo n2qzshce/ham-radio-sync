@@ -43,7 +43,7 @@ with the necessary directories for processing your csv's.
 * `--debug` Adds some more output to the console, primarily for developers.
 
 ### For best results...
-If you do not need a column, *leave it blank*. All radio requencies and offsets are in
+If you do not need a column, *leave it blank*. All radio frequencies and offsets are in
 Megahertz. Do not add any units, just input the number.
 
 Some sync applications have bugs where they cannot read certain values. You may need
