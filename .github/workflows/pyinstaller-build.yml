@@ -71,7 +71,7 @@ jobs:
         draft: true
         prerelease: false
   release-assets:
-    #if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-20.04
     needs: release
     strategy:
