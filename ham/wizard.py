@@ -5,7 +5,7 @@ from ham import radio_types
 from ham.dmr.dmr_contact import DmrContact
 from ham.dmr.dmr_id import DmrId
 from ham.dmr.dmr_user import DmrUser
-from ham.file_util import FileUtil
+from ham.file_util import FileUtil, RadioWriter
 from ham.radio_channel import RadioChannel
 from ham.radio_zone import RadioZone
 
@@ -43,7 +43,7 @@ class Wizard(object):
 				logging.info(f"`{key}.csv` already exists! Skipping.")
 
 	def _create_channel_file(self):
-		channel_file = open('in/input.csv', 'w+')
+		channel_file = RadioWriter('in/input.csv', '\n')
 		first_channel = RadioChannel({
 			'number': '1',
 			'name': 'National 2m',
@@ -82,23 +82,23 @@ class Wizard(object):
 			'digital_color': '',
 			'digital_contact_id': '',
 		}, digital_contacts=None, dmr_ids=None)
-		channel_file.write(RadioChannel.create_empty().headers(radio_types.DEFAULT) + '\n')
-		channel_file.write(first_channel.output(radio_types.DEFAULT, 1) + '\n')
-		channel_file.write(second_channel.output(radio_types.DEFAULT, 2) + '\n')
+		channel_file.writerow(RadioChannel.create_empty().headers(radio_types.DEFAULT))
+		channel_file.writerow(first_channel.output(radio_types.DEFAULT, 1))
+		channel_file.writerow(second_channel.output(radio_types.DEFAULT, 2))
 		channel_file.close()
 
 	def _create_dmr_data(self):
-		dmr_id_file = open('in/dmr_id.csv', 'w+')
+		dmr_id_file = RadioWriter('in/dmr_id.csv', '\n')
 		dmr_id = DmrId({
 			'number': 1,
 			'radio_id': '00000',
 			'name': 'DMR',
 		})
-		dmr_id_file.write(DmrId.create_empty().headers(radio_types.DEFAULT)+'\n')
-		dmr_id_file.write(dmr_id.output(radio_types.DEFAULT)+'\n')
+		dmr_id_file.writerow(DmrId.create_empty().headers(radio_types.DEFAULT))
+		dmr_id_file.writerow(dmr_id.output(radio_types.DEFAULT))
 		dmr_id_file.close()
 
-		digital_contacts_file = open('in/digital_contacts.csv', 'w+')
+		digital_contacts_file = RadioWriter('in/digital_contacts.csv', '\n')
 		analog_contact = DmrContact({
 			'number': 1,
 			'digital_id':  dmr_id.radio_id.fmt_val(),
@@ -111,23 +111,23 @@ class Wizard(object):
 			'name': 'Some Repeater',
 			'call_type': 'group',
 		})
-		digital_contacts_file.write(DmrContact.create_empty().headers(radio_types.DEFAULT) + '\n')
-		digital_contacts_file.write(analog_contact.output(radio_types.DEFAULT) + '\n')
-		digital_contacts_file.write(group_contact.output(radio_types.DEFAULT) + '\n')
+		digital_contacts_file.writerow(DmrContact.create_empty().headers(radio_types.DEFAULT))
+		digital_contacts_file.writerow(analog_contact.output(radio_types.DEFAULT))
+		digital_contacts_file.writerow(group_contact.output(radio_types.DEFAULT))
 		digital_contacts_file.close()
 
 	def _create_zone_data(self):
-		zone_id_file = open('in/zones.csv', 'w+')
+		zone_id_file = RadioWriter('in/zones.csv', '\n')
 		zone = RadioZone({
 			'number': 1,
 			'name': 'Zone 1',
 		})
-		zone_id_file.write(RadioZone.create_empty().headers(radio_types.DEFAULT)+'\n')
-		zone_id_file.write(zone.output(radio_types.DEFAULT)+'\n')
+		zone_id_file.writerow(RadioZone.create_empty().headers(radio_types.DEFAULT))
+		zone_id_file.writerow(zone.output(radio_types.DEFAULT))
 		zone_id_file.close()
 
 	def _create_dmr_user_data(self):
-		user_file = open('in/user.csv', 'w+')
+		user_file = RadioWriter('in/user.csv', '\n')
 		dmr_user = DmrUser({
 			'RADIO_ID': '00000',
 			'CALLSIGN': 'N0CALL',
@@ -138,8 +138,8 @@ class Wizard(object):
 			'COUNTRY': 'Theremany',
 			'REMARKS': 'Sample Entry',
 		})
-		user_file.write(DmrUser.create_empty().headers(radio_types.DEFAULT)+'\n')
-		user_file.write(dmr_user.output(radio_types.DEFAULT)+'\n')
+		user_file.writerow(DmrUser.create_empty().headers(radio_types.DEFAULT))
+		user_file.writerow(dmr_user.output(radio_types.DEFAULT))
 		user_file.close()
 		return
 
