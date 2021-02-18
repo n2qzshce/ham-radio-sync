@@ -26,18 +26,18 @@ At the moment, all fields are case-sensitive and all csv's are required.
 |digital_timeslot | DMR Timeslot, should be either 1 or 2 |
 |digital_color | Color parameter of DMR channel |
 |digital_contact_id | Contact to call on DMR channel |
-###zones.csv
+### zones.csv
 | **Column Name** | Description |
 |---|---|
 |number| Number of the zone, starting at 1|
 |name| Zone name |
-###dmr_id.csv
+### dmr_id.csv
 | **Column Name** | Description |
 |---|---|
 |number | number of DMR ID, starting at 1|
 |radio_id | ID number from radioid.net
 |name | nickname of DMR ID|
-###digital_contacts.csv
+### digital_contacts.csv
 | **Column Name** | Description |
 |---|---|
 |number|Number of talkgroup/zone, starting at 1|
@@ -67,11 +67,11 @@ This is the "RT Systems" branded sync software.
 ***
 # Known radio issues:
 
-###All radios:
+### All radios:
 * Unparseable fields may case an application crash.
-###FTM400: 
+### FTM400: 
 * The `step` column is not parsed correctly by the RT app.
-###Baofeng:
+### Baofeng:
 * `power` column does not sync.
-###Anytone 878:
+### Anytone 878:
 * Talkaround not supported.
