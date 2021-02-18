@@ -63,8 +63,8 @@ class RadioZone:
 
 	def _output_default(self):
 		output = list()
-		output.append(f"{self.number.fmt_val('')},")
-		output.append(f"{self.name.fmt_val('')},")
+		output.append(f"{self.number.fmt_val('')}")
+		output.append(f"{self.name.fmt_val('')}")
 		return output
 
 	def _output_d878(self):
