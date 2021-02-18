@@ -1,4 +1,5 @@
 import logging
+import csv
 
 from ham import radio_types
 from ham.dmr.dmr_contact import DmrContact
@@ -23,7 +24,7 @@ class RadioGenerator:
 		user = self._generate_user_data()
 
 		feed = open("in/input.csv", "r")
-		headers = feed.readline().replace('\n', '').split(',')
+		csv_reader = csv.DictReader(feed)
 
 		radio_files = dict()
 		radio_channels = dict()
@@ -44,10 +45,8 @@ class RadioGenerator:
 			radio_files[radio] = output
 			channel_numbers[radio] = 1
 
-		for line in feed.readlines():
-			column_values = FileUtil.line_to_dict(line, headers)
-
-			radio_channel = RadioChannel(column_values, digital_contacts, dmr_ids)
+		for line in csv_reader:
+			radio_channel = RadioChannel(line, digital_contacts, dmr_ids)
 			radio_channels[radio_channel.number] = radio_channel
 			if radio_channel.zone_id.fmt_val(None) is not None:
 				zones[radio_channel.zone_id.fmt_val()].add_channel(radio_channel)
@@ -68,48 +67,40 @@ class RadioGenerator:
 
 	def _generate_digital_contact_data(self):
 		feed = open("in/digital_contacts.csv", "r")
-		headers = feed.readline().replace('\n', '').split(',')
+		csv_feed = csv.DictReader(feed)
 		digital_contacts = dict()
-		for line in feed.readlines():
-			cols = FileUtil.line_to_dict(line, headers)
-			contact = DmrContact(cols)
+		for line in csv_feed:
+			contact = DmrContact(line)
 			digital_contacts[contact.radio_id.fmt_val()] = contact
 
 		return digital_contacts
 
 	def _generate_dmr_id_data(self):
 		feed = open("in/dmr_id.csv", "r")
-		headers = feed.readline().replace('\n', '').split(',')
+		csv_feed = csv.DictReader(feed)
 		dmr_ids = dict()
-		for line in feed.readlines():
-			cols = FileUtil.line_to_dict(line, headers)
-			dmr_id = DmrId(cols)
+		for line in csv_feed:
+			dmr_id = DmrId(line)
 			dmr_ids[dmr_id.number.fmt_val()] = dmr_id
 
 		return dmr_ids
 
 	def _generate_zone_data(self):
 		feed = open('in/zones.csv', 'r')
-		headers = feed.readline().replace('\n', '').split(',')
+		csv_feed = csv.DictReader(feed)
 		zones = dict()
-		for line in feed.readlines():
-			cols = FileUtil.line_to_dict(line, headers)
-			zone = RadioZone(cols)
+		for line in csv_feed:
+			zone = RadioZone(line)
 			zones[zone.number.fmt_val()] = zone
 
 		return zones
 
 	def _generate_user_data(self):
 		feed = open('in/user.csv', 'r', encoding='utf-8')
-		headers = feed.readline().replace('\n', ',').split(',')
+		csv_feed = csv.DictReader(feed)
 		users = dict()
-		line = feed.readline()
-		while line is not None:
-			f_line = line.replace('\n', '\\n')
-			# logging.debug(f"Reading {f_line}")
-			cols = FileUtil.line_to_dict(line+',', headers)
-			zone = DmrUser(cols)
+		for line in csv_feed:
+			zone = DmrUser(line)
 			users[zone.radio_id.fmt_val()] = zone
-			line = feed.readline()
 
 		return users

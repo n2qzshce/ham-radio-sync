@@ -82,7 +82,7 @@ class DmrUser:
 	def _output_cs800(self):
 		output = list()
 		output.append(f'{self.number.fmt_val()}')
-		output.append(f'{self.callsign.fmt_val()} {self.first_name.fmt_val()} {self.last_name.fmt_val("")[0]}')
+		output.append(f'{self.callsign.fmt_val()} {self.first_name.fmt_val()} {self.last_name.fmt_val("")[:1]}')
 		output.append(f'Private Call')
 		output.append(f'{self.radio_id.fmt_val()}')
 		output.append(f'No')
