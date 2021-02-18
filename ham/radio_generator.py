@@ -100,12 +100,16 @@ class RadioGenerator:
 		return zones
 
 	def _generate_user_data(self):
-		feed = open('in/user.csv', 'r')
-		headers = feed.readline().replace('\n', '').split(',')
+		feed = open('in/user.csv', 'r', encoding='utf-8')
+		headers = feed.readline().replace('\n', ',').split(',')
 		users = dict()
-		for line in feed.readlines():
-			cols = FileUtil.line_to_dict(line, headers)
+		line = feed.readline()
+		while line is not None:
+			f_line = line.replace('\n', '\\n')
+			# logging.debug(f"Reading {f_line}")
+			cols = FileUtil.line_to_dict(line+',', headers)
 			zone = DmrUser(cols)
 			users[zone.radio_id.fmt_val()] = zone
+			line = feed.readline()
 
 		return users
