@@ -8,9 +8,9 @@ RADIO_LINE_LOG_INTERVAL = 5
 
 
 class RadioWriter:
-	def __init__(self, file_path):
+	def __init__(self, file_path, newline_char):
 		logging.debug(f'Creating CSV at {file_path}')
-		self._writer = open(f'{file_path}', 'w+', encoding='utf-8', newline='\n')
+		self._writer = open(f'{file_path}', 'w+', encoding='utf-8', newline=newline_char)
 		self._csv_writer = csv.writer(self._writer, dialect='unix', quoting=0)
 
 	def writerow(self, row):
@@ -36,8 +36,3 @@ class FileUtil:
 			os.mkdir(dir_name)
 		else:
 			logging.info(f'Directory `{dir_name}` exists, skipping.')
-
-	@classmethod
-	def create_radio_writer(cls, file_path):
-		radio_writer = RadioWriter(file_path)
-		return radio_writer

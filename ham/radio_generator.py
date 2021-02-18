@@ -39,7 +39,7 @@ class RadioGenerator:
 			if RadioChannel.skip_radio_csv(radio):
 				logging.info(f"`{radio}` uses special output style. Skipping channels csv")
 				continue
-			output = RadioWriter(f'out/{radio}/{radio}_channels.csv')
+			output = RadioWriter(f'out/{radio}/{radio}_channels.csv', '\r\n')
 			file_headers = headers_gen.headers(radio)
 			output.writerow(file_headers)
 			radio_files[radio] = output
