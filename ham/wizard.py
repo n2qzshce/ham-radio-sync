@@ -1,10 +1,11 @@
 import logging
 import os
-import shutil
 
 from ham import radio_types
 from ham.dmr.dmr_contact import DmrContact
 from ham.dmr.dmr_id import DmrId
+from ham.dmr.dmr_user import DmrUser
+from ham.file_util import FileUtil
 from ham.radio_channel import RadioChannel
 from ham.radio_zone import RadioZone
 
@@ -23,29 +24,25 @@ class Wizard(object):
 			else:
 				logging.warning('FORCED YES')
 
-		self.create_input(is_forced)
-		self.create_output()
+		self._create_input(is_forced)
+		self._create_output()
 
-	def create_input(self, is_forced):
-		self.safe_create_dir('in')
+	def _create_input(self, is_forced):
+		FileUtil.safe_create_dir('in')
+		create_files = {
+			'channels': self._create_channel_file,
+			'digital_contacts': self._create_dmr_data,
+			'zones': self._create_zone_data,
+			'user': self._create_dmr_user_data,
+		}
 
-		if not os.path.exists('in/channels.csv') or is_forced:
-			self.create_channel_file()
-		else:
-			logging.info("`channels.csv` already exists! Skipping")
+		for key in create_files:
+			if not os.path.exists(f"in/{key}.csv") or is_forced:
+				create_files[key]()
+			else:
+				logging.info(f"`{key}.csv` already exists! Skipping.")
 
-		if not os.path.exists('in/digital_contacts.csv') or is_forced:
-			self.create_dmr_data()
-		else:
-			logging.info("`digital_contacts.csv` already exists! Skipping")
-
-		if not os.path.exists('in/zones.csv') or is_forced:
-			self.create_zone_data()
-		else:
-			logging.info("`zone.csv` already exists! Skipping")
-		return
-
-	def create_channel_file(self):
+	def _create_channel_file(self):
 		channel_file = open('in/input.csv', 'w+')
 		first_channel = RadioChannel({
 			'number': '1',
@@ -90,7 +87,7 @@ class Wizard(object):
 		channel_file.write(second_channel.output(radio_types.DEFAULT, 2) + '\n')
 		channel_file.close()
 
-	def create_dmr_data(self):
+	def _create_dmr_data(self):
 		dmr_id_file = open('in/dmr_id.csv', 'w+')
 		dmr_id = DmrId({
 			'number': 1,
@@ -119,7 +116,7 @@ class Wizard(object):
 		digital_contacts_file.write(group_contact.output(radio_types.DEFAULT) + '\n')
 		digital_contacts_file.close()
 
-	def create_zone_data(self):
+	def _create_zone_data(self):
 		zone_id_file = open('in/zones.csv', 'w+')
 		zone = RadioZone({
 			'number': 1,
@@ -129,27 +126,30 @@ class Wizard(object):
 		zone_id_file.write(zone.output(radio_types.DEFAULT)+'\n')
 		zone_id_file.close()
 
-	def create_output(self):
-		self.safe_create_dir('out')
+	def _create_dmr_user_data(self):
+		user_file = open('in/user.csv', 'w+')
+		dmr_user = DmrUser({
+			'RADIO_ID': '00000',
+			'CALLSIGN': 'N0CALL',
+			'FIRST_NAME': 'Sample',
+			'LAST_NAME': 'User',
+			'CITY': 'Somewhere',
+			'STATE': 'Stateville',
+			'COUNTRY': 'Theremany',
+			'REMARKS': 'Sample Entry',
+		})
+		user_file.write(DmrUser.create_empty().headers(radio_types.DEFAULT)+'\n')
+		user_file.write(dmr_user.output(radio_types.DEFAULT)+'\n')
+		user_file.close()
 		return
 
-	def safe_create_dir(self, dir_name):
-		if not os.path.exists(dir_name):
-			logging.info(f'Creating directory `{dir_name}`')
-			os.mkdir(dir_name)
-		else:
-			logging.info(f'`{dir_name}` exists, skipping.')
+	def _create_output(self):
+		FileUtil.safe_create_dir('out')
+		return
 
 	def cleanup(self):
-		self.safe_delete_dir('in')
-		self.safe_delete_dir('out')
-
-	def safe_delete_dir(self, dir_name):
-		try:
-			shutil.rmtree(f'{dir_name}')
-			logging.info(f'`{dir_name}` directory deleted')
-		except OSError:
-			logging.info(f'No `{dir_name}` directory to delete')
+		FileUtil.safe_delete_dir('in')
+		FileUtil.safe_delete_dir('out')
 
 	def readme(self):
 		return

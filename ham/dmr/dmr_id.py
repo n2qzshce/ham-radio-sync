@@ -38,30 +38,30 @@ class DmrId:
 		return switch[style]()
 
 	def _headers_default(self):
-		output = ''
-		output += f"{self.number.get_alias(radio_types.DEFAULT)},"
-		output += f"{self.radio_id.get_alias(radio_types.DEFAULT)},"
-		output += f"{self.name.get_alias(radio_types.DEFAULT)},"
+		output = list()
+		output.append(f"{self.number.get_alias(radio_types.DEFAULT)}")
+		output.append(f"{self.radio_id.get_alias(radio_types.DEFAULT)}")
+		output.append(f"{self.name.get_alias(radio_types.DEFAULT)}")
 		return output
 
 	def _output_default(self):
-		output = ''
-		output += f"{self.number.fmt_val()},"
-		output += f"{self.radio_id.fmt_val()},"
-		output += f"{self.name.fmt_val()},"
+		output = list()
+		output.append(f"{self.number.fmt_val()}")
+		output.append(f"{self.radio_id.fmt_val()}")
+		output.append(f"{self.name.fmt_val()}")
 		return output
 
 	def _headers_d878(self):
-		output = ''
-		output += f"{self.number.get_alias(radio_types.D878)},"
-		output += f"{self.radio_id.get_alias(radio_types.D878)},"
-		output += f"{self.name.get_alias(radio_types.D878)},"
+		output = list()
+		output.append(f"{self.number.get_alias(radio_types.D878)}")
+		output.append(f"{self.radio_id.get_alias(radio_types.D878)}")
+		output.append(f"{self.name.get_alias(radio_types.D878)}")
 		return output
 
 	def _output_d878(self):
-		output = ''
-		output += f"{self.number.fmt_val()},"
-		output += f"{self.radio_id.fmt_val()},"
-		output += f"{self.name.fmt_val()},"
+		output = list()
+		output.append(f"{self.number.fmt_val()}")
+		output.append(f"{self.radio_id.fmt_val()}")
+		output.append(f"{self.name.fmt_val()}")
 		return output
 

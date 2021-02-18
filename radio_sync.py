@@ -53,6 +53,7 @@ def main():
 			ham.radio_types.BAOFENG,
 			ham.radio_types.FTM400,
 			ham.radio_types.D878,
+			ham.radio_types.CS800,
 		],
 		default=[],
 		nargs='+',
@@ -60,7 +61,8 @@ def main():
 		{ham.radio_types.DEFAULT} -- This is a replication of the input, primarily used for validation/testing.
 		{ham.radio_types.BAOFENG} -- Baofeng UV-5R and F8-HP via CHiRP
 		{ham.radio_types.FTM400} -- Yaesu FTM-400 via RT Systems app 
-		{ham.radio_types.D878} --Anytone D878
+		{ham.radio_types.D878} -- Anytone D878 or D868
+		{ham.radio_types.CS800} -- Connect Systems CS800D
 		"""
 	)
 

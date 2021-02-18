@@ -1,12 +1,14 @@
 import logging
+import csv
 
-from ham import radio_types
+from ham import radio_types, file_util
 from ham.dmr.dmr_contact import DmrContact
 from ham.dmr.dmr_id import DmrId
+from ham.dmr.dmr_user import DmrUser
+from ham.file_util import FileUtil, RadioWriter
 from ham.radio_additional import RadioAdditionalData
 from ham.radio_channel import RadioChannel
 from ham.radio_zone import RadioZone
-from ham.wizard import Wizard
 
 
 class RadioGenerator:
@@ -19,82 +21,108 @@ class RadioGenerator:
 		digital_contacts = self._generate_digital_contact_data()
 		dmr_ids = self._generate_dmr_id_data()
 		zones = self._generate_zone_data()
+		user = self._generate_user_data()
 
 		feed = open("in/input.csv", "r")
-		headers = feed.readline().replace('\n', '').split(',')
+		csv_reader = csv.DictReader(feed)
 
 		radio_files = dict()
+		radio_channels = dict()
 		headers_gen = RadioChannel.create_empty()
-		wizard = Wizard()
-		wizard.safe_create_dir('out')
+		FileUtil.safe_create_dir('out')
 
 		channel_numbers = dict()
 		for radio in self.radio_list:
-			wizard.safe_create_dir(f'out/{radio}')
+			FileUtil.safe_create_dir(f'out/{radio}')
 			logging.info(f"Generating for radio type `{radio}`")
-			output = open(f"out/{radio}/{radio}_channels.csv", "w+")
+
+			if RadioChannel.skip_radio_csv(radio):
+				logging.info(f"`{radio}` uses special output style. Skipping channels csv")
+				continue
+			output = RadioWriter(f'out/{radio}/{radio}_channels.csv', '\r\n')
 			file_headers = headers_gen.headers(radio)
-			output.write(file_headers+'\n')
+			output.writerow(file_headers)
 			radio_files[radio] = output
 			channel_numbers[radio] = 1
 
-		for line in feed.readlines():
-			column_values = self._line_to_dict(line, headers)
+		logging.info("Processing radio channels")
+		line_num = 1
+		for line in csv_reader:
+			logging.debug(f"Processing radio line {line_num}")
+			if line_num % file_util.RADIO_LINE_LOG_INTERVAL == 0:
+				logging.info(f"Processing radio line {line_num}")
+			radio_channel = RadioChannel(line, digital_contacts, dmr_ids)
+			radio_channels[radio_channel.number] = radio_channel
+			line_num += 1
 
-			radio_channel = RadioChannel(column_values, digital_contacts, dmr_ids)
 			if radio_channel.zone_id.fmt_val(None) is not None:
 				zones[radio_channel.zone_id.fmt_val()].add_channel(radio_channel)
+
 			for radio in self.radio_list:
 				if not radio_types.supports_dmr(radio) and radio_channel.is_digital():
 					continue
+				if radio not in radio_files.keys():
+					continue
 
 				input_data = radio_channel.output(radio, channel_numbers[radio])
-				radio_files[radio].write(input_data+'\n')
+				radio_files[radio].writerow(input_data)
 				channel_numbers[radio] += 1
 
-		additional_data = RadioAdditionalData(dmr_ids, digital_contacts, zones)
+		additional_data = RadioAdditionalData(radio_channels, dmr_ids, digital_contacts, zones, user)
 		for radio in self.radio_list:
+			if radio in radio_files.keys():
+				radio_files[radio].close()
 			additional_data.output(radio)
+
+		logging.info("Radio generator complete")
 		return
 
 	def _generate_digital_contact_data(self):
+		logging.info("Processing digital contacts")
 		feed = open("in/digital_contacts.csv", "r")
-		headers = feed.readline().replace('\n', '').split(',')
+		csv_feed = csv.DictReader(feed)
 		digital_contacts = dict()
-		for line in feed.readlines():
-			cols = self._line_to_dict(line, headers)
-			contact = DmrContact(cols)
+		for line in csv_feed:
+			contact = DmrContact(line)
 			digital_contacts[contact.radio_id.fmt_val()] = contact
 
 		return digital_contacts
 
 	def _generate_dmr_id_data(self):
+		logging.info("Processing dmr ids")
 		feed = open("in/dmr_id.csv", "r")
-		headers = feed.readline().replace('\n', '').split(',')
+		csv_feed = csv.DictReader(feed)
 		dmr_ids = dict()
-		for line in feed.readlines():
-			cols = self._line_to_dict(line, headers)
-			dmr_id = DmrId(cols)
+		for line in csv_feed:
+			dmr_id = DmrId(line)
 			dmr_ids[dmr_id.number.fmt_val()] = dmr_id
 
 		return dmr_ids
 
 	def _generate_zone_data(self):
+		logging.info("Processing zones")
 		feed = open('in/zones.csv', 'r')
-		headers = feed.readline().replace('\n', '').split(',')
+		csv_feed = csv.DictReader(feed)
 		zones = dict()
-		for line in feed.readlines():
-			cols = self._line_to_dict(line, headers)
-			zone = RadioZone(cols)
+		for line in csv_feed:
+			zone = RadioZone(line)
 			zones[zone.number.fmt_val()] = zone
 
 		return zones
 
-	def _line_to_dict(self, line, headers):
-		column_values = dict()
-		cols = line.replace('\n', '').split(",")
-		if len(headers) != len(cols):
-			logging.error(f"Mismatch between lines! Headers: `{','.join(headers)}` Columns: `{','.join(cols)}` Line: `{line}`")
-		for i in range(0, len(headers) - 1):
-			column_values[headers[i]] = cols[i]
-		return column_values
+	def _generate_user_data(self):
+		logging.info("Processing dmr IDs. This step can take a while.")
+		feed = open('in/user.csv', 'r', encoding='utf-8')
+		csv_feed = csv.DictReader(feed)
+		users = dict()
+
+		rows_processed = 0
+		for line in csv_feed:
+			zone = DmrUser(line)
+			users[zone.radio_id.fmt_val()] = zone
+			rows_processed += 1
+			logging.debug(f"Writing user row {rows_processed}")
+			if rows_processed % file_util.USER_LINE_LOG_INTERVAL == 0:
+				logging.info(f"Processed {rows_processed} DMR users")
+
+		return users
