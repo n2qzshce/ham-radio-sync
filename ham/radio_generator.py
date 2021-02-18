@@ -1,7 +1,7 @@
 import logging
 import csv
 
-from ham import radio_types
+from ham import radio_types, file_util
 from ham.dmr.dmr_contact import DmrContact
 from ham.dmr.dmr_id import DmrId
 from ham.dmr.dmr_user import DmrUser
@@ -47,11 +47,16 @@ class RadioGenerator:
 			channel_numbers[radio] = 1
 
 		logging.info("Processing radio channels")
+		line_num = 1
 		for line in csv_reader:
+			logging.info(f"Processing radio line {line_num}")
 			radio_channel = RadioChannel(line, digital_contacts, dmr_ids)
 			radio_channels[radio_channel.number] = radio_channel
+			line_num += 1
+
 			if radio_channel.zone_id.fmt_val(None) is not None:
 				zones[radio_channel.zone_id.fmt_val()].add_channel(radio_channel)
+
 			for radio in self.radio_list:
 				if not radio_types.supports_dmr(radio) and radio_channel.is_digital():
 					continue
@@ -65,6 +70,8 @@ class RadioGenerator:
 		additional_data = RadioAdditionalData(radio_channels, dmr_ids, digital_contacts, zones, user)
 		for radio in self.radio_list:
 			additional_data.output(radio)
+
+		logging.info("Radio generator complete")
 		return
 
 	def _generate_digital_contact_data(self):
@@ -111,7 +118,7 @@ class RadioGenerator:
 			zone = DmrUser(line)
 			users[zone.radio_id.fmt_val()] = zone
 			rows_processed += 1
-			if rows_processed % 1000 == 0:
+			if rows_processed % file_util.USER_LINE_LOG_INTERVAL == 0:
 				logging.info(f"Processed {rows_processed} DMR users")
 
 		return users

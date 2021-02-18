@@ -2,6 +2,8 @@ import logging
 import os
 import shutil
 
+USER_LINE_LOG_INTERVAL = 50000
+
 
 class FileUtil:
 	@classmethod
