@@ -5,7 +5,7 @@ from ham import radio_types, file_util
 from ham.dmr.dmr_contact import DmrContact
 from ham.dmr.dmr_id import DmrId
 from ham.dmr.dmr_user import DmrUser
-from ham.file_util import FileUtil
+from ham.file_util import FileUtil, RadioWriter
 from ham.radio_additional import RadioAdditionalData
 from ham.radio_channel import RadioChannel
 from ham.radio_zone import RadioZone
@@ -39,8 +39,7 @@ class RadioGenerator:
 			if RadioChannel.skip_radio_csv(radio):
 				logging.info(f"`{radio}` uses special output style. Skipping channels csv")
 				continue
-			output_file = open(f"out/{radio}/{radio}_channels.csv", "w+")
-			output = csv.writer(output_file, delimiter=',', lineterminator='\n')
+			output = RadioWriter(f'out/{radio}/{radio}_channels.csv')
 			file_headers = headers_gen.headers(radio)
 			output.writerow(file_headers)
 			radio_files[radio] = output
@@ -49,7 +48,9 @@ class RadioGenerator:
 		logging.info("Processing radio channels")
 		line_num = 1
 		for line in csv_reader:
-			logging.info(f"Processing radio line {line_num}")
+			logging.debug(f"Processing radio line {line_num}")
+			if line_num % file_util.RADIO_LINE_LOG_INTERVAL == 0:
+				logging.info(f"Processing radio line {line_num}")
 			radio_channel = RadioChannel(line, digital_contacts, dmr_ids)
 			radio_channels[radio_channel.number] = radio_channel
 			line_num += 1
@@ -69,6 +70,8 @@ class RadioGenerator:
 
 		additional_data = RadioAdditionalData(radio_channels, dmr_ids, digital_contacts, zones, user)
 		for radio in self.radio_list:
+			if radio in radio_files.keys():
+				radio_files[radio].close()
 			additional_data.output(radio)
 
 		logging.info("Radio generator complete")
@@ -118,6 +121,7 @@ class RadioGenerator:
 			zone = DmrUser(line)
 			users[zone.radio_id.fmt_val()] = zone
 			rows_processed += 1
+			logging.debug(f"Writing user row {rows_processed}")
 			if rows_processed % file_util.USER_LINE_LOG_INTERVAL == 0:
 				logging.info(f"Processed {rows_processed} DMR users")
 

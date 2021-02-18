@@ -6,6 +6,7 @@ from ham import radio_types, file_util
 from ham.dmr.dmr_contact import DmrContact
 from ham.dmr.dmr_id import DmrId
 from ham.dmr.dmr_user import DmrUser
+from ham.file_util import FileUtil
 from ham.radio_channel import RadioChannel
 from ham.radio_zone import RadioZone
 
@@ -108,15 +109,15 @@ class RadioAdditionalData:
 		if self._dmr_ids is None:
 			logging.error(f"No DMR ids found for {style}.")
 			return
-		writer = open(f'out/{style}/{style}_radioid.csv', 'w+', encoding='utf-8')
-		radio_id_file = csv.writer(writer)
+
+		radio_id_file = FileUtil.create_radio_writer(f'out/{style}/{style}_radioid.csv')
 
 		headers = DmrId.create_empty()
 		radio_id_file.writerow(headers.headers(style))
 		for dmr_id in self._dmr_ids.values():
 			radio_id_file.writerow(dmr_id.output(style))
 
-		writer.close()
+		radio_id_file.close()
 		return
 
 	def _output_contacts_d878(self, style):
@@ -125,15 +126,14 @@ class RadioAdditionalData:
 			logging.error(f"No digital contacts found for {style}.")
 			return
 
-		writer = open(f'out/{style}/{style}_talkgroup.csv', 'w+', encoding='utf-8')
-		dmr_contact_file = csv.writer(writer, lineterminator='\n')
+		dmr_contact_file = FileUtil.create_radio_writer(f'out/{style}/{style}_talkgroup.csv')
 
 		headers = DmrContact.create_empty()
 		dmr_contact_file.writerow(headers.headers(style))
 		for dmr_contact in self._digital_contacts.values():
 			dmr_contact_file.writerow(dmr_contact.output(style))
 
-		writer.close()
+		dmr_contact_file.close()
 
 	def _output_zones_d878(self, style):
 		logging.info(f"Writing {style} zones")
@@ -141,8 +141,7 @@ class RadioAdditionalData:
 			logging.error(f"No zones list found for {style}.")
 			return
 
-		writer = open(f'out/{style}/{style}_zone.csv', 'w+', encoding='utf-8')
-		zone_file = csv.writer(writer, lineterminator='\n')
+		zone_file = FileUtil.create_radio_writer(f'out/{style}/{style}_zone.csv')
 
 		headers = RadioZone.create_empty()
 		zone_file.writerow(headers.headers(style))
@@ -151,7 +150,7 @@ class RadioAdditionalData:
 				continue
 			zone_file.writerow(zone.output(style))
 
-		writer.close()
+		zone_file.close()
 
 	def _output_user_d878(self, style):
 		logging.info(f"Writing {style} users")
@@ -159,8 +158,7 @@ class RadioAdditionalData:
 			logging.error(f"No zones list found for {style}.")
 			return
 
-		writer = open(f'out/{style}/{style}_user.csv', 'w+', encoding='utf-8')
-		users_file = csv.writer(writer, lineterminator='\n')
+		users_file = FileUtil.create_radio_writer(f'out/{style}/{style}_user.csv')
 
 		headers = DmrUser.create_empty()
 		users_file.writerow(headers.headers(style))
@@ -169,10 +167,11 @@ class RadioAdditionalData:
 		for user in self._users.values():
 			users_file.writerow(user.output(style))
 			rows_processed += 1
+			logging.debug(f"Writing user row {rows_processed}")
 			if rows_processed % file_util.USER_LINE_LOG_INTERVAL == 0:
 				logging.info(f"Writing user row {rows_processed}")
 
-		writer.close()
+		users_file.close()
 
 	def _output_cs800(self, style):
 		self._output_cs800_channels(style)
@@ -226,6 +225,7 @@ class RadioAdditionalData:
 			dmr_user.number._fmt_val = number
 			dmr_contacts_sheet.append(dmr_user.output(radio_types.CS800))
 			number += 1
+			logging.debug(f"Writing user row {number}")
 			if number % file_util.USER_LINE_LOG_INTERVAL == 0:
 				logging.info(f"Writing user row {number}")
 
