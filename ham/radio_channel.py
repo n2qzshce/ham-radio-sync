@@ -32,7 +32,7 @@ class RadioChannel:
 		self.rx_ctcss.set_alias(radio_types.BAOFENG, 'rToneFreq')
 		self.rx_ctcss.set_alias(radio_types.FTM400, 'CTCSS')
 
-		self.rx_dcs = DataColumn(fmt_name='rx_dcs', fmt_val=cols['rx_dcs'], shape=float)
+		self.rx_dcs = DataColumn(fmt_name='rx_dcs', fmt_val=cols['rx_dcs'], shape=int)
 		self.rx_dcs.set_alias(radio_types.BAOFENG, 'DtcsCode')
 		self.rx_dcs.set_alias(radio_types.FTM400, 'DCS')
 
@@ -44,7 +44,7 @@ class RadioChannel:
 		self.tx_ctcss = DataColumn(fmt_name='tx_ctcss', fmt_val=cols['tx_ctcss'], shape=float)
 		self.tx_ctcss.set_alias(radio_types.BAOFENG, 'cToneFreq')
 
-		self.tx_dcs = DataColumn(fmt_name='tx_dcs', fmt_val=cols['tx_dcs'], shape=float)
+		self.tx_dcs = DataColumn(fmt_name='tx_dcs', fmt_val=cols['tx_dcs'], shape=int)
 
 		self.tx_dcs_invert = DataColumn(fmt_name='tx_dcs_invert', fmt_val=cols['tx_dcs_invert'], shape=bool)
 
@@ -204,7 +204,7 @@ class RadioChannel:
 			tone = 'Tone'
 			if self.rx_ctcss.fmt_val() is not None:
 				tone = 'TSQL'
-		if self.rx_dcs.fmt_val() != '':
+		if self.rx_dcs.fmt_val() is not None:
 			tone = 'DTCS'
 
 		dtcs_polarity = 'NN'
