@@ -4,7 +4,7 @@
 name: Build executeable
 
 env:
-  semver: 1.2.1.${{ github.run_number }}
+  semver: 1.2.2.${{ github.run_number }}
   python-version: 3.8
 
 on:
