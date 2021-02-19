@@ -110,7 +110,7 @@ class RadioAdditionalData:
 			logging.error(f"No DMR ids found for {style}.")
 			return
 
-		radio_id_file = RadioWriter(f'out/{style}/{style}_radioid.csv', '\n')
+		radio_id_file = RadioWriter(f'out/{style}/{style}_radioid.csv', '\r\n')
 
 		headers = DmrId.create_empty()
 		radio_id_file.writerow(headers.headers(style))
@@ -126,7 +126,7 @@ class RadioAdditionalData:
 			logging.error(f"No digital contacts found for {style}.")
 			return
 
-		dmr_contact_file = RadioWriter(f'out/{style}/{style}_talkgroup.csv', '\n')
+		dmr_contact_file = RadioWriter(f'out/{style}/{style}_talkgroup.csv', '\r\n')
 
 		headers = DmrContact.create_empty()
 		dmr_contact_file.writerow(headers.headers(style))
@@ -141,7 +141,7 @@ class RadioAdditionalData:
 			logging.error(f"No zones list found for {style}.")
 			return
 
-		zone_file = RadioWriter(f'out/{style}/{style}_zone.csv', '\n')
+		zone_file = RadioWriter(f'out/{style}/{style}_zone.csv', '\r\n')
 
 		headers = RadioZone.create_empty()
 		zone_file.writerow(headers.headers(style))
