@@ -30,7 +30,9 @@ jobs:
           release_name: Release ${{ env.semver }}
           body: |
             release ${{ env.semver }} description
-            Changelog:
+
+            # Changelog:
+            *
           draft: true
           prerelease: false
   build:
