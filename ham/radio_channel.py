@@ -283,10 +283,13 @@ class RadioChannel:
 				offset_direction = 'Minus'
 
 		tone_mode = 'None'
+		tone = ''
 		if self.tx_ctcss.fmt_val() is not None or self.rx_ctcss.fmt_val() is not None:
+			tone = self.rx_ctcss.fmt_val()
 			if self.tx_ctcss.fmt_val() is not None:
 				tone_mode = 'Tone'
-			if self.tx_ctcss.fmt_val() is not None and self.tx_ctcss.fmt_val() is not None:
+				tone = self.tx_ctcss.fmt_val()
+			if self.tx_ctcss.fmt_val() is not None and self.rx_ctcss.fmt_val() is not None:
 				tone_mode = 'T Sql'
 		if self.rx_dcs.fmt_val() is not None:
 			tone_mode = 'DCS'
@@ -301,7 +304,7 @@ class RadioChannel:
 		output.append(f"{self.medium_name.fmt_val()}")
 		output.append(f"Large")
 		output.append(f"{tone_mode}")
-		output.append(f"{self.rx_ctcss.fmt_val('')}")
+		output.append(f"{tone}")
 		output.append(f"{self.rx_dcs.fmt_val('')}")
 		output.append(f"{self.tx_power.fmt_val('High')}")
 		output.append(f"Off")
