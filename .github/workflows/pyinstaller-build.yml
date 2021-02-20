@@ -4,7 +4,7 @@
 name: Build executeable
 
 env:
-  semver: 1.2.2.${{ github.run_number }}
+  semver: 1.2.3.${{ github.run_number }}
   python-version: 3.8
 
 on:
@@ -53,26 +53,27 @@ jobs:
   release:
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-20.04
-    needs: build
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
     steps:
-    - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-      with:
-        tag_name: ${{ env.semver }}
-        release_name: Release ${{ env.semver }}
-        body: |
-          release ${{ env.semver }} description
-          Changelog:
-        draft: true
-        prerelease: false
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.semver }}
+          release_name: Release ${{ env.semver }}
+          body: |
+            release ${{ env.semver }} description
+
+            # Changelog:
+            *
+          draft: true
+          prerelease: false
   release-assets:
     runs-on: ubuntu-20.04
-    needs: release
+    needs: [build, release]
     strategy:
       matrix:
         short-name: [win, osx]

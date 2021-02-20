@@ -29,7 +29,7 @@ class RadioChannel:
 		self.rx_freq.set_alias(radio_types.CS800, 'Receive Frequency')
 
 		self.rx_ctcss = DataColumn(fmt_name='rx_ctcss', fmt_val=cols['rx_ctcss'], shape=float)
-		self.rx_ctcss.set_alias(radio_types.BAOFENG, 'rToneFreq')
+		self.rx_ctcss.set_alias(radio_types.BAOFENG, 'cToneFreq')
 		self.rx_ctcss.set_alias(radio_types.FTM400, 'CTCSS')
 
 		self.rx_dcs = DataColumn(fmt_name='rx_dcs', fmt_val=cols['rx_dcs'], shape=int)
@@ -42,7 +42,7 @@ class RadioChannel:
 		self.tx_offset.set_alias(radio_types.FTM400, 'Offset Frequency')
 
 		self.tx_ctcss = DataColumn(fmt_name='tx_ctcss', fmt_val=cols['tx_ctcss'], shape=float)
-		self.tx_ctcss.set_alias(radio_types.BAOFENG, 'cToneFreq')
+		self.tx_ctcss.set_alias(radio_types.BAOFENG, 'rToneFreq')
 
 		self.tx_dcs = DataColumn(fmt_name='tx_dcs', fmt_val=cols['tx_dcs'], shape=int)
 
@@ -175,8 +175,8 @@ class RadioChannel:
 		output.append(f"Duplex")
 		output.append(f"{self.tx_offset.get_alias(radio_types.BAOFENG)}")
 		output.append(f"{'Tone'}")
-		output.append(f"{self.rx_ctcss.get_alias(radio_types.BAOFENG)}")
 		output.append(f"{self.tx_ctcss.get_alias(radio_types.BAOFENG)}")
+		output.append(f"{self.rx_ctcss.get_alias(radio_types.BAOFENG)}")
 		output.append(f"{self.rx_dcs.get_alias(radio_types.BAOFENG)}")
 		output.append(f"DtcsPolarity")
 		output.append(f"Mode")
@@ -224,8 +224,8 @@ class RadioChannel:
 		output.append(f"{duplex}")
 		output.append(f"{abs(self.tx_offset.fmt_val(0.0)):.6f}")
 		output.append(f"{tone}")
-		output.append(f"{self.rx_ctcss.fmt_val(67.0):.1f}")
 		output.append(f"{self.tx_ctcss.fmt_val(67.0):.1f}")
+		output.append(f"{self.rx_ctcss.fmt_val(67.0):.1f}")
 		output.append(f"{str(self.rx_dcs.fmt_val(23)).zfill(3)}")
 		output.append(f"{dtcs_polarity}")
 		output.append(f"FM")
@@ -283,10 +283,13 @@ class RadioChannel:
 				offset_direction = 'Minus'
 
 		tone_mode = 'None'
+		tone = ''
 		if self.tx_ctcss.fmt_val() is not None or self.rx_ctcss.fmt_val() is not None:
+			tone = self.rx_ctcss.fmt_val()
 			if self.tx_ctcss.fmt_val() is not None:
 				tone_mode = 'Tone'
-			if self.tx_ctcss.fmt_val() is not None and self.tx_ctcss.fmt_val() is not None:
+				tone = self.tx_ctcss.fmt_val()
+			if self.tx_ctcss.fmt_val() is not None and self.rx_ctcss.fmt_val() is not None:
 				tone_mode = 'T Sql'
 		if self.rx_dcs.fmt_val() is not None:
 			tone_mode = 'DCS'
@@ -301,7 +304,7 @@ class RadioChannel:
 		output.append(f"{self.medium_name.fmt_val()}")
 		output.append(f"Large")
 		output.append(f"{tone_mode}")
-		output.append(f"{self.rx_ctcss.fmt_val('')}")
+		output.append(f"{tone}")
 		output.append(f"{self.rx_dcs.fmt_val('')}")
 		output.append(f"{self.tx_power.fmt_val('High')}")
 		output.append(f"Off")
