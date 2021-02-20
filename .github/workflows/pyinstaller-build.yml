@@ -15,7 +15,7 @@ on:
 
 jobs:
   release:
-    #if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-20.04
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
@@ -72,7 +72,6 @@ jobs:
         name: radio_sync-${{ matrix.short-name }}-${{ env.semver }}
         path: radio_sync-${{ matrix.short-name }}-${{ env.semver }}.zip
   release-assets:
-    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-20.04
     needs: [build, release]
     strategy:
