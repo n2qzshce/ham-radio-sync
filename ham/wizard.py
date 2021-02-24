@@ -1,13 +1,13 @@
 import logging
 import os
 
-from ham import radio_types
+from ham.util import radio_types
 from ham.dmr.dmr_contact import DmrContact
 from ham.dmr.dmr_id import DmrId
 from ham.dmr.dmr_user import DmrUser
-from ham.file_util import FileUtil, RadioWriter
-from ham.radio_channel import RadioChannel
-from ham.radio_zone import RadioZone
+from ham.util.file_util import FileUtil, RadioWriter
+from ham.radio.radio_channel import RadioChannel
+from ham.radio.radio_zone import RadioZone
 
 
 class Wizard(object):

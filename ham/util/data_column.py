@@ -1,12 +1,12 @@
 import logging
 
-from ham import radio_types
+from ham.util import radio_types
 
 
 class DataColumn:
 	_alias_names = dict()
 	_fmt_val = None
-	_shape = None
+	shape = None
 
 	def __init__(self, fmt_name=None, fmt_val=None, shape=None):
 		if shape is None:
@@ -14,7 +14,7 @@ class DataColumn:
 		self._fmt_val = fmt_val
 		self._alias_names = dict()
 		self._alias_names[radio_types.DEFAULT] = fmt_name
-		self._shape = shape
+		self.shape = shape
 
 	def set_alias(self, style, name):
 		self._alias_names[style] = name
@@ -28,4 +28,4 @@ class DataColumn:
 		if self._fmt_val == '':
 			return none_val
 
-		return self._shape(self._fmt_val)
+		return self.shape(self._fmt_val)

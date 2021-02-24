@@ -1,5 +1,5 @@
-from ham import radio_types
-from ham.data_column import DataColumn
+from ham.util import radio_types
+from ham.util.data_column import DataColumn
 
 
 class DmrId:
