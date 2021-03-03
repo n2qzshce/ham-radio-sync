@@ -1,5 +1,6 @@
 import logging
 import csv
+import os
 
 from ham.util import file_util, radio_types
 from ham.dmr.dmr_contact import DmrContact
@@ -19,6 +20,7 @@ class RadioGenerator:
 		self._validator = Validator()
 
 	def generate_all_declared(self):
+		self._validator.flush_names()
 		file_errors = self._validate_files_exist()
 		if len(file_errors) > 0:
 			logging.error("--- FILE MISSING ERRORS, CANNOT CONTINUE ---")
@@ -103,7 +105,7 @@ class RadioGenerator:
 				radio_files[radio].close()
 			additional_data.output(radio)
 
-		logging.info("Radio generator complete")
+		logging.info(f"Radio generator complete. Your output files are in `{os.path.abspath('out')}`")
 		return
 
 	def _validate_files_exist(self):

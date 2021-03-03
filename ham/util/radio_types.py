@@ -15,3 +15,15 @@ def supports_dmr(radio_type):
 	}
 
 	return switch[radio_type]
+
+
+def pretty_name(radio_type):
+	switch = {
+		DEFAULT: 'Default',
+		BAOFENG: 'Baofeng Radios',
+		FTM400: 'Yaesu FTM-400',
+		D878: 'Anytone D878',
+		CS800: 'Connect Systems CS800',
+	}
+
+	return switch[radio_type]

@@ -13,6 +13,7 @@ Currently supported radios:
 * Baofeng uploads via CHiRP
 * Yaesu FTM400 via RT systems application
 * Anytone D8787 via D878UV software
+* Connect Systems CS-800D via Connect Systems software
 
 ### How it works
 This is a command line tool that will get you setting up your radios as quickly
@@ -20,11 +21,17 @@ as possible. Open a command window with `cmd` and navigate to the directory that
 has the executable in it. Running the executable without parameters will display a
 prompt along with explanations of the commands.
 
-Basic command format: `radio_sync.exe --help`
+Basic command format: `radio-sync.exe --help`
+
+There is now also a GUI version of the tool that has all the same features of the
+command line version! This version will be the `radio-sync_gui.exe` file in the
+release package.
+
+##### Windows defender will warn you about opening the GUI version. Click on the `more info` dialogue to run.
 
 ### General requirements
-* You will need some knowledge of how to run a command line application.
-* The executeable should be placed in a directory by itself. This will allow for
+* You may want some knowledge of how to run a command line application.
+* The executable should be placed in a directory by itself. This will allow for
 the `wizard` to create the necessary `in` and `out` folders.
 
     ##### **This program will create folders around it!**

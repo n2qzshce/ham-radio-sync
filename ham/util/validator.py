@@ -18,10 +18,15 @@ class Validator:
 		self._zone_template = RadioZone.create_empty()
 		self._dmr_user_template = DmrUser.create_empty()
 
+		self._short_names = None
+		self._medium_names = None
+		self._long_names = None
+		return
+
+	def flush_names(self):
 		self._short_names = dict()
 		self._medium_names = dict()
 		self._long_names = dict()
-		return
 
 	def validate_dmr_user(self, cols, line_num, file_name):
 		needed_cols_dict_gen = dict(self._dmr_user_template.__dict__)

@@ -4,7 +4,7 @@
 name: Build executeable
 
 env:
-  semver: 1.2.4.${{ github.run_number }}
+  semver: 1.3.0.${{ github.run_number }}
   python-version: 3.8
 
 on:
@@ -38,11 +38,16 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    - name: Build executable
+    - name: Build CLI executable
       run: |
         pyinstaller -F radio_sync.py -n radio_sync-${{ matrix.short-name }}-${{ env.semver }}${{ matrix.exe-extension }}
         ${{ matrix.move-command }} dist/radio_sync-${{ matrix.short-name }}-${{ env.semver }}${{ matrix.exe-extension }} ./
         7z a -tzip radio_sync-${{ matrix.short-name }}-${{ env.semver }}.zip radio_sync-${{ matrix.short-name }}-${{ env.semver }}${{ matrix.exe-extension }}
+    - name: Build GUI executable
+      run: |
+        pyinstaller -w -F radio_sync_gui.py -n radio_sync-${{ matrix.short-name }}_gui-${{ env.semver }}${{ matrix.exe-extension }}
+        ${{ matrix.move-command }} dist/radio_sync-${{ matrix.short-name }}_gui-${{ env.semver }}${{ matrix.exe-extension }} ./
+        7z a -tzip radio_sync-${{ matrix.short-name }}-${{ env.semver }}.zip radio_sync-${{ matrix.short-name }}_gui-${{ env.semver }}${{ matrix.exe-extension }}
     - name: Upload executable
       id: upload_executable
       uses: actions/upload-artifact@v2
