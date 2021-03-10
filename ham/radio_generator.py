@@ -73,6 +73,9 @@ class RadioGenerator:
 			radio_files[radio] = output
 			channel_numbers[radio] = 1
 
+		feed.close()
+		feed = open("in/input.csv", "r")
+		csv_reader = csv.DictReader(feed)
 		logging.info("Processing radio channels")
 		line_num = 1
 		for line in csv_reader:

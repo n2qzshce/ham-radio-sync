@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import threading
 from abc import ABC
 from typing import TextIO
 
@@ -41,21 +42,16 @@ class AsyncWrapper:
 		for button in self.dangerous_buttons:
 			button.update(disabled=self._buttons_disabled or not self.dangerous_ops_checkbox.get())
 
-	def _submit_blocking_task(self, task_func):
-		task = asyncio.create_task(self._async_blocking_task(task_func))
-		task.add_done_callback(self._check_exceptions)
-		return
-
 	def _check_exceptions(self, task: asyncio.Task):
 		try:
 			task.result()
 		except Exception as e:
 			logging.error(f"Fatal error while processing task. PLEASE send this to the project owners.", exc_info=True)
 
-	async def _async_blocking_task(self, task_func):
+	def _submit_blocking_task(self, task_func):
 		logging.info("---Starting task---")
 		self._set_buttons_disabled(True)
-		await task_func()
+		task_func()
 		logging.info("---Task finished---")
 		self.dangerous_ops_checkbox.Update(value=False)
 		self._set_buttons_disabled(False)
@@ -63,19 +59,19 @@ class AsyncWrapper:
 	def wizard_cleanup(self, event):
 		self._submit_blocking_task(self._wizard_cleanup_async)
 
-	async def _wizard_cleanup_async(self):
+	def _wizard_cleanup_async(self):
 		self._wizard.cleanup()
 
 	def wizard_bootstrap(self, event):
 		self._submit_blocking_task(self._wizard_bootstrap_async)
 
-	async def _wizard_bootstrap_async(self):
+	def _wizard_bootstrap_async(self):
 		self._wizard.bootstrap(True)
 
 	def radio_generator(self, event):
 		self._submit_blocking_task(self._radio_generator_async)
 
-	async def _radio_generator_async(self):
+	def _radio_generator_async(self):
 		gen_list = []
 
 		for radio in self.radio_buttons.keys():
@@ -216,17 +212,16 @@ class AppWindow:
 
 	_cycle_time = 0.001
 
-	async def async_run(self):
+	def async_run(self):
 		self.window = PySimpleGUI.Window(title='Ham Radio Sync', layout=self._layout, finalize=True)
 		logging.info("Welcome to the ham radio sync app.")
 
 		while True:
-			await asyncio.sleep(self._cycle_time)
-			event, values = await self.window_read()
+			event, values = self.window.read()
 			if event == PySimpleGUI.WIN_CLOSED:  # if user closes window or clicks cancel
 				break
 
-			self._event_handler.run_hook(event, values)
+			threading.Thread(target=self._event_handler.run_hook, args=(event, values), daemon=True).start()
 
 		self.window.close()
 		return
