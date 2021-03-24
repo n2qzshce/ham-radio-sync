@@ -7,7 +7,7 @@ unpredictable behavior.
 
 At the moment, all fields are case-sensitive and all csv's are required.
 
-###input.csv
+### input.csv
 | **Column Name** | Description |
 |---|---|
 |number|The sequence in your radio, starts at 1.|
@@ -66,9 +66,6 @@ This is the "RT Systems" branded sync software.
 
 ***
 # Known radio issues:
-
-### All radios:
-* Unparseable fields may case an application crash.
 ### FTM400: 
 * The `step` column is not parsed correctly by the RT app.
 ### Baofeng:

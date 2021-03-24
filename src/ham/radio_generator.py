@@ -2,22 +2,43 @@ import logging
 import csv
 import os
 
-from ham.util import file_util, radio_types
-from ham.dmr.dmr_contact import DmrContact
-from ham.dmr.dmr_id import DmrId
-from ham.dmr.dmr_user import DmrUser
-from ham.util.file_util import FileUtil, RadioWriter
-from ham.radio.radio_additional import RadioAdditionalData
-from ham.radio.radio_channel import RadioChannel
-from ham.radio.radio_zone import RadioZone
-from ham.util.validation_error import ValidationError
-from ham.util.validator import Validator
+from src.ham.util import radio_types, file_util
+from src.ham.dmr.dmr_contact import DmrContact
+from src.ham.dmr.dmr_id import DmrId
+from src.ham.dmr.dmr_user import DmrUser
+from src.ham.util.file_util import FileUtil, RadioWriter
+from src.ham.radio.radio_additional import RadioAdditionalData
+from src.ham.radio.radio_channel import RadioChannel
+from src.ham.radio.radio_zone import RadioZone
+from src.ham.util.validation_error import ValidationError
+from src.ham.util.validator import Validator
 
 
 class RadioGenerator:
 	def __init__(self, radio_list):
 		self.radio_list = radio_list
 		self._validator = Validator()
+
+	def info(self):
+		logging.info("""
+		HAM RADIO SYNC GENERATOR
+		Homepage: https://github.com/n2qzshce/ham-radio-sync
+		
+		Purpose: The intent of this program is to generate .csv files to import into various radio applications by using
+		a master set of csv files that have all the relevant information.\n
+		How to use: Start by running the Wizard to generate the `in` directory and `out` directory.
+		For more information about these files, please see:
+			https://github.com/n2qzshce/ham-radio-sync/blob/master/INPUTS_OUTPUTS_SYNCING.md
+			
+		Functions:
+			Cleanup - Will delete the contents of your `in` and `out` directory.
+			Wizard - Creates sample input files to help you get started.
+			Migrate - If you have recently updated ham radio sync, this can add any new columns that may be
+				needed. Migrations will rename your existing files by adding a `.bak` extension. You can run the
+				"migrations cleanup" to remove these files.
+			Create radio plugs - Will generate CSVs to import for the radios you have selected.
+			Debug logging - This will enable chattier logging. Generally only needed if you have been instructed to do so.
+		""")
 
 	def generate_all_declared(self):
 		self._validator.flush_names()

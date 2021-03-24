@@ -6,9 +6,10 @@ from typing import TextIO
 
 from PySimpleGUI import PySimpleGUI, TIMEOUT_EVENT
 
-from ham.radio_generator import RadioGenerator
-from ham.util import radio_types
-from ham.wizard import Wizard
+from src.ham.migration.migration_manager import MigrationManager
+from src.ham.radio_generator import RadioGenerator
+from src.ham.util import radio_types
+from src.ham.wizard import Wizard
 
 
 class AsyncWrapper:
@@ -16,6 +17,7 @@ class AsyncWrapper:
 		self.buttons = []
 		self.dangerous_buttons = []
 		self._wizard = Wizard()
+		self._migrations = MigrationManager()
 		self._radio_generator = RadioGenerator([radio_types.DEFAULT])
 		self.dangerous_ops_checkbox = None
 		self._buttons_disabled = False
@@ -42,19 +44,22 @@ class AsyncWrapper:
 		for button in self.dangerous_buttons:
 			button.update(disabled=self._buttons_disabled or not self.dangerous_ops_checkbox.get())
 
-	def _check_exceptions(self, task: asyncio.Task):
-		try:
-			task.result()
-		except Exception as e:
-			logging.error(f"Fatal error while processing task. PLEASE send this to the project owners.", exc_info=True)
-
 	def _submit_blocking_task(self, task_func):
 		logging.info("---Starting task---")
 		self._set_buttons_disabled(True)
-		task_func()
+		try:
+			task_func()
+		except Exception as e:
+			logging.error(f"Fatal error while processing task. PLEASE send this to the project owners.", exc_info=True)
 		logging.info("---Task finished---")
 		self.dangerous_ops_checkbox.Update(value=False)
 		self._set_buttons_disabled(False)
+
+	def display_about_info(self, event):
+		self._submit_blocking_task(self._display_about_info_async)
+
+	def _display_about_info_async(self):
+		self._radio_generator.info()
 
 	def wizard_cleanup(self, event):
 		self._submit_blocking_task(self._wizard_cleanup_async)
@@ -67,6 +72,18 @@ class AsyncWrapper:
 
 	def _wizard_bootstrap_async(self):
 		self._wizard.bootstrap(True)
+
+	def migrations(self, event):
+		self._submit_blocking_task(self._migrations_async)
+
+	def _migrations_async(self):
+		self._migrations.migrate()
+
+	def migration_backups(self, event):
+		self._submit_blocking_task(self._migration_backups_async)
+
+	def _migration_backups_async(self):
+		self._migrations.remove_backups()
 
 	def radio_generator(self, event):
 		self._submit_blocking_task(self._radio_generator_async)
@@ -98,8 +115,15 @@ class AppWindow:
 		self._event_handler = EventHandler()
 		self._async_wrapper = AsyncWrapper()
 		PySimpleGUI.theme('DarkGrey6')
+
 		button_pool_rows = []
 		layout = []
+		menu = [
+			['File', ['Exit']],
+			['Help', ['About...']]
+		]
+		layout.append([PySimpleGUI.Menu(menu_definition=menu)])
+		self._event_handler.add_hook('About...', self._async_wrapper.display_about_info)
 
 		buttons = []
 		dangerous_buttons = []
@@ -130,7 +154,7 @@ class AppWindow:
 
 		button_pool_rows += radio_button_list
 
-		horizontal_divider = PySimpleGUI.HorizontalSeparator(color='black', pad=(0, (0, 75)))
+		horizontal_divider = PySimpleGUI.HorizontalSeparator(color='black', pad=(0, (0, 50)))
 		button_pool_rows.append([horizontal_divider])
 
 		arm_dangerous_checkbox = PySimpleGUI.Checkbox(
@@ -166,6 +190,30 @@ class AppWindow:
 		button_pool_rows.append([wizard_button])
 		buttons.append(wizard_button)
 		dangerous_buttons.append(wizard_button)
+
+		migrations_button = PySimpleGUI.Button(
+			button_text='Migrate CSV to Latest',
+			size=(20, 2),
+			enable_events=True,
+			disabled=True,
+			tooltip='Adds and renames columns and files for the latest input version.'
+		)
+		self._event_handler.add_hook(migrations_button.get_text(), self._async_wrapper.migrations)
+		button_pool_rows.append([migrations_button])
+		buttons.append(migrations_button)
+		dangerous_buttons.append(migrations_button)
+
+		migration_backups_button = PySimpleGUI.Button(
+			button_text='Remove Migration Backups',
+			size=(20, 2),
+			enable_events=True,
+			disabled=True,
+			tooltip='Removes .bak file extensions from the "in" directory.'
+		)
+		self._event_handler.add_hook(migration_backups_button.get_text(), self._async_wrapper.migration_backups)
+		button_pool_rows.append([migration_backups_button])
+		buttons.append(migration_backups_button)
+		dangerous_buttons.append(migration_backups_button)
 
 		generate_button = PySimpleGUI.Button(
 			button_text='Create Radio Plugs',
@@ -212,14 +260,16 @@ class AppWindow:
 
 	_cycle_time = 0.001
 
-	def async_run(self):
+	async def async_run(self):
 		self.window = PySimpleGUI.Window(title='Ham Radio Sync', layout=self._layout, finalize=True)
-		logging.info("Welcome to the ham radio sync app.")
+		logging.info(f"Welcome to the ham radio sync app.")
 
 		while True:
 			event, values = self.window.read()
-			if event == PySimpleGUI.WIN_CLOSED:  # if user closes window or clicks cancel
+			if event == PySimpleGUI.WIN_CLOSED or event == 'Exit':  # if user closes window or clicks cancel
 				break
+			else:
+				logging.debug(event)
 
 			threading.Thread(target=self._event_handler.run_hook, args=(event, values), daemon=True).start()
 

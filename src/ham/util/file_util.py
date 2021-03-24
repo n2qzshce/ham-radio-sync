@@ -36,3 +36,7 @@ class FileUtil:
 			os.mkdir(dir_name)
 		else:
 			logging.info(f'Directory `{dir_name}` exists, skipping.')
+
+	@classmethod
+	def open_file(cls, file_name, mode):
+		return open(f'{file_name}', f'{mode}', encoding='utf-8', newline='\n')

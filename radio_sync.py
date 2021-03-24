@@ -2,9 +2,10 @@ import argparse
 import logging
 import sys
 
-import ham.util.radio_types
-from ham.radio_generator import RadioGenerator
-from ham.wizard import Wizard
+import src.ham.util.radio_types
+from src.ham.migration.migration_manager import MigrationManager
+from src.ham.radio_generator import RadioGenerator
+from src.ham.wizard import Wizard
 
 
 def main():
@@ -31,6 +32,22 @@ def main():
 	)
 
 	parser.add_argument(
+		'--migrate', '-m',
+		action='store_true',
+		default=False,
+		required=False,
+		help='Safely updates your input files to the latest version.',
+	)
+
+	parser.add_argument(
+		'--migrate_cleanup',
+		action='store_true',
+		default=False,
+		required=False,
+		help='Removes .bak files created during migration process.',
+	)
+
+	parser.add_argument(
 		'--wizard', '-w',
 		action='store_true',
 		default=False,
@@ -49,20 +66,20 @@ def main():
 	parser.add_argument(
 		'--radios', '-r',
 		choices=[
-			ham.util.radio_types.DEFAULT,
-			ham.util.radio_types.BAOFENG,
-			ham.util.radio_types.FTM400,
-			ham.util.radio_types.D878,
-			ham.util.radio_types.CS800,
+			src.ham.util.radio_types.DEFAULT,
+			src.ham.util.radio_types.BAOFENG,
+			src.ham.util.radio_types.FTM400,
+			src.ham.util.radio_types.D878,
+			src.ham.util.radio_types.CS800,
 		],
 		default=[],
 		nargs='+',
 		help=f"""Name of target radios to create.
-		{ham.util.radio_types.DEFAULT} -- This is a replication of the input, primarily used for validation/testing.
-		{ham.util.radio_types.BAOFENG} -- Baofeng UV-5R and F8-HP via CHiRP
-		{ham.util.radio_types.FTM400} -- Yaesu FTM-400 via RT Systems app 
-		{ham.util.radio_types.D878} -- Anytone D878 or D868
-		{ham.util.radio_types.CS800} -- Connect Systems CS800D
+		{src.ham.util.radio_types.DEFAULT} -- This is a replication of the input, primarily used for validation/testing.
+		{src.ham.util.radio_types.BAOFENG} -- Baofeng UV-5R and F8-HP via CHiRP
+		{src.ham.util.radio_types.FTM400} -- Yaesu FTM-400 via RT Systems app 
+		{src.ham.util.radio_types.D878} -- Anytone D878 or D868
+		{src.ham.util.radio_types.CS800} -- Connect Systems CS800D
 		"""
 	)
 
@@ -94,6 +111,18 @@ def main():
 		logging.info("Running wizard.")
 		wizard = Wizard()
 		wizard.bootstrap(arg_values.force)
+		op_performed = True
+
+	if arg_values.migrate:
+		logging.info("Running migration")
+		migrations = MigrationManager()
+		migrations.migrate()
+		op_performed = True
+
+	if arg_values.migrate_cleanup:
+		logging.info("Running migration")
+		migrations = MigrationManager()
+		migrations.remove_backups()
 		op_performed = True
 
 	if len(arg_values.radios) > 0:

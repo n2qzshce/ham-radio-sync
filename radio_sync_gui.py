@@ -3,7 +3,7 @@ import logging
 import os
 import sys
 
-from ui.app_window import AppWindow
+from src.ui.app_window import AppWindow
 
 
 def setup_logger():
@@ -25,7 +25,6 @@ def setup_logger():
 
 async def main():
 	setup_logger()
-	# kivy does some janky logging, so any logs that get put before this point are likely to get gobbled up.
 	app_window = AppWindow()
 	await app_window.async_run()
 

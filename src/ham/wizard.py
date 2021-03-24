@@ -1,13 +1,13 @@
 import logging
 import os
 
-from ham.util import radio_types
-from ham.dmr.dmr_contact import DmrContact
-from ham.dmr.dmr_id import DmrId
-from ham.dmr.dmr_user import DmrUser
-from ham.util.file_util import FileUtil, RadioWriter
-from ham.radio.radio_channel import RadioChannel
-from ham.radio.radio_zone import RadioZone
+from src.ham.util import radio_types
+from src.ham.dmr.dmr_contact import DmrContact
+from src.ham.dmr.dmr_id import DmrId
+from src.ham.dmr.dmr_user import DmrUser
+from src.ham.util.file_util import FileUtil, RadioWriter
+from src.ham.radio.radio_channel import RadioChannel
+from src.ham.radio.radio_zone import RadioZone
 
 
 class Wizard(object):
@@ -65,9 +65,9 @@ class Wizard(object):
 		}, digital_contacts=None, dmr_ids=None)
 		second_channel = RadioChannel({
 			'number': '2',
-			'name': 'Colcon Denver',
-			'medium_name': 'ConDenvr',
-			'short_name': 'CONDENV',
+			'name': 'Basic Repeater',
+			'medium_name': 'BasicRpt',
+			'short_name': 'BASRPTR',
 			'zone_id': '1',
 			'rx_freq': '145.310',
 			'rx_ctcss': '',
