@@ -1,124 +1,93 @@
-import asyncio
-import logging
 from abc import ABC
 from typing import TextIO
 
 from kivy.app import App
 from kivy.core.window import Window
-from kivy.uix.anchorlayout import AnchorLayout
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
-from kivy.uix.checkbox import CheckBox
-from kivy.uix.label import Label
-from kivy.uix.textinput import TextInput
+from kivy.lang import Builder
 
-from src.ham.migration.migration_manager import MigrationManager
-from src.ham.radio_generator import RadioGenerator
-from src.ham.util import radio_types
-from src.ham.wizard import Wizard
+from src.ui.async_wrapper import AsyncWrapper
 
-
-class AsyncWrapper:
-	def __init__(self):
-		self.buttons = []
-		self.dangerous_buttons = []
-		self._wizard = Wizard()
-		self._migrations = MigrationManager()
-		self._radio_generator = RadioGenerator([radio_types.DEFAULT])
-		self.dangerous_ops_checkbox = None
-		self._buttons_disabled = False
-		self.radio_buttons = dict()
-		return
-
-	def arm_dangerous(self, *args):
-		if self.dangerous_ops_checkbox.active:
-			logging.warning("Dangerous operations enabled. Have you backed up your input CSVs?")
-		else:
-			logging.info("Dangerous operations disabled")
-		self._refresh_buttons()
-
-	def _set_buttons_disabled(self, bool_val):
-		self._buttons_disabled = bool_val
-		self._refresh_buttons()
-		return
-
-	def _refresh_buttons(self):
-		for button in self.buttons:
-			button.disabled = self._buttons_disabled
-
-		for button in self.dangerous_buttons:
-			button.disabled = self._buttons_disabled or not self.dangerous_ops_checkbox.active
-
-	def _submit_blocking_task(self, task_func):
-		task = asyncio.create_task(self._async_blocking_task(task_func))
-		task.add_done_callback(self._check_exceptions)
-		return
-
-	def _check_exceptions(self, task: asyncio.Task):
-		try:
-			task.result()
-		except Exception as e:
-			logging.error(f"Fatal error while processing task. PLEASE send this to the project owners.", exc_info=True)
-
-	async def _async_blocking_task(self, task_func):
-		logging.info("---Starting task---")
-		self._set_buttons_disabled(True)
-		await task_func()
-		logging.info("---Task finished---")
-		self.dangerous_ops_checkbox.active = False
-		self._set_buttons_disabled(False)
-
-	def display_about_info(self, event):
-		self._submit_blocking_task(self._display_about_info_async)
-
-	async def _display_about_info_async(self):
-		self._radio_generator.info()
-
-	def wizard_cleanup(self, event):
-		self._submit_blocking_task(self._wizard_cleanup_async)
-
-	async def _wizard_cleanup_async(self):
-		self._wizard.cleanup()
-
-	def wizard_bootstrap(self, button):
-		self._submit_blocking_task(self._wizard_bootstrap_async)
-
-	async def _wizard_bootstrap_async(self):
-		self._wizard.bootstrap(True)
-
-	def migrations(self, event):
-		self._submit_blocking_task(self._migrations_async)
-
-	async def _migrations_async(self):
-		self._migrations.migrate()
-
-	def migration_backups(self, event):
-		self._submit_blocking_task(self._migration_backups_async)
-
-	async def _migration_backups_async(self):
-		self._migrations.remove_backups()
-
-	def radio_generator(self, event):
-		self._submit_blocking_task(self._radio_generator_async)
-
-	async def _radio_generator_async(self):
-		gen_list = []
-
-		for radio in self.radio_buttons.keys():
-			if self.radio_buttons[radio].active:
-				gen_list.append(radio)
-
-		self._radio_generator.radio_list = gen_list
-		self._radio_generator.generate_all_declared()
-
-	def log_level(self, _, value):
-		if value:
-			logging.root.setLevel(logging.DEBUG)
-			logging.debug("Debug logging enabled.")
-		else:
-			logging.root.setLevel(logging.INFO)
-			logging.debug("Debug logging disabled")
-			logging.info("Debug logging disabled")
+kv = """
+FloatLayout:
+	id: layout
+	AppMenu:
+		id: app_menu
+		top: root.height
+		cancel_handler_widget: layout
+		
+		AppMenuTextItem:
+			text: "File"
+			ContextMenu:
+				ContextMenuTextItem:
+					text: "Exit"
+		AppMenuTextItem:
+			text: "Dangerous Operations"
+			ContextMenu:
+				ContextMenuTextItem:
+					text: "Cleanup"
+				ContextMenuTextItem:
+					text: "Wizard"
+				ContextMenuTextItem:
+					text: "Migrate to latest format"
+				ContextMenuTextItem:
+					text: "Remove migration backups"
+		AppMenuTextItem:
+			text: "Help"
+			ContextMenu:
+				ContextMenuTextItem:
+					text: "About..."
+	BoxLayout:
+		orientation: "horizontal"
+		BoxLayout:
+			id: button_pool
+			orientation: "vertical"
+			spacing: 10
+			size_hint: (0.2, 1)
+			padding: [15, 15, 15, 15]
+			size_hint_min_x: 200
+			size_hint_max_x: 250
+			BoxLayout:
+				id: radio_labels
+				orientation: "vertical"
+				spacing: 10
+				size_hint: (1, 0.2)
+				padding: [15, 15, 15, 15]
+				Label:
+					id: radio_header
+					text: "Radios"
+					size_hint: (0.8, 0.125)
+					text_size: [150, None]
+					font_size: 15
+					bold: True
+					halign: "left"
+					size_hint_min_x: 150
+			BoxLayout:
+				id: buffer
+				orientation: "horizontal"
+				size_hint: (1.0, 0.25)
+			BoxLayout:
+				id: enable_dangerous
+				orientation: "horizontal"
+				size_hint: (1.0, 0.2)
+				Label:
+					text: "Enable Dangerous Operations"
+					size_hint: (0.8, 1)
+					font_size: 11
+				CheckBox:
+					size_hint: (0.2, 1)
+			Button:
+				text: "Create radio plugs"
+				size_hint: (1, 0.125)
+		AnchorLayout:
+			size_hint: (0.8, 0.9)
+			TextInput:
+				id: log_output
+				font_name: 'RobotoMono-Regular'
+				text: ''
+				size_hint: (1, 1)
+				readonly: True
+				font_size: 11
+"""
 
 
 class AppWindow(App):
@@ -126,6 +95,13 @@ class AppWindow(App):
 	_async_wrapper = None
 
 	def build(self):
+		self._async_wrapper = AsyncWrapper()
+		Window.clearcolor = (0.15, 0.15, 0.15, 1)
+		layout = Builder.load_string(kv)
+
+		return layout
+
+	def build_old(self):
 		# debug logging
 		# cleanup
 		# wizard bootstrap
@@ -254,6 +230,7 @@ class AppWindow(App):
 		self._async_wrapper.dangerous_ops_checkbox = arm_dangerous_checkbox
 		self._async_wrapper.arm_dangerous(None)
 		return layout
+
 
 
 class TextBoxHandler(TextIO, ABC):
