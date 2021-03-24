@@ -4,8 +4,9 @@
 name: Build executeable
 
 env:
-  semver: 1.4.0.${{ github.run_number }}
+  semver: 1.5.0.${{ github.run_number }}
   python-version: 3.8
+  KIVY_GL_BACKEND: 'angle_sdl2'
 
 on:
   pull_request:
@@ -17,6 +18,7 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         os: [windows-2019, macos-10.15]
         include:
@@ -25,7 +27,7 @@ jobs:
             short-name: win
             move-command: move
           - os: macos-10.15
-            exe-extension:
+            exe-extension: .app
             short-name: osx
             move-command: mv
     steps:
@@ -41,16 +43,16 @@ jobs:
     - name: Run Tests
       run: |
         python -m unittest discover test "*_test.py"
+    - name: Build GUI executable
+      run: |
+        pyinstaller radio_sync_gui_${{ matrix.short-name }}.spec
+        ${{ matrix.move-command }} dist/radio_sync_gui${{ matrix.exe-extension }} radio_sync-${{ matrix.short-name }}_gui-${{ env.semver }}${{ matrix.exe-extension }}
+        7z a -tzip radio_sync-${{ matrix.short-name }}-${{ env.semver }}.zip radio_sync-${{ matrix.short-name }}_gui-${{ env.semver }}${{ matrix.exe-extension }}
     - name: Build CLI executable
       run: |
         pyinstaller -F radio_sync.py -n radio_sync-${{ matrix.short-name }}-${{ env.semver }}${{ matrix.exe-extension }}
         ${{ matrix.move-command }} dist/radio_sync-${{ matrix.short-name }}-${{ env.semver }}${{ matrix.exe-extension }} ./
         7z a -tzip radio_sync-${{ matrix.short-name }}-${{ env.semver }}.zip radio_sync-${{ matrix.short-name }}-${{ env.semver }}${{ matrix.exe-extension }}
-    - name: Build GUI executable
-      run: |
-        pyinstaller -w -F radio_sync_gui.py -n radio_sync-${{ matrix.short-name }}_gui-${{ env.semver }}${{ matrix.exe-extension }}
-        ${{ matrix.move-command }} dist/radio_sync-${{ matrix.short-name }}_gui-${{ env.semver }}${{ matrix.exe-extension }} ./
-        7z a -tzip radio_sync-${{ matrix.short-name }}-${{ env.semver }}.zip radio_sync-${{ matrix.short-name }}_gui-${{ env.semver }}${{ matrix.exe-extension }}
     - name: Upload executable
       id: upload_executable
       uses: actions/upload-artifact@v2
