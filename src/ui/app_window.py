@@ -1,89 +1,86 @@
+import logging
 from abc import ABC
 from typing import TextIO
 
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.lang import Builder
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.checkbox import CheckBox
+from kivy.uix.label import Label
 
+from src.ham.util import radio_types
 from src.ui.async_wrapper import AsyncWrapper
 
 kv = """
-FloatLayout:
-	id: layout
-	AppMenu:
-		id: app_menu
-		top: root.height
-		cancel_handler_widget: layout
-		
-		AppMenuTextItem:
-			text: "File"
-			ContextMenu:
-				ContextMenuTextItem:
+BoxLayout:
+	orientation: "vertical"
+	ActionBar:
+		ActionView:
+			ActionPrevious:
+				title: 'Ham Radio Sync'
+				with_previous: False
+				enabled: False
+			ActionButton:
+				id: create_radio_plugs
+				text: "Create Radio Plugs"
+			ActionToggleButton:
+				id: enable_dangerous
+				text: "Enable Dangerous Operations"
+			ActionSeparator:
+				important: True
+			ActionGroup:
+				text: "File"
+				mode: "spinner"
+				ActionButton:
 					text: "Exit"
-		AppMenuTextItem:
-			text: "Dangerous Operations"
-			ContextMenu:
-				ContextMenuTextItem:
+			ActionGroup:
+				text: "Dangerous Operations"
+				mode: "spinner"
+				dropdown_width: 225
+				ActionButton:
 					text: "Cleanup"
-				ContextMenuTextItem:
+				ActionButton:
 					text: "Wizard"
-				ContextMenuTextItem:
+				ActionButton:
 					text: "Migrate to latest format"
-				ContextMenuTextItem:
+				ActionButton:
 					text: "Remove migration backups"
-		AppMenuTextItem:
-			text: "Help"
-			ContextMenu:
-				ContextMenuTextItem:
+			ActionGroup:
+				text: "Help"
+				mode: "spinner"
+				ActionButton:
 					text: "About..."
 	BoxLayout:
 		orientation: "horizontal"
-		BoxLayout:
+		StackLayout:
 			id: button_pool
-			orientation: "vertical"
 			spacing: 10
 			size_hint: (0.2, 1)
 			padding: [15, 15, 15, 15]
 			size_hint_min_x: 200
 			size_hint_max_x: 250
+			Label:
+				id: radio_header
+				text: "Radios"
+				size_hint: (1.0, 0.1)
+				font_size: 15
+				bold: True
 			BoxLayout:
 				id: radio_labels
 				orientation: "vertical"
 				spacing: 10
-				size_hint: (1, 0.2)
-				padding: [15, 15, 15, 15]
-				Label:
-					id: radio_header
-					text: "Radios"
-					size_hint: (0.8, 0.125)
-					text_size: [150, None]
-					font_size: 15
-					bold: True
-					halign: "left"
-					size_hint_min_x: 150
+				size_hint: (1, 0.4)
 			BoxLayout:
 				id: buffer
-				orientation: "horizontal"
-				size_hint: (1.0, 0.25)
-			BoxLayout:
-				id: enable_dangerous
-				orientation: "horizontal"
-				size_hint: (1.0, 0.2)
-				Label:
-					text: "Enable Dangerous Operations"
-					size_hint: (0.8, 1)
-					font_size: 11
-				CheckBox:
-					size_hint: (0.2, 1)
-			Button:
-				text: "Create radio plugs"
-				size_hint: (1, 0.125)
+				orientation: "vertical"
+				size_hint: (1, 0.2)
 		AnchorLayout:
-			size_hint: (0.8, 0.9)
+			size_hint: (0.8, 1)
 			TextInput:
 				id: log_output
 				font_name: 'RobotoMono-Regular'
-				text: ''
+				text: 'lorem\\nipsum'
 				size_hint: (1, 1)
 				readonly: True
 				font_size: 11
@@ -96,8 +93,52 @@ class AppWindow(App):
 
 	def build(self):
 		self._async_wrapper = AsyncWrapper()
-		Window.clearcolor = (0.15, 0.15, 0.15, 1)
 		layout = Builder.load_string(kv)
+		Window.size = (1200, 500)
+		Window.clearcolor = (0.15, 0.15, 0.15, 1)
+
+		button_pool = layout.ids['radio_labels']
+
+		radio_select_buttons = dict()
+		radios = [
+			radio_types.DEFAULT,
+			radio_types.D878,
+			radio_types.BAOFENG,
+			radio_types.CS800,
+			radio_types.FTM400,
+		]
+
+		for radio in radios:
+			radio_layout = BoxLayout(orientation='horizontal', size_hint=(1, 0.1))
+
+			radio_label = Label(text=radio_types.pretty_name(radio), size_hint=(0.8, 1), font_size=11, halign='left')
+			radio_label.size_hint_min_x = 150
+			radio_checkbox = CheckBox(size_hint=(0.2, 1))
+			radio_checkbox.active = radio == radio_types.DEFAULT
+
+			radio_layout.add_widget(radio_label)
+			radio_layout.add_widget(radio_checkbox)
+
+			radio_select_buttons[radio] = radio_checkbox
+			button_pool.add_widget(radio_layout)
+
+			radio_label.text_size = [150, None]
+		self._async_wrapper.radio_buttons = radio_select_buttons
+
+		text_log = layout.ids['log_output']
+		self.text_log = text_log
+
+		logger = logging.getLogger('radio_sync')
+		formatter = logging.Formatter(
+			fmt='%(asctime)s.%(msecs)03d %(levelname)7s %(filename).6s:%(lineno)3s:  %(message)s',
+			datefmt="%Y-%m-%d %H:%M:%S"
+		)
+
+		text_box_logger = TextBoxHandler(self.text_log)
+		handler = logging.StreamHandler(stream=text_box_logger)
+		handler.setFormatter(formatter)
+		logger.setLevel(logging.INFO)
+		logger.addHandler(handler)
 
 		return layout
 
@@ -132,21 +173,6 @@ class AppWindow(App):
 		radio_header.size_hint_min_x = 150
 
 		button_pool.add_widget(radio_header)
-		for radio in radios:
-			radio_layout = BoxLayout(orientation='horizontal', size_hint=(1, 0.1))
-
-			radio_label = Label(text=radio_types.pretty_name(radio), size_hint=(0.8, 1), font_size=11, halign='left')
-			radio_label.size_hint_min_x = 150
-			radio_checkbox = CheckBox(size_hint=(0.2, 1))
-			radio_checkbox.active = radio == radio_types.DEFAULT
-
-			radio_layout.add_widget(radio_label)
-			radio_layout.add_widget(radio_checkbox)
-
-			radio_select_buttons[radio] = radio_checkbox
-			button_pool.add_widget(radio_layout)
-
-			radio_label.text_size = [150, None]
 
 		self._async_wrapper.radio_buttons = radio_select_buttons
 		empty_buffer = BoxLayout(orientation='horizontal', size_hint=(1, 0.25))
@@ -196,16 +222,6 @@ class AppWindow(App):
 		layout.add_widget(log_output)
 
 		self.text_log = text_log
-
-		logger = logging.getLogger('radio_sync')
-		formatter = logging.Formatter(
-			fmt='%(asctime)s.%(msecs)03d %(levelname)7s %(filename).6s:%(lineno)3s:  %(message)s',
-			datefmt="%Y-%m-%d %H:%M:%S"
-		)
-
-		text_box_logger = TextBoxHandler(self.text_log)
-		handler = logging.StreamHandler(stream=text_box_logger)
-		handler.setFormatter(formatter)
 
 		debugger_layout = BoxLayout(orientation='horizontal', size_hint=(1, 0.1))
 
