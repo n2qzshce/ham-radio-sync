@@ -108,18 +108,18 @@ class AppWindow(App):
 	force_debug = False
 
 	def build(self):
+
+		self.icon = './radio_sync.ico'
 		if hasattr(sys, '_MEIPASS'):
 			logging.info("Has _MEIPASS")
-			# resource_add_path(os.path.join(sys._MEIPASS))
-			bundle_dir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
-			resource_add_path(bundle_dir)
+			resource_add_path(os.path.join(sys._MEIPASS))
+			self.icon = os.path.join(sys._MEIPASS, 'radio_sync.ico')
 
 		self._async_wrapper = AsyncWrapper()
 		layout = Builder.load_string(kv)
 		Window.size = (1200, 500)
 		Window.clearcolor = (0.15, 0.15, 0.15, 1)
 
-		self.icon = './radio_sync.ico'
 		self.title = 'Ham Radio Sync'
 
 		self._bind_radio_menu(layout)
