@@ -5,9 +5,6 @@ import os
 import sys
 
 
-os.environ['KIVY_NO_ARGS'] = '1'
-
-
 def setup_logger():
 	os.environ["KIVY_NO_CONSOLELOG"] = "1"
 	os.environ["KIVY_NO_FILELOG"] = "1"
