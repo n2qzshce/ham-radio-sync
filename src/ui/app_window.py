@@ -109,6 +109,7 @@ class AppWindow(App):
 
 	def build(self):
 		if hasattr(sys, '_MEIPASS'):
+			logging.info("Has _MEIPASS")
 			resource_add_path(os.path.join(sys._MEIPASS))
 
 		self._async_wrapper = AsyncWrapper()
@@ -116,7 +117,7 @@ class AppWindow(App):
 		Window.size = (1200, 500)
 		Window.clearcolor = (0.15, 0.15, 0.15, 1)
 
-		self.icon = 'radio_sync.ico'
+		self.icon = './radio_sync.ico'
 		self.title = 'Ham Radio Sync'
 
 		self._bind_radio_menu(layout)
