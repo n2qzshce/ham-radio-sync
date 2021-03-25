@@ -32,5 +32,4 @@ exe = EXE(pyz,
           upx=True,
           upx_exclude=[],
           runtime_tmpdir=None,
-          console=False,
-          icon='radio_sync.ico' )
+          console=False , icon='radio_sync.ico')

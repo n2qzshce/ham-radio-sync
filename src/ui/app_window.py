@@ -110,7 +110,9 @@ class AppWindow(App):
 	def build(self):
 		if hasattr(sys, '_MEIPASS'):
 			logging.info("Has _MEIPASS")
-			resource_add_path(os.path.join(sys._MEIPASS))
+			# resource_add_path(os.path.join(sys._MEIPASS))
+			bundle_dir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
+			resource_add_path(bundle_dir)
 
 		self._async_wrapper = AsyncWrapper()
 		layout = Builder.load_string(kv)
