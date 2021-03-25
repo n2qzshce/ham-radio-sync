@@ -1,10 +1,13 @@
 import logging
+import os
+import sys
 from abc import ABC
 from typing import TextIO
 
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.lang import Builder
+from kivy.resources import resource_add_path
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.checkbox import CheckBox
 from kivy.uix.label import Label
@@ -21,6 +24,7 @@ BoxLayout:
 				title: 'Ham Radio Sync'
 				with_previous: False
 				enabled: False
+				app_icon: 'radio_sync.ico'
 			ActionButton:
 				id: create_radio_plugs
 				text: "Create Radio Plugs"
@@ -55,11 +59,12 @@ BoxLayout:
 			ActionGroup:
 				text: "Help"
 				mode: "spinner"
-				dropdown_width: 200
+				dropdown_width: 150
 				ActionToggleButton:
 					id: debug_toggle
-					text: "Enable debug logging"
+					text: "Debug logging"
 				ActionButton:
+					id: about
 					text: "About..."
 	BoxLayout:
 		orientation: "horizontal"
@@ -103,10 +108,16 @@ class AppWindow(App):
 	force_debug = False
 
 	def build(self):
+		if hasattr(sys, '_MEIPASS'):
+			resource_add_path(os.path.join(sys._MEIPASS))
+
 		self._async_wrapper = AsyncWrapper()
 		layout = Builder.load_string(kv)
 		Window.size = (1200, 500)
 		Window.clearcolor = (0.15, 0.15, 0.15, 1)
+
+		self.icon = 'radio_sync.ico'
+		self.title = 'Ham Radio Sync'
 
 		self._bind_radio_menu(layout)
 		self._bind_console_log(layout)
@@ -151,6 +162,9 @@ class AppWindow(App):
 
 			radio_label.text_size = [150, None]
 		self._async_wrapper.radio_buttons = radio_select_buttons
+
+		create_button = layout.ids['create_radio_plugs']
+		create_button.bind(on_press=self._async_wrapper.radio_generator)
 
 	def _bind_console_log(self, layout):
 		text_log = layout.ids['log_output']
@@ -201,6 +215,10 @@ class AppWindow(App):
 		debug_button = layout.ids['debug_toggle']
 		self._async_wrapper.debug_toggle = debug_button
 		debug_button.bind(on_press=self._async_wrapper.log_level)
+
+		about_button = layout.ids['about']
+		about_button.bind(on_press=self._async_wrapper.display_about_info)
+
 
 class TextBoxHandler(TextIO, ABC):
 	def __init__(self, text_log):
