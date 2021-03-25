@@ -113,8 +113,12 @@ class AppWindow(App):
 		if hasattr(sys, '_MEIPASS'):
 			logging.info("Has _MEIPASS")
 			logging.info(os.listdir(sys._MEIPASS))
+			icon_path = os.path.join(sys._MEIPASS, 'radio_sync.ico')
+			logging.info(f"Icon path: `{icon_path}`")
+			if os.path.exists(icon_path):
+				logging.info("Icon path exists")
 			resource_add_path(os.path.join(sys._MEIPASS))
-			self.icon = os.path.join(sys._MEIPASS, 'radio_sync.ico')
+			self.icon = 'data:radio_sync.ico'
 
 		self._async_wrapper = AsyncWrapper()
 		layout = Builder.load_string(kv)
