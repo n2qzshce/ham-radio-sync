@@ -112,6 +112,7 @@ class AppWindow(App):
 		self.icon = './radio_sync.ico'
 		if hasattr(sys, '_MEIPASS'):
 			logging.info("Has _MEIPASS")
+			logging.info(os.listdir(sys._MEIPASS))
 			resource_add_path(os.path.join(sys._MEIPASS))
 			self.icon = os.path.join(sys._MEIPASS, 'radio_sync.ico')
 
