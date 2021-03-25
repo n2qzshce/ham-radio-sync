@@ -33,22 +33,31 @@ BoxLayout:
 				text: "File"
 				mode: "spinner"
 				ActionButton:
+					id: exit_button
 					text: "Exit"
 			ActionGroup:
 				text: "Dangerous Operations"
 				mode: "spinner"
+				id: dangerous_operations
 				dropdown_width: 225
 				ActionButton:
+					id: dangerous_operations.cleanup
 					text: "Cleanup"
 				ActionButton:
+					id: dangerous_operations.wizard
 					text: "Wizard"
 				ActionButton:
+					id: dangerous_operations.migrate
 					text: "Migrate to latest format"
 				ActionButton:
+					id: dangerous_operations.delete_migrate
 					text: "Remove migration backups"
 			ActionGroup:
 				text: "Help"
 				mode: "spinner"
+				dropdown_width: 200
+				ActionToggleButton:
+					text: "Enable debug logging"
 				ActionButton:
 					text: "About..."
 	BoxLayout:
@@ -97,6 +106,21 @@ class AppWindow(App):
 		Window.size = (1200, 500)
 		Window.clearcolor = (0.15, 0.15, 0.15, 1)
 
+		self._bind_radio_menu(layout)
+		self._bind_console_log(layout)
+		self._bind_file_menu(layout)
+		self._bind_dangerous_ops_menu(layout)
+
+		create_radio_button = layout.ids['create_radio_plugs']
+		dangerous_ops_button = layout.ids['enable_dangerous']
+		dangerous_ops_menu = layout.ids['dangerous_operations']
+		buttons = [create_radio_button, dangerous_ops_button, dangerous_ops_menu]
+		self._async_wrapper.buttons = buttons
+
+		logging.info("Welcome to the ham radio sync app.")
+		return layout
+
+	def _bind_radio_menu(self, layout):
 		button_pool = layout.ids['radio_labels']
 
 		radio_select_buttons = dict()
@@ -125,6 +149,7 @@ class AppWindow(App):
 			radio_label.text_size = [150, None]
 		self._async_wrapper.radio_buttons = radio_select_buttons
 
+	def _bind_console_log(self, layout):
 		text_log = layout.ids['log_output']
 		self.text_log = text_log
 
@@ -137,116 +162,33 @@ class AppWindow(App):
 		text_box_logger = TextBoxHandler(self.text_log)
 		handler = logging.StreamHandler(stream=text_box_logger)
 		handler.setFormatter(formatter)
-		logger.setLevel(logging.INFO)
+		logger.setLevel(logging.DEBUG)
 		logger.addHandler(handler)
 
-		return layout
+	def _bind_file_menu(self, layout):
+		exit_button = layout.ids['exit_button']
+		exit_button.bind(on_press=self.stop)
 
-	def build_old(self):
-		# debug logging
-		# cleanup
-		# wizard bootstrap
-		# generate all declared
-		# help page
-		# Window.clearcolor = (0.15, 0.15, 0.15, 1)
-		buttons = []
-		dangerous_buttons = []
-		self._async_wrapper = AsyncWrapper()
+	def _bind_dangerous_ops_menu(self, layout):
+		dangerous_ops_button = layout.ids['enable_dangerous']
+		dangerous_ops_button.bind(on_press=self._async_wrapper.arm_dangerous)
+		self._async_wrapper.dangerous_ops_toggle = dangerous_ops_button
 
-		layout = BoxLayout(orientation='horizontal')
+		dangerous_ops_menu = layout.ids['dangerous_operations']
+		self._async_wrapper.dangerous_buttons = [dangerous_ops_menu]
+		dangerous_ops_menu.disabled = False
 
-		button_pool = BoxLayout(spacing=10, orientation='vertical', size_hint=(0.2, 1), padding=[15, 15, 15, 15])
-		button_pool.size_hint_min_x = 200
-		button_pool.size_hint_max_x = 250
+		cleanup_button = layout.ids['dangerous_operations.cleanup']
+		cleanup_button.bind(on_press=self._async_wrapper.wizard_cleanup)
 
-		radio_select_buttons = dict()
-		radios = [
-			radio_types.DEFAULT,
-			radio_types.D878,
-			radio_types.BAOFENG,
-			radio_types.CS800,
-			radio_types.FTM400,
-		]
+		wizard_button = layout.ids['dangerous_operations.wizard']
+		wizard_button.bind(on_press=self._async_wrapper.wizard_bootstrap)
 
-		radio_header = Label(text='Radio List', size_hint=(0.8, 0.125), font_size=15, bold=True, halign='left')
-		radio_header.text_size = [150, None]
-		radio_header.size_hint_min_x = 150
+		migrate_button = layout.ids['dangerous_operations.migrate']
+		migrate_button.bind(on_press=self._async_wrapper.migrations)
 
-		button_pool.add_widget(radio_header)
-
-		self._async_wrapper.radio_buttons = radio_select_buttons
-		empty_buffer = BoxLayout(orientation='horizontal', size_hint=(1, 0.25))
-		button_pool.add_widget(empty_buffer)
-
-		arm_dangerous_layout = BoxLayout(orientation='horizontal', size_hint=(1, 0.125))
-		arm_dangerous_label = Label(text='Enable Dangerous Operations', size_hint=(0.8, 1), font_size=11)
-		arm_dangerous_checkbox = CheckBox(size_hint=(0.2, 1))
-		arm_dangerous_layout.add_widget(arm_dangerous_label)
-		arm_dangerous_layout.add_widget(arm_dangerous_checkbox)
-		button_pool.add_widget(arm_dangerous_layout)
-
-		cleanup_button = Button(text='Run Cleanup', size_hint=(1, 0.125), on_press=self._async_wrapper.wizard_cleanup)
-		button_pool.add_widget(cleanup_button)
-		buttons.append(cleanup_button)
-		dangerous_buttons.append(cleanup_button)
-
-		wizard = Button(text='Run Setup Wizard', size_hint=(1, 0.125), on_press=self._async_wrapper.wizard_bootstrap)
-		button_pool.add_widget(wizard)
-		buttons.append(wizard)
-		dangerous_buttons.append(wizard)
-
-		migrate = Button(text='Migrate CSV to Latest', size_hint=(1, 0.125), on_press=self._async_wrapper.migrations)
-		button_pool.add_widget(migrate)
-		buttons.append(migrate)
-		dangerous_buttons.append(migrate)
-
-		migrate_del_backups = Button(text='Remove Migration Backups', size_hint=(1, 0.125), on_press=self._async_wrapper.migration_backups)
-		button_pool.add_widget(migrate_del_backups)
-		buttons.append(migrate_del_backups)
-		dangerous_buttons.append(migrate_del_backups)
-
-		generate = Button(text='Create radio plugs', size_hint=(1, 0.125), on_press=self._async_wrapper.radio_generator)
-		button_pool.add_widget(generate)
-		buttons.append(generate)
-
-		help_btn = Button(text='Help', size_hint=(1, 0.125), on_press=self._async_wrapper.display_about_info)
-		button_pool.add_widget(help_btn)
-		buttons.append(help_btn)
-
-		log_output = AnchorLayout(size_hint=(0.8, 1))
-
-		text_log = TextInput(font_name='RobotoMono-Regular', text='', size_hint=(1, 1), readonly=True, font_size=11)
-		log_output.add_widget(text_log)
-
-		layout.add_widget(button_pool)
-		layout.add_widget(log_output)
-
-		self.text_log = text_log
-
-		debugger_layout = BoxLayout(orientation='horizontal', size_hint=(1, 0.1))
-
-		debugger_label = Label(text='Verbose logging', size_hint=(0.8, 1), font_size=11, halign='left')
-		debugger_checkbox = CheckBox(size_hint=(0.2, 1))
-		debugger_checkbox.bind(active=self._async_wrapper.log_level)
-		debugger_checkbox.active = False
-
-		debugger_layout.add_widget(debugger_label)
-		debugger_layout.add_widget(debugger_checkbox)
-		button_pool.add_widget(debugger_layout)
-
-		logger.setLevel(logging.INFO)
-		logger.addHandler(handler)
-		Window.size = (1200, 500)
-		logging.info("Welcome to the ham radio sync app.")
-		self._async_wrapper.dangerous_ops_checkbox = arm_dangerous_checkbox
-		self._async_wrapper.buttons = buttons
-		self._async_wrapper.dangerous_buttons = dangerous_buttons
-		arm_dangerous_checkbox.bind(active=self._async_wrapper.arm_dangerous)
-
-		self._async_wrapper.dangerous_ops_checkbox = arm_dangerous_checkbox
-		self._async_wrapper.arm_dangerous(None)
-		return layout
-
+		delete_migrate_button = layout.ids['dangerous_operations.delete_migrate']
+		delete_migrate_button.bind(on_press=self._async_wrapper.migration_backups)
 
 
 class TextBoxHandler(TextIO, ABC):
