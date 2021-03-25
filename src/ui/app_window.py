@@ -22,10 +22,10 @@ BoxLayout:
 	ActionBar:
 		ActionView:
 			ActionPrevious:
+				id: action_previous
 				title: 'Ham Radio Sync'
 				with_previous: False
 				enabled: False
-				app_icon: 'radio_sync.ico'
 			ActionButton:
 				id: create_radio_plugs
 				text: "Create Radio Plugs"
@@ -109,20 +109,20 @@ class AppWindow(App):
 	force_debug = False
 
 	def build(self):
+		icon_path = './images/radio_sync.ico'
 		if hasattr(sys, '_MEIPASS'):
-			logging.info("Has _MEIPASS")
-			logging.info(os.listdir(sys._MEIPASS))
+			logging.debug("Has _MEIPASS")
+			logging.debug(os.listdir(sys._MEIPASS))
 			icon_path = os.path.join(sys._MEIPASS, 'images/radio_sync.ico')
-			logging.info(f"Icon path: `{icon_path}`")
+			logging.debug(f"Icon path: `{icon_path}`")
 			if os.path.exists(icon_path):
-				logging.info("Icon path exists")
+				logging.debug("Icon path exists")
 			resource_add_path(os.path.join(sys._MEIPASS, 'images'))
-			self.icon = icon_path
 		else:
 			resource_add_path('images')
 
+		self.icon = icon_path
 		logging.debug(f"Resource paths: `{resource_paths}`")
-		self.icon = './images/radio_sync.ico'
 
 		self._async_wrapper = AsyncWrapper()
 		layout = Builder.load_string(kv)
@@ -130,6 +130,9 @@ class AppWindow(App):
 		Window.clearcolor = (0.15, 0.15, 0.15, 1)
 
 		self.title = 'Ham Radio Sync'
+
+		action_previous = layout.ids['action_previous']
+		action_previous.app_icon = icon_path
 
 		self._bind_radio_menu(layout)
 		self._bind_console_log(layout)
