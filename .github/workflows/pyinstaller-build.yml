@@ -50,7 +50,7 @@ jobs:
         7z a -tzip radio_sync-${{ matrix.short-name }}-${{ env.semver }}.zip radio_sync-${{ matrix.short-name }}_gui-${{ env.semver }}${{ matrix.exe-extension }}
     - name: Build CLI executable
       run: |
-        pyinstaller -F radio_sync.py -n radio_sync-${{ matrix.short-name }}-${{ env.semver }}${{ matrix.exe-extension }} --icon radio_sync.ico
+        pyinstaller -F radio_sync.py -n radio_sync-${{ matrix.short-name }}-${{ env.semver }}${{ matrix.exe-extension }} --icon images/radio_sync.ico
         ${{ matrix.move-command }} dist/radio_sync-${{ matrix.short-name }}-${{ env.semver }}${{ matrix.exe-extension }} ./
         7z a -tzip radio_sync-${{ matrix.short-name }}-${{ env.semver }}.zip radio_sync-${{ matrix.short-name }}-${{ env.semver }}${{ matrix.exe-extension }}
     - name: Upload executable
