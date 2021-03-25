@@ -118,7 +118,7 @@ class AppWindow(App):
 			if os.path.exists(icon_path):
 				logging.info("Icon path exists")
 			resource_add_path(os.path.join(sys._MEIPASS))
-			self.icon = 'data:radio_sync.ico'
+			self.icon = icon_path
 
 		self._async_wrapper = AsyncWrapper()
 		layout = Builder.load_string(kv)
