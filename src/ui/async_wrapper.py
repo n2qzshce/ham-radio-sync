@@ -17,6 +17,7 @@ class AsyncWrapper:
 		self.dangerous_ops_toggle = None
 		self._buttons_disabled = False
 		self.radio_buttons = dict()
+		self.debug_toggle = None
 		return
 
 	def arm_dangerous(self, *args):
@@ -98,8 +99,8 @@ class AsyncWrapper:
 		self._radio_generator.radio_list = gen_list
 		self._radio_generator.generate_all_declared()
 
-	def log_level(self, _, value):
-		if value:
+	def log_level(self, value):
+		if value.state == 'down':
 			logging.root.setLevel(logging.DEBUG)
 			logging.debug("Debug logging enabled.")
 		else:

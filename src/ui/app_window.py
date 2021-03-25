@@ -57,6 +57,7 @@ BoxLayout:
 				mode: "spinner"
 				dropdown_width: 200
 				ActionToggleButton:
+					id: debug_toggle
 					text: "Enable debug logging"
 				ActionButton:
 					text: "About..."
@@ -111,6 +112,7 @@ class AppWindow(App):
 		self._bind_console_log(layout)
 		self._bind_file_menu(layout)
 		self._bind_dangerous_ops_menu(layout)
+		self._bind_help_menu(layout)
 
 		create_radio_button = layout.ids['create_radio_plugs']
 		dangerous_ops_button = layout.ids['enable_dangerous']
@@ -195,6 +197,10 @@ class AppWindow(App):
 		delete_migrate_button = layout.ids['dangerous_operations.delete_migrate']
 		delete_migrate_button.bind(on_press=self._async_wrapper.migration_backups)
 
+	def _bind_help_menu(self, layout):
+		debug_button = layout.ids['debug_toggle']
+		self._async_wrapper.debug_toggle = debug_button
+		debug_button.bind(on_press=self._async_wrapper.log_level)
 
 class TextBoxHandler(TextIO, ABC):
 	def __init__(self, text_log):
