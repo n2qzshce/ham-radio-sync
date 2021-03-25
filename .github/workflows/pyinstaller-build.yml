@@ -45,7 +45,7 @@ jobs:
         python -m unittest discover test "*_test.py"
     - name: Build GUI executable
       run: |
-        pyinstaller radio_sync_gui_${{ matrix.short-name }}.spec --icon radio_sync.ico
+        pyinstaller radio_sync_gui_${{ matrix.short-name }}.spec
         ${{ matrix.move-command }} dist/radio_sync_gui${{ matrix.exe-extension }} radio_sync-${{ matrix.short-name }}_gui-${{ env.semver }}${{ matrix.exe-extension }}
         7z a -tzip radio_sync-${{ matrix.short-name }}-${{ env.semver }}.zip radio_sync-${{ matrix.short-name }}_gui-${{ env.semver }}${{ matrix.exe-extension }}
     - name: Build CLI executable
