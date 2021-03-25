@@ -110,10 +110,12 @@ class AppWindow(App):
 
 	def build(self):
 		icon_path = './images/radio_sync.ico'
+		action_icon_path = './images/radio_sync.png'
 		if hasattr(sys, '_MEIPASS'):
 			logging.debug("Has _MEIPASS")
 			logging.debug(os.listdir(sys._MEIPASS))
 			icon_path = os.path.join(sys._MEIPASS, 'images/radio_sync.ico')
+			action_icon_path = os.path.join(sys._MEIPASS, 'images/radio_sync.png')
 			logging.debug(f"Icon path: `{icon_path}`")
 			if os.path.exists(icon_path):
 				logging.debug("Icon path exists")
@@ -132,7 +134,7 @@ class AppWindow(App):
 		self.title = 'Ham Radio Sync'
 
 		action_previous = layout.ids['action_previous']
-		action_previous.app_icon = icon_path
+		action_previous.app_icon = action_icon_path
 
 		self._bind_radio_menu(layout)
 		self._bind_console_log(layout)
