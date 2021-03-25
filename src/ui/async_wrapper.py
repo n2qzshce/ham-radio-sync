@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import threading
 
 from src.ham.migration.migration_manager import MigrationManager
 from src.ham.radio_generator import RadioGenerator
@@ -40,8 +41,9 @@ class AsyncWrapper:
 
 	def _submit_blocking_task(self, task_func):
 		logging.debug("Submitting blocking task")
-		task = asyncio.create_task(self._async_blocking_task(task_func))
-		task.add_done_callback(self._check_exceptions)
+		# task = asyncio.create_task(self._async_blocking_task(task_func))
+		threading.Thread(target=task_func, daemon=True).start()
+		# task.add_done_callback(self._check_exceptions)
 		logging.debug("Submitted blocking task")
 		return
 
@@ -51,10 +53,13 @@ class AsyncWrapper:
 		except Exception as e:
 			logging.error(f"Fatal error while processing task. PLEASE send this to the project owners.", exc_info=True)
 
-	async def _async_blocking_task(self, task_func):
+	def _async_blocking_task(self, task_func):
 		logging.info("---Starting task---")
 		self._set_buttons_disabled(True)
-		await task_func()
+		try:
+			task_func()
+		except Exception as e:
+			logging.error(f"Fatal error while processing task. PLEASE send this to the project owners.", exc_info=True)
 		logging.info("---Task finished---")
 		self.dangerous_ops_toggle.active = False
 		self._set_buttons_disabled(False)
@@ -62,37 +67,37 @@ class AsyncWrapper:
 	def display_about_info(self, event):
 		self._submit_blocking_task(self._display_about_info_async)
 
-	async def _display_about_info_async(self):
+	def _display_about_info_async(self):
 		self._radio_generator.info()
 
 	def wizard_cleanup(self, event):
 		self._submit_blocking_task(self._wizard_cleanup_async)
 
-	async def _wizard_cleanup_async(self):
+	def _wizard_cleanup_async(self):
 		self._wizard.cleanup()
 
 	def wizard_bootstrap(self, button):
 		self._submit_blocking_task(self._wizard_bootstrap_async)
 
-	async def _wizard_bootstrap_async(self):
+	def _wizard_bootstrap_async(self):
 		self._wizard.bootstrap(True)
 
 	def migrations(self, event):
 		self._submit_blocking_task(self._migrations_async)
 
-	async def _migrations_async(self):
+	def _migrations_async(self):
 		self._migrations.migrate()
 
 	def migration_backups(self, event):
 		self._submit_blocking_task(self._migration_backups_async)
 
-	async def _migration_backups_async(self):
+	def _migration_backups_async(self):
 		self._migrations.remove_backups()
 
 	def radio_generator(self, event):
 		self._submit_blocking_task(self._radio_generator_async)
 
-	async def _radio_generator_async(self):
+	def _radio_generator_async(self):
 		gen_list = []
 
 		for radio in self.radio_buttons.keys():
