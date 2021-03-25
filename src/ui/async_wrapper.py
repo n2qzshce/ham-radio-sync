@@ -1,4 +1,3 @@
-import asyncio
 import logging
 import threading
 
@@ -41,17 +40,9 @@ class AsyncWrapper:
 
 	def _submit_blocking_task(self, task_func):
 		logging.debug("Submitting blocking task")
-		# task = asyncio.create_task(self._async_blocking_task(task_func))
-		threading.Thread(target=task_func, daemon=True).start()
-		# task.add_done_callback(self._check_exceptions)
+		threading.Thread(target=self._async_blocking_task, args=(task_func,), daemon=True).start()
 		logging.debug("Submitted blocking task")
 		return
-
-	def _check_exceptions(self, task: asyncio.Task):
-		try:
-			task.result()
-		except Exception as e:
-			logging.error(f"Fatal error while processing task. PLEASE send this to the project owners.", exc_info=True)
 
 	def _async_blocking_task(self, task_func):
 		logging.info("---Starting task---")

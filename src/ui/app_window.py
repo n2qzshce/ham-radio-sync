@@ -162,7 +162,7 @@ class AppWindow(App):
 		text_box_logger = TextBoxHandler(self.text_log)
 		handler = logging.StreamHandler(stream=text_box_logger)
 		handler.setFormatter(formatter)
-		logger.setLevel(logging.DEBUG)
+		logger.setLevel(logging.INFO)
 		logger.addHandler(handler)
 
 	def _bind_file_menu(self, layout):
@@ -176,7 +176,7 @@ class AppWindow(App):
 
 		dangerous_ops_menu = layout.ids['dangerous_operations']
 		self._async_wrapper.dangerous_buttons = [dangerous_ops_menu]
-		dangerous_ops_menu.disabled = False
+		dangerous_ops_menu.disabled = True
 
 		cleanup_button = layout.ids['dangerous_operations.cleanup']
 		cleanup_button.bind(on_press=self._async_wrapper.wizard_cleanup)
