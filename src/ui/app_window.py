@@ -8,6 +8,7 @@ from kivy.app import App
 from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.resources import resource_add_path
+from kivy.resources import resource_paths
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.checkbox import CheckBox
 from kivy.uix.label import Label
@@ -115,9 +116,12 @@ class AppWindow(App):
 			logging.info(f"Icon path: `{icon_path}`")
 			if os.path.exists(icon_path):
 				logging.info("Icon path exists")
-			resource_add_path(os.path.join(sys._MEIPASS))
+			resource_add_path(os.path.join(sys._MEIPASS, 'images'))
 			self.icon = icon_path
+		else:
+			resource_add_path('images')
 
+		logging.debug(f"Resource paths: `{resource_paths}`")
 		self.icon = './images/radio_sync.ico'
 
 		self._async_wrapper = AsyncWrapper()
