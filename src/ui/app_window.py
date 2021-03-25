@@ -89,7 +89,7 @@ BoxLayout:
 			TextInput:
 				id: log_output
 				font_name: 'RobotoMono-Regular'
-				text: 'lorem\\nipsum'
+				text: ''
 				size_hint: (1, 1)
 				readonly: True
 				font_size: 11
@@ -99,6 +99,7 @@ BoxLayout:
 class AppWindow(App):
 	text_log = None
 	_async_wrapper = None
+	force_debug = False
 
 	def build(self):
 		self._async_wrapper = AsyncWrapper()
@@ -162,7 +163,11 @@ class AppWindow(App):
 		text_box_logger = TextBoxHandler(self.text_log)
 		handler = logging.StreamHandler(stream=text_box_logger)
 		handler.setFormatter(formatter)
+
 		logger.setLevel(logging.INFO)
+		if self.force_debug:
+			logger.setLevel(logging.DEBUG)
+
 		logger.addHandler(handler)
 
 	def _bind_file_menu(self, layout):
