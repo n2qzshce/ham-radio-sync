@@ -4,8 +4,8 @@ import os
 from src.ham.radio.default_radio.dmr_contact_default import DmrContactDefault
 from src.ham.radio.default_radio.dmr_id_default import DmrIdDefault
 from src.ham.radio.default_radio.dmr_user_default import DmrUserDefault
+from src.ham.radio.default_radio.radio_channel_default import RadioChannelDefault
 from src.ham.radio.radio_casted_builder import RadioChannelBuilder
-from src.ham.radio.radio_channel import RadioChannel
 from src.ham.radio.radio_zone import RadioZone
 from src.ham.util import radio_types
 from src.ham.util.file_util import FileUtil, RadioWriter
@@ -45,7 +45,7 @@ class Wizard(object):
 
 	def _create_channel_file(self):
 		channel_file = RadioWriter('in/input.csv', '\n')
-		first_channel = RadioChannel({
+		first_channel = RadioChannelDefault({
 			'number': '1',
 			'name': 'National 2m',
 			'medium_name': 'Natl 2m',
@@ -64,7 +64,7 @@ class Wizard(object):
 			'digital_color': '',
 			'digital_contact_id': '',
 		}, digital_contacts=None, dmr_ids=None)
-		second_channel = RadioChannel({
+		second_channel = RadioChannelDefault({
 			'number': '2',
 			'name': 'Basic Repeater',
 			'medium_name': 'BasicRpt',
@@ -83,8 +83,7 @@ class Wizard(object):
 			'digital_color': '',
 			'digital_contact_id': '',
 		}, digital_contacts=None, dmr_ids=None)
-		headers_row = RadioChannelBuilder.casted(RadioChannel.create_empty(), radio_types.DEFAULT)
-		channel_file.writerow(headers_row.headers())
+		channel_file.writerow(RadioChannelDefault.create_empty().headers())
 		channel_file.writerow(RadioChannelBuilder.casted(first_channel, radio_types.DEFAULT).output(1))
 		channel_file.writerow(RadioChannelBuilder.casted(second_channel, radio_types.DEFAULT).output(2))
 		channel_file.close()

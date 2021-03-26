@@ -2,6 +2,28 @@ from src.ham.util.data_column import DataColumn
 
 
 class RadioChannel:
+	@classmethod
+	def create_empty(cls):
+		col_vals = dict()
+		col_vals['number'] = ''
+		col_vals['name'] = ''
+		col_vals['medium_name'] = ''
+		col_vals['short_name'] = ''
+		col_vals['zone_id'] = ''
+		col_vals['rx_freq'] = ''
+		col_vals['rx_ctcss'] = ''
+		col_vals['rx_dcs'] = ''
+		col_vals['rx_dcs_invert'] = ''
+		col_vals['tx_power'] = ''
+		col_vals['tx_offset'] = ''
+		col_vals['tx_ctcss'] = ''
+		col_vals['tx_dcs'] = ''
+		col_vals['tx_dcs_invert'] = ''
+		col_vals['digital_timeslot'] = ''
+		col_vals['digital_color'] = ''
+		col_vals['digital_contact_id'] = ''
+		return cls(col_vals, digital_contacts=None, dmr_ids=None)
+
 	def __init__(self, cols, digital_contacts, dmr_ids):
 		self.number = DataColumn(fmt_name='number', fmt_val=cols['number'], shape=int)
 		self.name = DataColumn(fmt_name='name', fmt_val=cols['name'], shape=str)
@@ -24,28 +46,6 @@ class RadioChannel:
 		self.cols = cols
 		self.digital_contacts = digital_contacts
 		self.dmr_ids = dmr_ids
-
-	@classmethod
-	def create_empty(cls):
-		col_vals = dict()
-		col_vals['number'] = ''
-		col_vals['name'] = ''
-		col_vals['medium_name'] = ''
-		col_vals['short_name'] = ''
-		col_vals['zone_id'] = ''
-		col_vals['rx_freq'] = ''
-		col_vals['rx_ctcss'] = ''
-		col_vals['rx_dcs'] = ''
-		col_vals['rx_dcs_invert'] = ''
-		col_vals['tx_power'] = ''
-		col_vals['tx_offset'] = ''
-		col_vals['tx_ctcss'] = ''
-		col_vals['tx_dcs'] = ''
-		col_vals['tx_dcs_invert'] = ''
-		col_vals['digital_timeslot'] = ''
-		col_vals['digital_color'] = ''
-		col_vals['digital_contact_id'] = ''
-		return RadioChannel(col_vals, digital_contacts=None, dmr_ids=None)
 
 	def is_digital(self):
 		return self.digital_color.fmt_val() is not None
