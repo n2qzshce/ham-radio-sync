@@ -5,7 +5,8 @@ import os
 from src.ham.radio.dmr_contact import DmrContact
 from src.ham.radio.dmr_id import DmrId
 from src.ham.radio.dmr_user import DmrUser
-from src.ham.radio.radio_additional import RadioAdditionalData
+from src.ham.radio.radio_additional import RadioAdditional
+from src.ham.radio.radio_additional_builder import RadioAdditionalBuilder
 from src.ham.radio.radio_casted_builder import RadioChannelBuilder
 from src.ham.radio.radio_channel import RadioChannel
 from src.ham.radio.radio_zone import RadioZone
@@ -120,11 +121,12 @@ class RadioGenerator:
 				radio_files[radio].writerow(input_data)
 				channel_numbers[radio] += 1
 
-		additional_data = RadioAdditionalData(radio_channels, dmr_ids, digital_contacts, zones, user)
+		additional_data = RadioAdditional(radio_channels, dmr_ids, digital_contacts, zones, user)
 		for radio in self.radio_list:
 			if radio in radio_files.keys():
 				radio_files[radio].close()
-			additional_data.output(radio)
+			casted_additional_data = RadioAdditionalBuilder.casted(additional_data, radio)
+			casted_additional_data.output()
 
 		logging.info(f"Radio generator complete. Your output files are in `{os.path.abspath('out')}`")
 		return
