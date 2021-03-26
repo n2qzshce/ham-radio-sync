@@ -94,8 +94,6 @@ class RadioChannel:
 	@classmethod
 	def skip_radio_csv(cls, style):
 		switch = {
-			radio_types.DEFAULT: False,
-			radio_types.BAOFENG: False,
 			radio_types.FTM400: False,
 			radio_types.D878: False,
 			radio_types.CS800: True,
@@ -106,7 +104,6 @@ class RadioChannel:
 
 	def headers(self, style):
 		switch = {
-			radio_types.DEFAULT: self._headers_default,
 			radio_types.BAOFENG: self._headers_baofeng,
 			radio_types.FTM400: self._headers_ftm400,
 			radio_types.D878: self._headers_d878,
@@ -118,7 +115,6 @@ class RadioChannel:
 
 	def output(self, style, channel_number):
 		switch = {
-			radio_types.DEFAULT: self._output_default,
 			radio_types.BAOFENG: self._output_baofeng,
 			radio_types.FTM400: self._output_ftm400,
 			radio_types.D878: self._output_d878,
@@ -127,48 +123,6 @@ class RadioChannel:
 		}
 
 		return switch[style](channel_number)
-
-	def _headers_default(self):
-		output = list()
-		output.append(f"{self.number.get_alias(radio_types.DEFAULT)}")
-		output.append(f"{self.name.get_alias(radio_types.DEFAULT)}")
-		output.append(f"{self.medium_name.get_alias(radio_types.DEFAULT)}")
-		output.append(f"{self.short_name.get_alias(radio_types.DEFAULT)}")
-		output.append(f"{self.zone_id.get_alias(radio_types.DEFAULT)}")
-		output.append(f"{self.tx_power.get_alias(radio_types.DEFAULT)}")
-		output.append(f"{self.rx_freq.get_alias(radio_types.DEFAULT)}")
-		output.append(f"{self.rx_ctcss.get_alias(radio_types.DEFAULT)}")
-		output.append(f"{self.rx_dcs.get_alias(radio_types.DEFAULT)}")
-		output.append(f"{self.rx_dcs_invert.get_alias(radio_types.DEFAULT)}")
-		output.append(f"{self.tx_offset.get_alias(radio_types.DEFAULT)}")
-		output.append(f"{self.tx_ctcss.get_alias(radio_types.DEFAULT)}")
-		output.append(f"{self.tx_dcs.get_alias(radio_types.DEFAULT)}")
-		output.append(f"{self.tx_dcs_invert.get_alias(radio_types.DEFAULT)}")
-		output.append(f"{self.digital_timeslot.get_alias(radio_types.DEFAULT)}")
-		output.append(f"{self.digital_color.get_alias(radio_types.DEFAULT)}")
-		output.append(f"{self.digital_contact.get_alias(radio_types.DEFAULT)}")
-		return output
-
-	def _output_default(self, channel_number):
-		output = list()
-		output.append(f"{channel_number}")
-		output.append(f"{self.name.fmt_val('')}")
-		output.append(f"{self.medium_name.fmt_val('')}")
-		output.append(f"{self.short_name.fmt_val('')}")
-		output.append(f"{self.zone_id.fmt_val('')}")
-		output.append(f"{self.tx_power.fmt_val('')}")
-		output.append(f"{self.rx_freq.fmt_val('')}")
-		output.append(f"{self.rx_ctcss.fmt_val('')}")
-		output.append(f"{self.rx_dcs.fmt_val('')}")
-		output.append(f"{self.rx_dcs_invert.fmt_val('')}")
-		output.append(f"{self.tx_offset.fmt_val('')}")
-		output.append(f"{self.tx_ctcss.fmt_val('')}")
-		output.append(f"{self.tx_dcs.fmt_val('')}")
-		output.append(f"{self.tx_dcs_invert.fmt_val('')}")
-		output.append(f"{self.digital_timeslot.fmt_val('')}")
-		output.append(f"{self.digital_color.fmt_val('')}")
-		output.append(f"{self.digital_contact.fmt_val('')}")
-		return output
 
 	def _headers_baofeng(self):
 		output = list()
