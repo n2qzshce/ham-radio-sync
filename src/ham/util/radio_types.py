@@ -13,6 +13,7 @@ def supports_dmr(radio_type):
 		FTM400: False,
 		D878: True,
 		CS800: True,
+		D710: False,
 	}
 
 	return switch[radio_type]

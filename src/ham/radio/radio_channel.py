@@ -650,6 +650,6 @@ class RadioChannel:
 	def _headers_d710(self):
 		return
 
-	def __output_d710(self):
+	def _output_d710(self, channel_number):
 		return
 
