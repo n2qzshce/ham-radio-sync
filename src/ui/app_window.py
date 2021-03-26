@@ -60,10 +60,13 @@ BoxLayout:
 			ActionGroup:
 				text: "Help"
 				mode: "spinner"
-				dropdown_width: 150
+				dropdown_width: 225
 				ActionToggleButton:
 					id: debug_toggle
 					text: "Debug logging"
+				ActionButton:
+					id: feature_request
+					text: "Feature Request/Bug Report"
 				ActionButton:
 					id: about
 					text: "About..."
@@ -232,6 +235,9 @@ class AppWindow(App):
 		debug_button = layout.ids['debug_toggle']
 		self._async_wrapper.debug_toggle = debug_button
 		debug_button.bind(on_press=self._async_wrapper.log_level)
+
+		contact_button = layout.ids['feature_request']
+		contact_button.bind(on_press=self._async_wrapper.contact_info)
 
 		about_button = layout.ids['about']
 		about_button.bind(on_press=self._async_wrapper.display_about_info)

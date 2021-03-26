@@ -1,5 +1,7 @@
+import base64
 import logging
 import threading
+import webbrowser
 
 from src.ham.migration.migration_manager import MigrationManager
 from src.ham.radio_generator import RadioGenerator
@@ -107,3 +109,13 @@ class AsyncWrapper:
 			logging.root.setLevel(logging.INFO)
 			logging.debug("Debug logging disabled")
 			logging.info("Debug logging disabled")
+
+	def contact_info(self, value):
+		email_enc = "c3cuYXUrZ2l0aHViQHBtLm1l"
+		decode_bytes = base64.b64decode(email_enc)
+		email_dec = str(decode_bytes, "utf-8")
+		logging.info(f"""
+For feature requests, you can contact the repository owners here: 
+Email: {email_dec}
+A mailto link will now attempt to open...""")
+		webbrowser.open(f"mailto:{email_dec}?subject=radio_sync%20sFeature%20srequest", new=2)
