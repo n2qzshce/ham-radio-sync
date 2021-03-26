@@ -1,27 +1,12 @@
-import logging
 import os
-import sys
-import unittest
 from csv import DictReader
 
 from src.ham.migration.migration_manager import MigrationManager
 from src.ham.util.file_util import FileUtil
+from test.base_test_setup import BaseTestSetup
 
 
-class MigrationTest(unittest.TestCase):
-	@classmethod
-	def setUpClass(cls):
-		logger = logging.getLogger()
-		formatter = logging.Formatter(
-			fmt='%(asctime)s.%(msecs)03d %(levelname)7s %(filename).6s:%(lineno)3s:  %(message)s',
-			datefmt="%Y-%m-%d %H:%M:%S")
-
-		handler = logging.StreamHandler(stream=sys.stdout)
-		handler.setFormatter(formatter)
-
-		logger.setLevel(logging.INFO)
-		logger.addHandler(handler)
-
+class MigrationTest(BaseTestSetup):
 	def setUp(self):
 		FileUtil.safe_delete_dir('in')
 		FileUtil.safe_delete_dir('out')
