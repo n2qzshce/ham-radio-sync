@@ -1,4 +1,5 @@
 import logging
+import os
 
 from src.ham.dmr.dmr_contact import DmrContact
 from src.ham.dmr.dmr_id import DmrId
@@ -7,7 +8,6 @@ from src.ham.radio.radio_channel import RadioChannel
 from src.ham.radio.radio_zone import RadioZone
 from src.ham.util import radio_types
 from src.ham.util.data_column import DataColumn
-from src.ham.util.file_util import FileUtil
 from src.ham.util.validation_error import ValidationError
 
 
@@ -19,7 +19,15 @@ class Validator:
 		self._zone_template = RadioZone.create_empty()
 		self._dmr_user_template = DmrUser.create_empty()
 
+		self._short_names = None
+		self._medium_names = None
+		self._long_names = None
 		return
+
+	def flush_names(self):
+		self._short_names = dict()
+		self._medium_names = dict()
+		self._long_names = dict()
 
 	@classmethod
 	def validate_files_exist(cls):
@@ -27,10 +35,7 @@ class Validator:
 
 		files_list = ["in/input.csv", "in/digital_contacts.csv", "in/dmr_id.csv", 'in/zones.csv', 'in/user.csv']
 		for file_name in files_list:
-			try:
-				f = FileUtil.open_file(file_name, "r")
-				f.close()
-			except FileNotFoundError:
+			if not os.path.exists(file_name):
 				err = ValidationError(f"Cannot open file: `{file_name}`", None, file_name)
 				errors.append(err)
 

@@ -42,7 +42,8 @@ class RadioGenerator:
 		""")
 
 	def generate_all_declared(self):
-		file_errors = Validator.validate_files_exist()
+		file_errors = self._validator.validate_files_exist()
+		self._validator.flush_names()
 		if len(file_errors) > 0:
 			return
 
@@ -55,23 +56,33 @@ class RadioGenerator:
 		feed = FileUtil.open_file("in/input.csv", "r")
 		csv_reader = csv.DictReader(feed)
 
-		line_num = 1
 		radio_channel_errors = []
+		radio_channels = dict()
+		line_num = 1
 		for line in csv_reader:
 			line_errors = self._validator.validate_radio_channel(line, line_num, feed.name)
 			radio_channel_errors += line_errors
 			line_num += 1
+
+			if len(line_errors) > 0:
+				continue
+
+			radio_channel = RadioChannel(line, digital_contacts, dmr_ids)
+			radio_channels[radio_channel.number] = radio_channel
+
+			if radio_channel.zone_id.fmt_val(None) is not None:
+				zones[radio_channel.zone_id.fmt_val()].add_channel(radio_channel)
 
 		all_errors = preload_errors + radio_channel_errors
 		if len(all_errors) > 0:
 			logging.error("--- VALIDATION ERRORS, CANNOT CONTINUE ---")
 			for err in all_errors:
 				logging.error(f"\t\tfile: `{err.file_name}` line:{err.line_num} validation error: {err.message}")
+			return
 		else:
 			logging.info("File validation complete, no obvious formatting errors found")
 
 		radio_files = dict()
-		radio_channels = dict()
 		headers_gen = RadioChannel.create_empty()
 		FileUtil.safe_create_dir('out')
 
@@ -90,32 +101,20 @@ class RadioGenerator:
 			radio_files[radio] = output
 			channel_numbers[radio] = 1
 
-		feed.close()
-		feed = FileUtil.open_file("in/input.csv", "r")
-		csv_reader = csv.DictReader(feed)
 		logging.info("Processing radio channels")
-		line_num = 1
-		for line in csv_reader:
-			logging.debug(f"Processing radio line {line_num}")
-			if line_num % file_util.RADIO_LINE_LOG_INTERVAL == 0:
-				logging.info(f"Processing radio line {line_num}")
-
-			self._validator.validate_radio_channel(line, line_num, feed.name)
-
-			radio_channel = RadioChannel(line, digital_contacts, dmr_ids)
-			radio_channels[radio_channel.number] = radio_channel
-			line_num += 1
-
-			if radio_channel.zone_id.fmt_val(None) is not None:
-				zones[radio_channel.zone_id.fmt_val()].add_channel(radio_channel)
+		for radio_channel in radio_channels.values():
+			logging.debug(f"Processing radio line {radio_channel.number}")
+			if radio_channel.number.fmt_val(None) % file_util.RADIO_LINE_LOG_INTERVAL == 0:
+				logging.info(f"Processing radio line {radio_channel.number.fmt_val(None)}")
 
 			for radio in self.radio_list:
-				casted_channel = RadioChannelBuilder.casted(radio_channel, radio)
-
-				if not radio_types.supports_dmr(radio) and casted_channel.is_digital():
-					continue
 				if radio not in radio_files.keys():
 					continue
+
+				if not radio_types.supports_dmr(radio) and radio_channel.is_digital():
+					continue
+
+				casted_channel = RadioChannelBuilder.casted(radio_channel, radio)
 
 				input_data = casted_channel.output(radio, channel_numbers[radio])
 				radio_files[radio].writerow(input_data)
@@ -187,7 +186,7 @@ class RadioGenerator:
 
 	def _generate_user_data(self):
 		logging.info("Processing dmr IDs. This step can take a while.")
-		feed = FileUtil.open_file('in/user.csv', 'r', encoding='utf-8')
+		feed = FileUtil.open_file('in/user.csv', 'r')
 		csv_feed = csv.DictReader(feed)
 		users = dict()
 		errors = []

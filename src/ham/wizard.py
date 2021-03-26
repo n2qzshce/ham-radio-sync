@@ -1,13 +1,14 @@
 import logging
 import os
 
-from src.ham.util import radio_types
 from src.ham.dmr.dmr_contact import DmrContact
 from src.ham.dmr.dmr_id import DmrId
 from src.ham.dmr.dmr_user import DmrUser
-from src.ham.util.file_util import FileUtil, RadioWriter
 from src.ham.radio.radio_channel import RadioChannel
+from src.ham.radio.radio_channel_builder import RadioChannelBuilder
 from src.ham.radio.radio_zone import RadioZone
+from src.ham.util import radio_types
+from src.ham.util.file_util import FileUtil, RadioWriter
 
 
 class Wizard(object):
@@ -82,9 +83,11 @@ class Wizard(object):
 			'digital_color': '',
 			'digital_contact_id': '',
 		}, digital_contacts=None, dmr_ids=None)
-		channel_file.writerow(RadioChannel.create_empty().headers(radio_types.DEFAULT))
-		channel_file.writerow(first_channel.output(radio_types.DEFAULT, 1))
-		channel_file.writerow(second_channel.output(radio_types.DEFAULT, 2))
+		headers_row = RadioChannel.create_empty()
+		headers_row = RadioChannelBuilder.casted(headers_row, radio_types.DEFAULT)
+		channel_file.writerow(headers_row.headers(radio_types.DEFAULT))
+		channel_file.writerow(RadioChannelBuilder.casted(first_channel, radio_types.DEFAULT).output(radio_types.DEFAULT, 1))
+		channel_file.writerow(RadioChannelBuilder.casted(second_channel, radio_types.DEFAULT).output(radio_types.DEFAULT, 2))
 		channel_file.close()
 
 	def _create_dmr_data(self):
