@@ -20,7 +20,8 @@ class RadioGenerator:
 		self.radio_list = radio_list
 		self._validator = Validator()
 
-	def info(self):
+	@classmethod
+	def info(cls):
 		logging.info("""
 		HAM RADIO SYNC GENERATOR
 		Homepage: https://github.com/n2qzshce/ham-radio-sync
@@ -56,6 +57,7 @@ class RadioGenerator:
 		dmr_ids, dmr_id_errors = self._generate_dmr_id_data()
 		zones, zone_errors = self._generate_zone_data()
 		user, user_data_errors = self._generate_user_data()
+		preload_errors = digi_contact_errors + dmr_id_errors + zone_errors + user_data_errors
 
 		feed = open("in/input.csv", "r")
 		csv_reader = csv.DictReader(feed)
@@ -67,12 +69,11 @@ class RadioGenerator:
 			radio_channel_errors += line_errors
 			line_num += 1
 
-		all_errors = digi_contact_errors + dmr_id_errors + zone_errors + user_data_errors + radio_channel_errors
+		all_errors = preload_errors + radio_channel_errors
 		if len(all_errors) > 0:
 			logging.error("--- VALIDATION ERRORS, CANNOT CONTINUE ---")
 			for err in all_errors:
 				logging.error(f"\t\tfile: `{err.file_name}` line:{err.line_num} validation error: {err.message}")
-			return
 		else:
 			logging.info("File validation complete, no obvious formatting errors found")
 

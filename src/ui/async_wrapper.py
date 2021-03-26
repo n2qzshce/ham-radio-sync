@@ -5,7 +5,6 @@ import webbrowser
 
 from src.ham.migration.migration_manager import MigrationManager
 from src.ham.radio_generator import RadioGenerator
-from src.ham.util import radio_types
 from src.ham.wizard import Wizard
 
 
@@ -15,7 +14,6 @@ class AsyncWrapper:
 		self.dangerous_buttons = []
 		self._wizard = Wizard()
 		self._migrations = MigrationManager()
-		self._radio_generator = RadioGenerator([radio_types.DEFAULT])
 		self.dangerous_ops_toggle = None
 		self._buttons_disabled = False
 		self.radio_buttons = dict()
@@ -62,7 +60,7 @@ class AsyncWrapper:
 		self._submit_blocking_task(self._display_about_info_async)
 
 	def _display_about_info_async(self):
-		self._radio_generator.info()
+		RadioGenerator.info()
 
 	def wizard_cleanup(self, event):
 		self._submit_blocking_task(self._wizard_cleanup_async)
@@ -98,8 +96,8 @@ class AsyncWrapper:
 			if self.radio_buttons[radio].active:
 				gen_list.append(radio)
 
-		self._radio_generator.radio_list = gen_list
-		self._radio_generator.generate_all_declared()
+		radio_generator = RadioGenerator(gen_list)
+		radio_generator.generate_all_declared()
 
 	def log_level(self, value):
 		if value.state == 'down':
