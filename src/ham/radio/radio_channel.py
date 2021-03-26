@@ -99,6 +99,7 @@ class RadioChannel:
 			radio_types.FTM400: False,
 			radio_types.D878: False,
 			radio_types.CS800: True,
+			radio_types.D710: True,
 		}
 
 		return switch[style]
@@ -110,6 +111,7 @@ class RadioChannel:
 			radio_types.FTM400: self._headers_ftm400,
 			radio_types.D878: self._headers_d878,
 			radio_types.CS800: self._headers_cs800,
+			radio_types.D710: self._headers_d710,
 		}
 
 		return switch[style]()
@@ -121,6 +123,7 @@ class RadioChannel:
 			radio_types.FTM400: self._output_ftm400,
 			radio_types.D878: self._output_d878,
 			radio_types.CS800: self._output_cs800,
+			radio_types.D710: self._output_d710,
 		}
 
 		return switch[style](channel_number)
@@ -643,4 +646,10 @@ class RadioChannel:
 		output.append(f'180')  # CTCSS Tail Revert Option
 
 		return output
+
+	def _headers_d710(self):
+		return
+
+	def __output_d710(self):
+		return
 

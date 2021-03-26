@@ -1,14 +1,15 @@
 import csv
 import logging
+
 import openpyxl
 
-from src.ham.util import radio_types, file_util
 from src.ham.dmr.dmr_contact import DmrContact
 from src.ham.dmr.dmr_id import DmrId
 from src.ham.dmr.dmr_user import DmrUser
-from src.ham.util.file_util import RadioWriter
 from src.ham.radio.radio_channel import RadioChannel
 from src.ham.radio.radio_zone import RadioZone
+from src.ham.util import radio_types, file_util
+from src.ham.util.file_util import RadioWriter
 
 
 class RadioAdditionalData:
@@ -26,7 +27,8 @@ class RadioAdditionalData:
 			radio_types.BAOFENG: lambda x: False,
 			radio_types.FTM400: lambda x: False,
 			radio_types.D878: self._output_d878,
-			radio_types.CS800: self._output_cs800
+			radio_types.CS800: self._output_cs800,
+			radio_types.D710: self._output_d710,
 		}
 
 		return switch[style](style)
@@ -233,5 +235,8 @@ class RadioAdditionalData:
 		user_workbook.save(f'out/{style}/{style}_user.xlsx')
 		logging.info("Save done.")
 		user_workbook.close()
+		return
+
+	def _output_d710(self, style):
 		return
 
