@@ -158,13 +158,7 @@ class AppWindow(App):
 		button_pool = layout.ids['radio_labels']
 
 		radio_select_buttons = dict()
-		radios = [
-			radio_types.DEFAULT,
-			radio_types.D878,
-			radio_types.BAOFENG,
-			radio_types.CS800,
-			radio_types.FTM400,
-		]
+		radios = radio_types.radio_choices()
 
 		for radio in radios:
 			radio_layout = BoxLayout(orientation='horizontal', size_hint=(1, 0.1))
