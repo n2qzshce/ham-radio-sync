@@ -50,11 +50,11 @@ class RadioChannel:
 	def is_digital(self):
 		return self.digital_color.fmt_val() is not None
 
-	def skip_radio_csv(self, style):
-		return
+	def skip_radio_csv(self):
+		raise Exception("Base method cannot be called!")
 
-	def headers(self, style):
-		return
+	def headers(self):
+		raise Exception("Base method cannot be called!")
 
-	def output(self, style, channel_number):
-		return
+	def output(self, channel_number):
+		raise Exception("Base method cannot be called!")

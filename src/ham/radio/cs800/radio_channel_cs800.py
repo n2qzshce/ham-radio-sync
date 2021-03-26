@@ -12,10 +12,10 @@ class RadioChannelCS800(RadioChannel):
 		self.digital_color.set_alias(radio_types.CS800, 'Color Code')
 		self.tx_power.set_alias(radio_types.CS800, 'Power Level')
 
-	def skip_radio_csv(self, style):
+	def skip_radio_csv(self):
 		return True
 
-	def headers(self, style):
+	def headers(self):
 		if self.is_digital():
 			return self._headers_cs800_digital()
 		else:
@@ -91,7 +91,7 @@ class RadioChannelCS800(RadioChannel):
 
 		return output
 
-	def output(self, style, channel_number):
+	def output(self, channel_number):
 		if self.is_digital():
 			return self._output_cs800_digital(channel_number)
 		else:

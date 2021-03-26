@@ -6,10 +6,10 @@ class RadioChannelDefault(RadioChannel):
 	def __init__(self, cols, digital_contacts, dmr_ids):
 		super().__init__(cols, digital_contacts, dmr_ids)
 
-	def skip_radio_csv(self, style):
+	def skip_radio_csv(self):
 		return False
 
-	def headers(self, style):
+	def headers(self):
 		output = list()
 		output.append(f"{self.number.get_alias(radio_types.DEFAULT)}")
 		output.append(f"{self.name.get_alias(radio_types.DEFAULT)}")
@@ -30,7 +30,7 @@ class RadioChannelDefault(RadioChannel):
 		output.append(f"{self.digital_contact.get_alias(radio_types.DEFAULT)}")
 		return output
 
-	def output(self, style, channel_number):
+	def output(self, channel_number):
 		output = list()
 		output.append(f"{channel_number}")
 		output.append(f"{self.name.fmt_val('')}")

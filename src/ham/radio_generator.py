@@ -2,12 +2,12 @@ import csv
 import logging
 import os
 
-from src.ham.dmr.dmr_contact import DmrContact
-from src.ham.dmr.dmr_id import DmrId
-from src.ham.dmr.dmr_user import DmrUser
+from src.ham.radio.dmr_contact import DmrContact
+from src.ham.radio.dmr_id import DmrId
+from src.ham.radio.dmr_user import DmrUser
 from src.ham.radio.radio_additional import RadioAdditionalData
+from src.ham.radio.radio_casted_builder import RadioChannelBuilder
 from src.ham.radio.radio_channel import RadioChannel
-from src.ham.radio.radio_channel_builder import RadioChannelBuilder
 from src.ham.radio.radio_zone import RadioZone
 from src.ham.util import radio_types, file_util
 from src.ham.util.file_util import FileUtil, RadioWriter
@@ -92,11 +92,11 @@ class RadioGenerator:
 			FileUtil.safe_create_dir(f'out/{radio}')
 			logging.info(f"Generating for radio type `{radio}`")
 
-			if radio_casted.skip_radio_csv(radio):
+			if radio_casted.skip_radio_csv():
 				logging.info(f"`{radio}` uses special output style. Skipping channels csv")
 				continue
 			output = RadioWriter(f'out/{radio}/{radio}_channels.csv', '\r\n')
-			file_headers = radio_casted.headers(radio)
+			file_headers = radio_casted.headers()
 			output.writerow(file_headers)
 			radio_files[radio] = output
 			channel_numbers[radio] = 1
@@ -116,7 +116,7 @@ class RadioGenerator:
 
 				casted_channel = RadioChannelBuilder.casted(radio_channel, radio)
 
-				input_data = casted_channel.output(radio, channel_numbers[radio])
+				input_data = casted_channel.output(channel_numbers[radio])
 				radio_files[radio].writerow(input_data)
 				channel_numbers[radio] += 1
 

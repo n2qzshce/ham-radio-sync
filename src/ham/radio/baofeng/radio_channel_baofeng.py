@@ -13,10 +13,10 @@ class RadioChannelBaofeng(RadioChannel):
 		self.tx_offset.set_alias(radio_types.BAOFENG, 'Offset')
 		self.tx_ctcss.set_alias(radio_types.BAOFENG, 'rToneFreq')
 
-	def skip_radio_csv(self, style):
+	def skip_radio_csv(self):
 		return False
 
-	def headers(self, style):
+	def headers(self):
 		output = list()
 		output.append(f"{self.number.get_alias(radio_types.BAOFENG)}")
 		output.append(f"{self.short_name.get_alias(radio_types.BAOFENG)}")
@@ -38,7 +38,7 @@ class RadioChannelBaofeng(RadioChannel):
 		output.append(f"DVCODE")
 		return output
 
-	def output(self, style, channel_number):
+	def output(self, channel_number):
 		number = channel_number - 1
 
 		duplex = ''

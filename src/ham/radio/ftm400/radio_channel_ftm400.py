@@ -13,10 +13,10 @@ class RadioChannelFtm400(RadioChannel):
 		self.tx_offset.set_alias(radio_types.FTM400, 'Offset Frequency')
 		self.tx_power.set_alias(radio_types.FTM400, 'Tx Power')
 
-	def skip_radio_csv(self, style):
+	def skip_radio_csv(self):
 		return False
 
-	def headers(self, style):
+	def headers(self):
 		output = list()
 
 		output.append(f"{self.number.get_alias(radio_types.FTM400)}")
@@ -39,7 +39,7 @@ class RadioChannelFtm400(RadioChannel):
 
 		return output
 
-	def output(self, style, channel_number):
+	def output(self, channel_number):
 		tx_freq = self.rx_freq.fmt_val() + self.tx_offset.fmt_val(0)
 
 		tx_units = ''

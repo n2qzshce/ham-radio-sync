@@ -1,9 +1,10 @@
 import logging
 import os
 
-from src.ham.dmr.dmr_contact import DmrContact
-from src.ham.dmr.dmr_id import DmrId
-from src.ham.dmr.dmr_user import DmrUser
+from src.ham.radio.default_radio.dmr_contact_default import DmrContactDefault
+from src.ham.radio.default_radio.dmr_id_default import DmrIdDefault
+from src.ham.radio.default_radio.dmr_user_default import DmrUserDefault
+from src.ham.radio.default_radio.radio_channel_default import RadioChannelDefault
 from src.ham.radio.radio_channel import RadioChannel
 from src.ham.radio.radio_zone import RadioZone
 from src.ham.util import radio_types
@@ -13,11 +14,11 @@ from src.ham.util.validation_error import ValidationError
 
 class Validator:
 	def __init__(self):
-		self._radio_channel_template = RadioChannel.create_empty()
-		self._digital_contact_template = DmrContact.create_empty()
-		self._dmr_id_template = DmrId.create_empty()
+		self._radio_channel_template = RadioChannelDefault.create_empty()
+		self._digital_contact_template = DmrContactDefault.create_empty()
+		self._dmr_id_template = DmrIdDefault.create_empty()
 		self._zone_template = RadioZone.create_empty()
-		self._dmr_user_template = DmrUser.create_empty()
+		self._dmr_user_template = DmrUserDefault.create_empty()
 
 		self._short_names = None
 		self._medium_names = None

@@ -12,10 +12,10 @@ class RadioChannelD878(RadioChannel):
 		self.digital_color.set_alias(radio_types.D878, 'Color Code')
 		self.tx_power.set_alias(radio_types.D878, 'Transmit Power')
 
-	def skip_radio_csv(self, style):
+	def skip_radio_csv(self):
 		return False
 
-	def headers(self, style):
+	def headers(self):
 		output = list()
 		output.append(f"{self.number.get_alias(radio_types.D878)}")  # "No.,"
 		output.append(f"{self.name.get_alias(radio_types.D878)}")  # "Channel Name,"
@@ -68,7 +68,7 @@ class RadioChannelD878(RadioChannel):
 		output.append(f"R5ToneEot")  # "R5ToneEot,"
 		return output
 
-	def output(self, style, channel_number):
+	def output(self, channel_number):
 		tx_frequency = self.rx_freq.fmt_val() + self.tx_offset.fmt_val(0)
 
 		channel_type = 'A-Analog'

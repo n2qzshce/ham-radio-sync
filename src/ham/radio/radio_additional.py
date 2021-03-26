@@ -3,11 +3,14 @@ import logging
 
 import openpyxl
 
-from src.ham.dmr.dmr_contact import DmrContact
-from src.ham.dmr.dmr_id import DmrId
-from src.ham.dmr.dmr_user import DmrUser
+from src.ham.radio.d878.dmr_contact_d878 import DmrContactD878
+from src.ham.radio.d878.dmr_user_d878 import DmrUserD878
+from src.ham.radio.default_radio.dmr_contact_default import DmrContactDefault
+from src.ham.radio.default_radio.dmr_user_default import DmrUserDefault
+from src.ham.radio.dmr_contact import DmrContact
+from src.ham.radio.dmr_id import DmrId
+from src.ham.radio.radio_casted_builder import RadioChannelBuilder, DmrContactBuilder, DmrIdBuilder, DmrUserBuilder
 from src.ham.radio.radio_channel import RadioChannel
-from src.ham.radio.radio_channel_builder import RadioChannelBuilder
 from src.ham.radio.radio_zone import RadioZone
 from src.ham.util import radio_types, file_util
 from src.ham.util.file_util import RadioWriter, FileUtil
@@ -48,10 +51,11 @@ class RadioAdditionalData:
 		writer = FileUtil.open_file(f'out/{style}/{style}_radioid.csv', 'w+')
 		radio_id_file = csv.writer(writer, lineterminator='\n')
 
-		headers = DmrId.create_empty()
-		radio_id_file.writerow(headers.headers(style))
+		headers = DmrIdBuilder.casted(DmrId.create_empty(), style)
+		radio_id_file.writerow(headers.headers())
 		for dmr_id in self._dmr_ids.values():
-			radio_id_file.writerow(dmr_id.output(style))
+			casted_id = DmrIdBuilder.casted(dmr_id, style)
+			radio_id_file.writerow(casted_id.output())
 
 		writer.close()
 		return
@@ -64,10 +68,12 @@ class RadioAdditionalData:
 		writer = FileUtil.open_file(f'out/{style}/{style}_contacts.csv', 'w+')
 		dmr_contact_file = csv.writer(writer, lineterminator='\n')
 
-		headers = DmrContact.create_empty()
-		dmr_contact_file.writerow(headers.headers(style))
+		headers = DmrContactDefault.create_empty()
+		headers = DmrContactBuilder.casted(headers, style)
+		dmr_contact_file.writerow(headers.headers())
 		for dmr_contact in self._digital_contacts.values():
-			dmr_contact_file.writerow(dmr_contact.output(style))
+			casted_contact = DmrContactBuilder.casted(dmr_contact, style)
+			dmr_contact_file.writerow(casted_contact.output())
 
 		writer.close()
 
@@ -94,10 +100,11 @@ class RadioAdditionalData:
 		writer = FileUtil.open_file(f'out/{style}/{style}_user.csv', 'w+')
 		users_file = csv.writer(writer, lineterminator='\n')
 
-		headers = DmrUser.create_empty()
-		users_file.writerow(headers.headers(style))
-		for zone in self._users.values():
-			users_file.writerow(zone.output(style))
+		headers = DmrUserDefault.create_empty()
+		users_file.writerow(headers.headers())
+		for user in self._users.values():
+			casted_user = DmrUserBuilder.casted(user.cols, user.number, style)
+			users_file.writerow(casted_user.output())
 
 		writer.close()
 
@@ -115,10 +122,11 @@ class RadioAdditionalData:
 
 		radio_id_file = RadioWriter(f'out/{style}/{style}_radioid.csv', '\r\n')
 
-		headers = DmrId.create_empty()
-		radio_id_file.writerow(headers.headers(style))
+		headers = DmrIdBuilder.casted(DmrId.create_empty(), radio_types.D878)
+		radio_id_file.writerow(headers.headers())
 		for dmr_id in self._dmr_ids.values():
-			radio_id_file.writerow(dmr_id.output(style))
+			casted_id = DmrIdBuilder.casted(dmr_id, radio_types.D878)
+			radio_id_file.writerow(casted_id.output())
 
 		radio_id_file.close()
 		return
@@ -131,10 +139,12 @@ class RadioAdditionalData:
 
 		dmr_contact_file = RadioWriter(f'out/{style}/{style}_talkgroup.csv', '\r\n')
 
-		headers = DmrContact.create_empty()
-		dmr_contact_file.writerow(headers.headers(style))
+		headers = DmrContactD878.create_empty()
+		headers = DmrContactBuilder.casted(headers, style)
+		dmr_contact_file.writerow(headers.headers())
 		for dmr_contact in self._digital_contacts.values():
-			dmr_contact_file.writerow(dmr_contact.output(style))
+			casted_contact = DmrContactBuilder.casted(dmr_contact, style)
+			dmr_contact_file.writerow(casted_contact.output())
 
 		dmr_contact_file.close()
 
@@ -163,12 +173,13 @@ class RadioAdditionalData:
 
 		users_file = RadioWriter(f'out/{style}/{style}_digital_contacts.csv', '\n')
 
-		headers = DmrUser.create_empty()
-		users_file.writerow(headers.headers(style))
+		headers = DmrUserD878.create_empty()
+		users_file.writerow(headers.headers())
 
 		rows_processed = 1
 		for user in self._users.values():
-			users_file.writerow(user.output(style))
+			casted_user = DmrUserBuilder.casted(user.cols, user.number, style)
+			users_file.writerow(casted_user.output())
 			rows_processed += 1
 			logging.debug(f"Writing user row {rows_processed}")
 			if rows_processed % file_util.USER_LINE_LOG_INTERVAL == 0:
@@ -189,9 +200,9 @@ class RadioAdditionalData:
 
 		header = RadioChannelBuilder.casted(RadioChannel.create_empty(), radio_types.CS800)
 		header.is_digital = lambda: False
-		analog_sheet.append(header.headers(radio_types.CS800))
+		analog_sheet.append(header.headers())
 		header.is_digital = lambda: True
-		digital_sheet.append(header.headers(radio_types.CS800))
+		digital_sheet.append(header.headers())
 
 		analog_num = 1
 		digital_num = 1
@@ -199,10 +210,10 @@ class RadioAdditionalData:
 			casted_channel = RadioChannelBuilder.casted(radio_channel, radio_types.CS800)
 
 			if casted_channel.is_digital():
-				digital_sheet.append(casted_channel.output(radio_types.CS800, digital_num))
+				digital_sheet.append(casted_channel.output(digital_num))
 				digital_num += 1
 			else:
-				analog_sheet.append(casted_channel.output(radio_types.CS800, analog_num))
+				analog_sheet.append(casted_channel.output(analog_num))
 				analog_num += 1
 		channels_workbook.save(f'out/{style}/{style}_channels.xlsx')
 		channels_workbook.close()
@@ -214,21 +225,24 @@ class RadioAdditionalData:
 		dmr_contacts_sheet = user_workbook.create_sheet('DMR_Contacts', 0)
 		user_workbook.remove_sheet(user_workbook.get_sheet_by_name('Sheet'))
 
-		headers = DmrContact.create_empty().headers(radio_types.CS800)
-		dmr_contacts_sheet.append(headers)
+		headers = DmrContact.create_empty()
+		headers = DmrContactBuilder.casted(headers, style)
+		dmr_contacts_sheet.append(headers.headers())
 
 		number = 1
 		for dmr_contact in self._digital_contacts.values():
-			if dmr_contact.name.fmt_val() == 'Analog':
+			casted_contact = DmrContactBuilder.casted(dmr_contact, style)
+			if casted_contact.name.fmt_val() == 'Analog':
 				continue
-			dmr_contact.number._fmt_val = number
-			dmr_contacts_sheet.append(dmr_contact.output(radio_types.CS800))
+			casted_contact.number._fmt_val = number
+			dmr_contacts_sheet.append(casted_contact.output())
 			number += 1
 
 		logging.info(f"Writing DMR users for {style}")
 		for dmr_user in self._users.values():
 			dmr_user.number._fmt_val = number
-			dmr_contacts_sheet.append(dmr_user.output(radio_types.CS800))
+			casted_user = DmrUserBuilder.casted(dmr_user.cols, number, style)
+			dmr_contacts_sheet.append(casted_user.output())
 			number += 1
 			logging.debug(f"Writing user row {number}")
 			if number % file_util.USER_LINE_LOG_INTERVAL == 0:
