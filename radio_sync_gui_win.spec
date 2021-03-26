@@ -5,7 +5,6 @@ block_cipher = None
 
 
 a = Analysis(['radio_sync_gui.py'],
-             pathex=['C:\\Users\\***REMOVED***\\dev\\radio_sync'],
              binaries=[],
              datas=[],
              hiddenimports=[],
