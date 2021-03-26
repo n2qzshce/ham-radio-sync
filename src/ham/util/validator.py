@@ -18,15 +18,29 @@ class Validator:
 		self._zone_template = RadioZone.create_empty()
 		self._dmr_user_template = DmrUser.create_empty()
 
-		self._short_names = None
-		self._medium_names = None
-		self._long_names = None
 		return
 
-	def flush_names(self):
-		self._short_names = dict()
-		self._medium_names = dict()
-		self._long_names = dict()
+	@classmethod
+	def validate_files_exist(cls):
+		errors = []
+
+		files_list = ["in/input.csv", "in/digital_contacts.csv", "in/dmr_id.csv", 'in/zones.csv', 'in/user.csv']
+		for file_name in files_list:
+			try:
+				f = open(file_name, "r")
+				f.close()
+			except FileNotFoundError:
+				err = ValidationError(f"Cannot open file: `{file_name}`", None, file_name)
+				errors.append(err)
+
+		if len(errors) > 0:
+			logging.error("--- FILE MISSING ERRORS, CANNOT CONTINUE ---")
+			for err in errors:
+				logging.error(f"\t\t{err.message}")
+		else:
+			logging.info("All necessary files found")
+
+		return errors
 
 	def validate_dmr_user(self, cols, line_num, file_name):
 		needed_cols_dict_gen = dict(self._dmr_user_template.__dict__)

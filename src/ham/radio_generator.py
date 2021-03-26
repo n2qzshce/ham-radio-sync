@@ -11,7 +11,6 @@ from src.ham.radio.radio_channel_builder import RadioChannelBuilder
 from src.ham.radio.radio_zone import RadioZone
 from src.ham.util import radio_types, file_util
 from src.ham.util.file_util import FileUtil, RadioWriter
-from src.ham.util.validation_error import ValidationError
 from src.ham.util.validator import Validator
 
 
@@ -43,15 +42,9 @@ class RadioGenerator:
 		""")
 
 	def generate_all_declared(self):
-		self._validator.flush_names()
-		file_errors = self._validate_files_exist()
+		file_errors = Validator.validate_files_exist()
 		if len(file_errors) > 0:
-			logging.error("--- FILE MISSING ERRORS, CANNOT CONTINUE ---")
-			for err in file_errors:
-				logging.error(f"\t\t{err.message}")
 			return
-		else:
-			logging.info("All necessary files found")
 
 		digital_contacts, digi_contact_errors = self._generate_digital_contact_data()
 		dmr_ids, dmr_id_errors = self._generate_dmr_id_data()
@@ -136,20 +129,6 @@ class RadioGenerator:
 
 		logging.info(f"Radio generator complete. Your output files are in `{os.path.abspath('out')}`")
 		return
-
-	def _validate_files_exist(self):
-		errors = []
-
-		files_list = ["in/input.csv", "in/digital_contacts.csv", "in/dmr_id.csv", 'in/zones.csv', 'in/user.csv']
-		for file_name in files_list:
-			try:
-				f = open(file_name, "r")
-				f.close()
-			except FileNotFoundError:
-				err = ValidationError(f"Cannot open file: `{file_name}`", None, file_name)
-				errors.append(err)
-
-		return errors
 
 	def _generate_digital_contact_data(self):
 		logging.info("Processing digital contacts")
