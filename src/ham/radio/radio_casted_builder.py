@@ -7,10 +7,12 @@ from src.ham.radio.d878.dmr_contact_d878 import DmrContactD878
 from src.ham.radio.d878.dmr_id_d878 import DmrIdD878
 from src.ham.radio.d878.dmr_user_d878 import DmrUserD878
 from src.ham.radio.d878.radio_channel_d878 import RadioChannelD878
+from src.ham.radio.d878.radio_zone_d878 import RadioZoneD878
 from src.ham.radio.default_radio.dmr_contact_default import DmrContactDefault
 from src.ham.radio.default_radio.dmr_id_default import DmrIdDefault
 from src.ham.radio.default_radio.dmr_user_default import DmrUserDefault
 from src.ham.radio.default_radio.radio_channel_default import RadioChannelDefault
+from src.ham.radio.default_radio.radio_zone_default import RadioZoneDefault
 from src.ham.radio.ftm400.radio_channel_ftm400 import RadioChannelFtm400
 from src.ham.util import radio_types
 
@@ -63,3 +65,15 @@ class DmrUserBuilder:
 		}
 
 		return switch[style]
+
+
+class RadioZoneBuilder:
+	@classmethod
+	def casted(cls, cols, associated_channels, style):
+		switch = {
+			radio_types.DEFAULT: RadioZoneDefault(cols),
+			radio_types.D878: RadioZoneD878(cols)
+		}
+		result = switch[style]
+		result._associated_channels = associated_channels
+		return result

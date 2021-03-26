@@ -5,8 +5,8 @@ from src.ham.radio.default_radio.dmr_contact_default import DmrContactDefault
 from src.ham.radio.default_radio.dmr_id_default import DmrIdDefault
 from src.ham.radio.default_radio.dmr_user_default import DmrUserDefault
 from src.ham.radio.default_radio.radio_channel_default import RadioChannelDefault
+from src.ham.radio.default_radio.radio_zone_default import RadioZoneDefault
 from src.ham.radio.radio_casted_builder import RadioChannelBuilder
-from src.ham.radio.radio_zone import RadioZone
 from src.ham.util import radio_types
 from src.ham.util.file_util import FileUtil, RadioWriter
 
@@ -83,7 +83,7 @@ class Wizard(object):
 			'digital_color': '',
 			'digital_contact_id': '',
 		}, digital_contacts=None, dmr_ids=None)
-		channel_file.writerow(RadioChannelDefault.create_empty().headers())
+		channel_file.writerow(first_channel.headers())
 		channel_file.writerow(RadioChannelBuilder.casted(first_channel, radio_types.DEFAULT).output(1))
 		channel_file.writerow(RadioChannelBuilder.casted(second_channel, radio_types.DEFAULT).output(2))
 		channel_file.close()
@@ -120,12 +120,12 @@ class Wizard(object):
 
 	def _create_zone_data(self):
 		zone_id_file = RadioWriter('in/zones.csv', '\n')
-		zone = RadioZone({
+		zone = RadioZoneDefault({
 			'number': 1,
 			'name': 'Zone 1',
 		})
-		zone_id_file.writerow(RadioZone.create_empty().headers(radio_types.DEFAULT))
-		zone_id_file.writerow(zone.output(radio_types.DEFAULT))
+		zone_id_file.writerow(zone.headers())
+		zone_id_file.writerow(zone.output())
 		zone_id_file.close()
 
 	def _create_dmr_user_data(self):
@@ -140,7 +140,7 @@ class Wizard(object):
 			'COUNTRY': 'Theremany',
 			'REMARKS': 'Sample Entry',
 		})
-		user_file.writerow(DmrUserDefault.create_empty().headers())
+		user_file.writerow(dmr_user.headers())
 		user_file.writerow(dmr_user.output())
 		user_file.close()
 		return

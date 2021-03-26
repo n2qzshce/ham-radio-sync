@@ -5,8 +5,8 @@ from src.ham.radio.default_radio.dmr_contact_default import DmrContactDefault
 from src.ham.radio.default_radio.dmr_id_default import DmrIdDefault
 from src.ham.radio.default_radio.dmr_user_default import DmrUserDefault
 from src.ham.radio.default_radio.radio_channel_default import RadioChannelDefault
+from src.ham.radio.default_radio.radio_zone_default import RadioZoneDefault
 from src.ham.radio.radio_channel import RadioChannel
-from src.ham.radio.radio_zone import RadioZone
 from src.ham.util import radio_types
 from src.ham.util.data_column import DataColumn
 from src.ham.util.validation_error import ValidationError
@@ -17,7 +17,7 @@ class Validator:
 		self._radio_channel_template = RadioChannelDefault.create_empty()
 		self._digital_contact_template = DmrContactDefault.create_empty()
 		self._dmr_id_template = DmrIdDefault.create_empty()
-		self._zone_template = RadioZone.create_empty()
+		self._zone_template = RadioZoneDefault.create_empty()
 		self._dmr_user_template = DmrUserDefault.create_empty()
 
 		self._short_names = None

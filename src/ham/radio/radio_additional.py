@@ -8,11 +8,13 @@ from src.ham.radio.cs800.radio_channel_cs800 import RadioChannelCS800
 from src.ham.radio.d878.dmr_contact_d878 import DmrContactD878
 from src.ham.radio.d878.dmr_id_d878 import DmrIdD878
 from src.ham.radio.d878.dmr_user_d878 import DmrUserD878
+from src.ham.radio.d878.radio_zone_d878 import RadioZoneD878
 from src.ham.radio.default_radio.dmr_contact_default import DmrContactDefault
 from src.ham.radio.default_radio.dmr_id_default import DmrIdDefault
 from src.ham.radio.default_radio.dmr_user_default import DmrUserDefault
-from src.ham.radio.radio_casted_builder import RadioChannelBuilder, DmrContactBuilder, DmrIdBuilder, DmrUserBuilder
-from src.ham.radio.radio_zone import RadioZone
+from src.ham.radio.default_radio.radio_zone_default import RadioZoneDefault
+from src.ham.radio.radio_casted_builder import RadioChannelBuilder, DmrContactBuilder, DmrIdBuilder, DmrUserBuilder, \
+	RadioZoneBuilder
 from src.ham.util import radio_types, file_util
 from src.ham.util.file_util import RadioWriter, FileUtil
 
@@ -85,10 +87,11 @@ class RadioAdditionalData:
 		writer = FileUtil.open_file(f'out/{style}/{style}_zone.csv', 'w+')
 		zone_file = csv.writer(writer, lineterminator='\n')
 
-		headers = RadioZone.create_empty()
-		zone_file.writerow(headers.headers(style))
+		headers = RadioZoneDefault.create_empty()
+		zone_file.writerow(headers.headers())
 		for zone in self._zones.values():
-			zone_file.writerow(zone.output(style))
+			casted_zone = RadioZoneBuilder.casted(zone.cols, zone._associated_channels, style)
+			zone_file.writerow(casted_zone.output())
 
 		writer.close()
 
@@ -155,12 +158,13 @@ class RadioAdditionalData:
 
 		zone_file = RadioWriter(f'out/{style}/{style}_zone.csv', '\r\n')
 
-		headers = RadioZone.create_empty()
-		zone_file.writerow(headers.headers(style))
+		headers = RadioZoneD878.create_empty()
+		zone_file.writerow(headers.headers())
 		for zone in self._zones.values():
 			if not zone.has_channels():
 				continue
-			zone_file.writerow(zone.output(style))
+			casted_zone = RadioZoneBuilder.casted(zone.cols, zone._associated_channels, style)
+			zone_file.writerow(casted_zone.output())
 
 		zone_file.close()
 
