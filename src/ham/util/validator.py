@@ -7,6 +7,7 @@ from src.ham.radio.radio_channel import RadioChannel
 from src.ham.radio.radio_zone import RadioZone
 from src.ham.util import radio_types
 from src.ham.util.data_column import DataColumn
+from src.ham.util.file_util import FileUtil
 from src.ham.util.validation_error import ValidationError
 
 
@@ -27,7 +28,7 @@ class Validator:
 		files_list = ["in/input.csv", "in/digital_contacts.csv", "in/dmr_id.csv", 'in/zones.csv', 'in/user.csv']
 		for file_name in files_list:
 			try:
-				f = open(file_name, "r")
+				f = FileUtil.open_file(file_name, "r")
 				f.close()
 			except FileNotFoundError:
 				err = ValidationError(f"Cannot open file: `{file_name}`", None, file_name)

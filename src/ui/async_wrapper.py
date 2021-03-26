@@ -116,4 +116,4 @@ class AsyncWrapper:
 For feature requests, you can contact the repository owners here: 
 Email: {email_dec}
 A mailto link will now attempt to open...""")
-		webbrowser.open(f"mailto:{email_dec}?subject=radio_sync%20sFeature%20srequest", new=2)
+		webbrowser.FileUtil.open_file(f"mailto:{email_dec}?subject=radio_sync%20sFeature%20srequest", new=2)

@@ -40,7 +40,7 @@ class MigrationTest(BaseTestSetup):
 		self.manager._migrate_two()
 		self.manager._migrate_three()
 
-		f = open('in/input.csv', encoding='utf-8', newline='\n')
+		f = FileUtil.open_file('in/input.csv', 'r')
 		first_line = f.readline()
 		self.assertEqual(
 							'number,'

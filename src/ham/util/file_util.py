@@ -10,7 +10,7 @@ RADIO_LINE_LOG_INTERVAL = 5
 class RadioWriter:
 	def __init__(self, file_path, newline_char):
 		logging.debug(f'Creating CSV at {file_path}')
-		self._writer = open(f'{file_path}', 'w+', encoding='utf-8', newline=newline_char)
+		self._writer = FileUtil.open_file(f'{file_path}', 'w+', encoding='utf-8', newline=newline_char)
 		self._csv_writer = csv.writer(self._writer, dialect='unix', quoting=0)
 
 	def writerow(self, row):

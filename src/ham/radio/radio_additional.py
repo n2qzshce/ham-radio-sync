@@ -45,7 +45,7 @@ class RadioAdditionalData:
 			logging.error(f"No DMR ids found for {style}.")
 			return
 
-		writer = open(f'out/{style}/{style}_radioid.csv', 'w+', encoding='utf-8')
+		writer = FileUtil.open_file(f'out/{style}/{style}_radioid.csv', 'w+', encoding='utf-8')
 		radio_id_file = csv.writer(writer, lineterminator='\n')
 
 		headers = DmrId.create_empty()
@@ -61,7 +61,7 @@ class RadioAdditionalData:
 			logging.error(f"No digital contacts found for {style}.")
 			return
 
-		writer = open(f'out/{style}/{style}_contacts.csv', 'w+', encoding='utf-8')
+		writer = FileUtil.open_file(f'out/{style}/{style}_contacts.csv', 'w+', encoding='utf-8')
 		dmr_contact_file = csv.writer(writer, lineterminator='\n')
 
 		headers = DmrContact.create_empty()
@@ -76,7 +76,7 @@ class RadioAdditionalData:
 			logging.error(f"No zones list found for {style}.")
 			return
 
-		writer = open(f'out/{style}/{style}_zone.csv', 'w+', encoding='utf-8')
+		writer = FileUtil.open_file(f'out/{style}/{style}_zone.csv', 'w+', encoding='utf-8')
 		zone_file = csv.writer(writer, lineterminator='\n')
 
 		headers = RadioZone.create_empty()
@@ -91,7 +91,7 @@ class RadioAdditionalData:
 			logging.error(f"No zones list found for {style}.")
 			return
 
-		writer = open(f'out/{style}/{style}_user.csv', 'w+', encoding='utf-8')
+		writer = FileUtil.open_file(f'out/{style}/{style}_user.csv', 'w+', encoding='utf-8')
 		users_file = csv.writer(writer, lineterminator='\n')
 
 		headers = DmrUser.create_empty()

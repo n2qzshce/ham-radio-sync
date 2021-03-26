@@ -87,25 +87,25 @@ class MigrationManager:
 		logging.info("Running migration step 2: Creating in.csv")
 
 		if not os.path.exists('in/input.csv'):
-			f = open('in/input.csv', 'w+')
+			f = FileUtil.open_file('in/input.csv', 'w+')
 			f.close()
 
 		if not os.path.exists('in/digital_contacts.csv'):
-			f = open('in/digital_contacts.csv', 'w+')
+			f = FileUtil.open_file('in/digital_contacts.csv', 'w+')
 			f.close()
 
 		if not os.path.exists('in/zones.csv'):
-			f = open('in/zones.csv', 'w+')
+			f = FileUtil.open_file('in/zones.csv', 'w+')
 			f.close()
 
 		if not os.path.exists('in/user.csv'):
-			f = open('in/user.csv', 'w+')
+			f = FileUtil.open_file('in/user.csv', 'w+')
 			f.close()
 			user_columns = ['RADIO_ID', 'CALLSIGN', 'FIRST_NAME', 'LAST_NAME', 'CITY', 'STATE', 'COUNTRY', 'REMARKS']
 			self._add_cols_to_file('in/user.csv', user_columns)
 
 		if not os.path.exists('in/dmr_id.csv'):
-			f = open('in/dmr_id.csv', 'w+')
+			f = FileUtil.open_file('in/dmr_id.csv', 'w+')
 			f.close()
 
 	def _migrate_three(self):

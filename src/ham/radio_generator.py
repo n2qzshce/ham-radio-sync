@@ -52,7 +52,7 @@ class RadioGenerator:
 		user, user_data_errors = self._generate_user_data()
 		preload_errors = digi_contact_errors + dmr_id_errors + zone_errors + user_data_errors
 
-		feed = open("in/input.csv", "r")
+		feed = FileUtil.open_file("in/input.csv", "r")
 		csv_reader = csv.DictReader(feed)
 
 		line_num = 1
@@ -91,7 +91,7 @@ class RadioGenerator:
 			channel_numbers[radio] = 1
 
 		feed.close()
-		feed = open("in/input.csv", "r")
+		feed = FileUtil.open_file("in/input.csv", "r")
 		csv_reader = csv.DictReader(feed)
 		logging.info("Processing radio channels")
 		line_num = 1
@@ -132,7 +132,7 @@ class RadioGenerator:
 
 	def _generate_digital_contact_data(self):
 		logging.info("Processing digital contacts")
-		feed = open("in/digital_contacts.csv", "r")
+		feed = FileUtil.open_file("in/digital_contacts.csv", "r")
 		csv_feed = csv.DictReader(feed)
 		digital_contacts = dict()
 		errors = []
@@ -151,7 +151,7 @@ class RadioGenerator:
 
 	def _generate_dmr_id_data(self):
 		logging.info("Processing dmr ids")
-		feed = open("in/dmr_id.csv", "r")
+		feed = FileUtil.open_file("in/dmr_id.csv", "r")
 		csv_feed = csv.DictReader(feed)
 		dmr_ids = dict()
 		errors = []
@@ -169,7 +169,7 @@ class RadioGenerator:
 
 	def _generate_zone_data(self):
 		logging.info("Processing zones")
-		feed = open('in/zones.csv', 'r')
+		feed = FileUtil.open_file('in/zones.csv', 'r')
 		csv_feed = csv.DictReader(feed)
 		zones = dict()
 		errors = []
@@ -187,7 +187,7 @@ class RadioGenerator:
 
 	def _generate_user_data(self):
 		logging.info("Processing dmr IDs. This step can take a while.")
-		feed = open('in/user.csv', 'r', encoding='utf-8')
+		feed = FileUtil.open_file('in/user.csv', 'r', encoding='utf-8')
 		csv_feed = csv.DictReader(feed)
 		users = dict()
 		errors = []

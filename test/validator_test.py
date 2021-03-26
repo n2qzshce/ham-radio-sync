@@ -1,10 +1,9 @@
-import unittest
-
 from src.ham.util.file_util import FileUtil
 from src.ham.util.validator import Validator
+from test.base_test_setup import BaseTestSetup
 
 
-class ValidatorTest(unittest.TestCase):
+class ValidatorTest(BaseTestSetup):
 	def setUp(self):
 		FileUtil.safe_delete_dir('in')
 		FileUtil.safe_delete_dir('out')
@@ -26,5 +25,6 @@ class ValidatorTest(unittest.TestCase):
 
 	def test_only_some_files_exist(self):
 		f = FileUtil.open_file("in/input.csv", 'w+')
+		f.close()
 		errors = Validator.validate_files_exist()
 		self.assertEquals(4, len(errors))
