@@ -7,6 +7,7 @@ from src.ham.dmr.dmr_contact import DmrContact
 from src.ham.dmr.dmr_id import DmrId
 from src.ham.dmr.dmr_user import DmrUser
 from src.ham.radio.radio_channel import RadioChannel
+from src.ham.radio.radio_channel_builder import RadioChannelBuilder
 from src.ham.radio.radio_zone import RadioZone
 from src.ham.util import radio_types, file_util
 from src.ham.util.file_util import RadioWriter
@@ -186,7 +187,7 @@ class RadioAdditionalData:
 		digital_sheet = channels_workbook.create_sheet('Digital Channel', 1)
 		channels_workbook.remove_sheet(channels_workbook.get_sheet_by_name('Sheet'))
 
-		header = RadioChannel.create_empty()
+		header = RadioChannelBuilder.casted(RadioChannel.create_empty(), radio_types.CS800)
 		header.is_digital = lambda: False
 		analog_sheet.append(header.headers(radio_types.CS800))
 		header.is_digital = lambda: True
@@ -195,11 +196,13 @@ class RadioAdditionalData:
 		analog_num = 1
 		digital_num = 1
 		for radio_channel in self._channels.values():
-			if radio_channel.is_digital():
-				digital_sheet.append(radio_channel.output(radio_types.CS800, digital_num))
+			casted_channel = RadioChannelBuilder.casted(radio_channel, radio_types.CS800)
+
+			if casted_channel.is_digital():
+				digital_sheet.append(casted_channel.output(radio_types.CS800, digital_num))
 				digital_num += 1
 			else:
-				analog_sheet.append(radio_channel.output(radio_types.CS800, analog_num))
+				analog_sheet.append(casted_channel.output(radio_types.CS800, analog_num))
 				analog_num += 1
 		channels_workbook.save(f'out/{style}/{style}_channels.xlsx')
 		channels_workbook.close()

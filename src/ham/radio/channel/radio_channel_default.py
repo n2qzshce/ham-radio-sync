@@ -1,7 +1,11 @@
 from src.ham.radio.radio_channel import RadioChannel
 from src.ham.util import radio_types
 
+
 class RadioChannelDefault(RadioChannel):
+	def __init__(self, cols, digital_contacts, dmr_ids):
+		super().__init__(cols, digital_contacts, dmr_ids)
+
 	def skip_radio_csv(self, style):
 		return False
 

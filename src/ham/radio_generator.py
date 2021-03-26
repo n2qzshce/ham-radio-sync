@@ -1,15 +1,16 @@
-import logging
 import csv
+import logging
 import os
 
-from src.ham.util import radio_types, file_util
 from src.ham.dmr.dmr_contact import DmrContact
 from src.ham.dmr.dmr_id import DmrId
 from src.ham.dmr.dmr_user import DmrUser
-from src.ham.util.file_util import FileUtil, RadioWriter
 from src.ham.radio.radio_additional import RadioAdditionalData
 from src.ham.radio.radio_channel import RadioChannel
+from src.ham.radio.radio_channel_builder import RadioChannelBuilder
 from src.ham.radio.radio_zone import RadioZone
+from src.ham.util import radio_types, file_util
+from src.ham.util.file_util import FileUtil, RadioWriter
 from src.ham.util.validation_error import ValidationError
 from src.ham.util.validator import Validator
 
@@ -82,14 +83,15 @@ class RadioGenerator:
 
 		channel_numbers = dict()
 		for radio in self.radio_list:
+			radio_casted = RadioChannelBuilder.casted(headers_gen, radio)
 			FileUtil.safe_create_dir(f'out/{radio}')
 			logging.info(f"Generating for radio type `{radio}`")
 
-			if RadioChannel.skip_radio_csv(radio):
+			if radio_casted.skip_radio_csv(radio):
 				logging.info(f"`{radio}` uses special output style. Skipping channels csv")
 				continue
 			output = RadioWriter(f'out/{radio}/{radio}_channels.csv', '\r\n')
-			file_headers = headers_gen.headers(radio)
+			file_headers = radio_casted.headers(radio)
 			output.writerow(file_headers)
 			radio_files[radio] = output
 			channel_numbers[radio] = 1
@@ -114,12 +116,14 @@ class RadioGenerator:
 				zones[radio_channel.zone_id.fmt_val()].add_channel(radio_channel)
 
 			for radio in self.radio_list:
-				if not radio_types.supports_dmr(radio) and radio_channel.is_digital():
+				casted_channel = RadioChannelBuilder.casted(radio_channel, radio)
+
+				if not radio_types.supports_dmr(radio) and casted_channel.is_digital():
 					continue
 				if radio not in radio_files.keys():
 					continue
 
-				input_data = radio_channel.output(radio, channel_numbers[radio])
+				input_data = casted_channel.output(radio, channel_numbers[radio])
 				radio_files[radio].writerow(input_data)
 				channel_numbers[radio] += 1
 
