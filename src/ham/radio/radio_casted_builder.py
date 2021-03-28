@@ -22,8 +22,8 @@ class RadioChannelBuilder:
 	def casted(cls, radio_channel, style):
 		switch = {
 			radio_types.DEFAULT: RadioChannelDefault(radio_channel.cols, radio_channel.digital_contacts, radio_channel.dmr_ids),
-			radio_types.BAOFENG: RadioChannelBaofeng(radio_channel.cols, radio_channel.digital_contacts, radio_channel.dmr_ids),
-			radio_types.FTM400: RadioChannelFtm400(radio_channel.cols, radio_channel.digital_contacts, radio_channel.dmr_ids),
+			radio_types.CHIRP: RadioChannelBaofeng(radio_channel.cols, radio_channel.digital_contacts, radio_channel.dmr_ids),
+			radio_types.FTM400_RT: RadioChannelFtm400(radio_channel.cols, radio_channel.digital_contacts, radio_channel.dmr_ids),
 			radio_types.D878: RadioChannelD878(radio_channel.cols, radio_channel.digital_contacts, radio_channel.dmr_ids),
 			radio_types.CS800: RadioChannelCS800(radio_channel.cols, radio_channel.digital_contacts, radio_channel.dmr_ids),
 			radio_types.D710: RadioChannelD710(radio_channel.cols, radio_channel.digital_contacts, radio_channel.dmr_ids),

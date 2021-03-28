@@ -44,6 +44,7 @@ class Validator:
 			logging.error("--- FILE MISSING ERRORS, CANNOT CONTINUE ---")
 			for err in errors:
 				logging.error(f"\t\t{err.message}")
+			logging.info("Have you run `Wizard` under `Dangerous Operations`?")
 		else:
 			logging.info("All necessary files found")
 

@@ -18,14 +18,14 @@ class RadioAdditionalBuilder:
 														, radio_additional_data._zones
 														, radio_additional_data._users
 														),
-			radio_types.BAOFENG: RadioAdditionalBaofeng(
+			radio_types.CHIRP: RadioAdditionalBaofeng(
 														radio_additional_data._channels
 														, radio_additional_data._dmr_ids
 														, radio_additional_data._digital_contacts
 														, radio_additional_data._zones
 														, radio_additional_data._users
 														),
-			radio_types.FTM400: RadioAdditionalFtm400(
+			radio_types.FTM400_RT: RadioAdditionalFtm400(
 														radio_additional_data._channels
 														, radio_additional_data._dmr_ids
 														, radio_additional_data._digital_contacts

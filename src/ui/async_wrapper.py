@@ -22,7 +22,10 @@ class AsyncWrapper:
 
 	def arm_dangerous(self, *args):
 		if self.dangerous_ops_toggle.state == 'down':
-			logging.warning("Dangerous operations enabled. Have you backed up your input CSVs?")
+			logging.warning(
+							"Dangerous operations enabled, this may destroy/delete input files. "
+							"Have you backed up your input CSVs?"
+			)
 		else:
 			logging.info("Dangerous operations disabled")
 		self._refresh_buttons()
@@ -53,7 +56,7 @@ class AsyncWrapper:
 		except Exception as e:
 			logging.error(f"Fatal error while processing task. PLEASE send this to the project owners.", exc_info=True)
 		logging.info("---Task finished---")
-		self.dangerous_ops_toggle.active = False
+		self.dangerous_ops_toggle.state = 'normal'
 		self._set_buttons_disabled(False)
 
 	def display_about_info(self, event):
@@ -115,5 +118,5 @@ class AsyncWrapper:
 		logging.info(f"""
 For feature requests, you can contact the repository owners here: 
 Email: {email_dec}
-A mailto link will now attempt to open...""")
-		webbrowser.FileUtil.open_file(f"mailto:{email_dec}?subject=radio_sync%20sFeature%20srequest", new=2)
+A draft email will now attempt to open...""")
+		webbrowser.open(f"mailto:{email_dec}?subject=radio_sync%20sFeature%20srequest", new=2)

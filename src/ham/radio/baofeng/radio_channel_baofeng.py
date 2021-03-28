@@ -5,28 +5,28 @@ from src.ham.util import radio_types
 class RadioChannelBaofeng(RadioChannel):
 	def __init__(self, cols, digital_contacts, dmr_ids):
 		super().__init__(cols, digital_contacts, dmr_ids)
-		self.number.set_alias(radio_types.BAOFENG, 'Location')
-		self.short_name.set_alias(radio_types.BAOFENG, 'Name')
-		self.rx_freq.set_alias(radio_types.BAOFENG, 'Frequency')
-		self.rx_ctcss.set_alias(radio_types.BAOFENG, 'cToneFreq')
-		self.rx_dcs.set_alias(radio_types.BAOFENG, 'DtcsCode')
-		self.tx_offset.set_alias(radio_types.BAOFENG, 'Offset')
-		self.tx_ctcss.set_alias(radio_types.BAOFENG, 'rToneFreq')
+		self.number.set_alias(radio_types.CHIRP, 'Location')
+		self.short_name.set_alias(radio_types.CHIRP, 'Name')
+		self.rx_freq.set_alias(radio_types.CHIRP, 'Frequency')
+		self.rx_ctcss.set_alias(radio_types.CHIRP, 'cToneFreq')
+		self.rx_dcs.set_alias(radio_types.CHIRP, 'DtcsCode')
+		self.tx_offset.set_alias(radio_types.CHIRP, 'Offset')
+		self.tx_ctcss.set_alias(radio_types.CHIRP, 'rToneFreq')
 
 	def skip_radio_csv(self):
 		return False
 
 	def headers(self):
 		output = list()
-		output.append(f"{self.number.get_alias(radio_types.BAOFENG)}")
-		output.append(f"{self.short_name.get_alias(radio_types.BAOFENG)}")
-		output.append(f"{self.rx_freq.get_alias(radio_types.BAOFENG)}")
+		output.append(f"{self.number.get_alias(radio_types.CHIRP)}")
+		output.append(f"{self.short_name.get_alias(radio_types.CHIRP)}")
+		output.append(f"{self.rx_freq.get_alias(radio_types.CHIRP)}")
 		output.append(f"Duplex")
-		output.append(f"{self.tx_offset.get_alias(radio_types.BAOFENG)}")
+		output.append(f"{self.tx_offset.get_alias(radio_types.CHIRP)}")
 		output.append(f"{'Tone'}")
-		output.append(f"{self.tx_ctcss.get_alias(radio_types.BAOFENG)}")
-		output.append(f"{self.rx_ctcss.get_alias(radio_types.BAOFENG)}")
-		output.append(f"{self.rx_dcs.get_alias(radio_types.BAOFENG)}")
+		output.append(f"{self.tx_ctcss.get_alias(radio_types.CHIRP)}")
+		output.append(f"{self.rx_ctcss.get_alias(radio_types.CHIRP)}")
+		output.append(f"{self.rx_dcs.get_alias(radio_types.CHIRP)}")
 		output.append(f"DtcsPolarity")
 		output.append(f"Mode")
 		output.append(f"TStep")

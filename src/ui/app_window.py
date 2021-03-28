@@ -29,6 +29,7 @@ BoxLayout:
 			ActionButton:
 				id: create_radio_plugs
 				text: "Create Radio Plugs"
+				background_color: [0.2, 1.00, 0.47, 1.0]
 			ActionToggleButton:
 				id: enable_dangerous
 				text: "Enable Dangerous Operations"
@@ -46,27 +47,39 @@ BoxLayout:
 				id: dangerous_operations
 				dropdown_width: 225
 				ActionButton:
-					id: dangerous_operations.cleanup
-					text: "Cleanup"
-				ActionButton:
-					id: dangerous_operations.wizard
-					text: "Wizard"
+					id: dangerous_operations.delete_migrate
+					text: "Remove migration backups"
 				ActionButton:
 					id: dangerous_operations.migrate
 					text: "Migrate to latest format"
 				ActionButton:
-					id: dangerous_operations.delete_migrate
-					text: "Remove migration backups"
+					id: dangerous_operations.wizard
+					text: "Wizard"
+				ActionButton:
+					id: dangerous_operations.cleanup
+					text: "Cleanup"
 			ActionGroup:
-				text: "Help"
+				text: "Help / Getting Started"
 				mode: "spinner"
-				dropdown_width: 225
+				dropdown_width: 250
+				ActionButton:
+					id: getting_started
+					text: "Getting started..."
+				ActionButton:
+					id: radio_descriptions
+					text: "Radio model/program list"
+				ActionButton:
+					id: cant_find_radio
+					text: "My radio isn't here"
+				ActionButton:
+					id: wtf_is_dangerous
+					text: "What are 'Dangerous Operations'?"
+				ActionButton:
+					id: feature_request
+					text: "Feature request/bug report"
 				ActionToggleButton:
 					id: debug_toggle
 					text: "Debug logging"
-				ActionButton:
-					id: feature_request
-					text: "Feature Request/Bug Report"
 				ActionButton:
 					id: about
 					text: "About..."
@@ -81,7 +94,7 @@ BoxLayout:
 			size_hint_max_x: 250
 			Label:
 				id: radio_header
-				text: "Radios"
+				text: "Radios to Generate"
 				size_hint: (1.0, 0.1)
 				font_size: 15
 				bold: True
@@ -230,8 +243,11 @@ class AppWindow(App):
 		self._async_wrapper.debug_toggle = debug_button
 		debug_button.bind(on_press=self._async_wrapper.log_level)
 
-		contact_button = layout.ids['feature_request']
+		contact_button = layout.ids['cant_find_radio']
 		contact_button.bind(on_press=self._async_wrapper.contact_info)
+
+		about_button = layout.ids['feature_request']
+		about_button.bind(on_press=self._async_wrapper.contact_info)
 
 		about_button = layout.ids['about']
 		about_button.bind(on_press=self._async_wrapper.display_about_info)
