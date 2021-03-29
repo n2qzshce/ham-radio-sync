@@ -1,4 +1,5 @@
 import logging
+import os
 import sys
 import unittest
 
@@ -15,4 +16,6 @@ class BaseTestSetup(unittest.TestCase):
 		handler.setFormatter(formatter)
 
 		logger.setLevel(logging.INFO)
+		if 'CI' in os.environ.keys():
+			logger.setLevel(logging.ERROR)
 		logger.addHandler(handler)
