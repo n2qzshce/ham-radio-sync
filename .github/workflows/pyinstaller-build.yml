@@ -42,7 +42,7 @@ jobs:
         python -m pip install -r requirements.txt
     - name: Run Tests
       run: |
-        python -m unittest discover
+        python -m unittest -v discover
     - name: Build GUI executable
       run: |
         pyinstaller radio_sync_gui_${{ matrix.short-name }}.spec
