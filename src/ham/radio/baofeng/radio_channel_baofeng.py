@@ -66,10 +66,6 @@ class RadioChannelBaofeng(RadioChannel):
 			if invert_tx:
 				dtcs_polarity = dtcs_polarity[0] + 'R'
 
-		rx_step = 5.0
-		if self.rx_freq.fmt_val() > 400:
-			rx_step = 25.0
-
 		output = list()
 		output.append(f"{number}")
 		output.append(f"{self.short_name.fmt_val().upper():.7s}")
