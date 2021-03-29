@@ -21,7 +21,7 @@ def main():
 	parser = argparse.ArgumentParser(
 		prog='Ham Radio channel wizard',
 		description='''Convert a ham channel list to various radio formats. All of these options can be chained
-					to run multiple steps simultaneously.''')
+					to run multiple steps in order.''')
 
 	parser.add_argument(
 		'--clean', '-c',
