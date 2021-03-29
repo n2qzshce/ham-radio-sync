@@ -1,3 +1,5 @@
+import logging
+
 from src.ham.util.file_util import FileUtil
 from src.ham.util.validator import Validator
 from test.base_test_setup import BaseTestSetup
@@ -5,6 +7,7 @@ from test.base_test_setup import BaseTestSetup
 
 class ValidatorTest(BaseTestSetup):
 	def setUp(self):
+		logging.getLogger().setLevel(logging.CRITICAL)
 		FileUtil.safe_delete_dir('in')
 		FileUtil.safe_delete_dir('out')
 

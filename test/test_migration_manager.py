@@ -1,3 +1,4 @@
+import logging
 import os
 from csv import DictReader
 
@@ -8,6 +9,7 @@ from test.base_test_setup import BaseTestSetup
 
 class MigrationTest(BaseTestSetup):
 	def setUp(self):
+		logging.getLogger().setLevel(logging.ERROR)
 		FileUtil.safe_delete_dir('in')
 		FileUtil.safe_delete_dir('out')
 		self.manager = MigrationManager()
@@ -66,6 +68,7 @@ class MigrationTest(BaseTestSetup):
 		f.close()
 
 	def test_three_does_not_stomp(self):
+		logging.getLogger().setLevel(logging.CRITICAL)
 		self.manager._migrate_one()
 		self.manager._migrate_two()
 
