@@ -1,4 +1,4 @@
-from src.ham.radio.baofeng.radio_additional_baofeng import RadioAdditionalBaofeng
+from src.ham.radio.chirp.radio_additional_chirp import RadioAdditionalChirp
 from src.ham.radio.cs800.radio_additional_cs800 import RadioAdditionalCs800
 from src.ham.radio.d710.radio_additional_d710 import RadioAdditionalD710
 from src.ham.radio.d878.radio_additional_d878 import RadioAdditionalD878
@@ -18,7 +18,7 @@ class RadioAdditionalBuilder:
 														, radio_additional_data._zones
 														, radio_additional_data._users
 														),
-			radio_types.CHIRP: RadioAdditionalBaofeng(
+			radio_types.CHIRP: RadioAdditionalChirp(
 														radio_additional_data._channels
 														, radio_additional_data._dmr_ids
 														, radio_additional_data._digital_contacts

@@ -1,4 +1,4 @@
-from src.ham.radio.baofeng.radio_channel_baofeng import RadioChannelBaofeng
+from src.ham.radio.chirp.radio_channel_chirp import RadioChannelChirp
 from src.ham.radio.cs800.dmr_contact_cs800 import DmrContactCs800
 from src.ham.radio.cs800.dmr_user_cs800 import DmrUserCs800
 from src.ham.radio.cs800.radio_channel_cs800 import RadioChannelCS800
@@ -22,7 +22,7 @@ class RadioChannelBuilder:
 	def casted(cls, radio_channel, style):
 		switch = {
 			radio_types.DEFAULT: RadioChannelDefault(radio_channel.cols, radio_channel.digital_contacts, radio_channel.dmr_ids),
-			radio_types.CHIRP: RadioChannelBaofeng(radio_channel.cols, radio_channel.digital_contacts, radio_channel.dmr_ids),
+			radio_types.CHIRP: RadioChannelChirp(radio_channel.cols, radio_channel.digital_contacts, radio_channel.dmr_ids),
 			radio_types.FTM400_RT: RadioChannelFtm400(radio_channel.cols, radio_channel.digital_contacts, radio_channel.dmr_ids),
 			radio_types.D878: RadioChannelD878(radio_channel.cols, radio_channel.digital_contacts, radio_channel.dmr_ids),
 			radio_types.CS800: RadioChannelCS800(radio_channel.cols, radio_channel.digital_contacts, radio_channel.dmr_ids),
