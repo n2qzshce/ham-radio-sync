@@ -66,6 +66,10 @@ class RadioChannelBaofeng(RadioChannel):
 			if invert_tx:
 				dtcs_polarity = dtcs_polarity[0] + 'R'
 
+		rx_step = 5.0
+		if self.rx_freq.fmt_val() > 400:
+			rx_step = 25.0
+
 		output = list()
 		output.append(f"{number}")
 		output.append(f"{self.short_name.fmt_val().upper():.7s}")
@@ -78,7 +82,7 @@ class RadioChannelBaofeng(RadioChannel):
 		output.append(f"{str(self.rx_dcs.fmt_val(23)).zfill(3)}")
 		output.append(f"{dtcs_polarity}")
 		output.append(f"FM")
-		output.append(f"{5.0:0.2f}")
+		output.append(f"{rx_step:0.2f}")
 		output.append(f"")
 		output.append(f"")
 		output.append(f"")

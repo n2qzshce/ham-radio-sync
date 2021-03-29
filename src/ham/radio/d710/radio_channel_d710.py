@@ -47,6 +47,28 @@ class RadioChannelD710(RadioChannel):
 		return result
 
 	def output(self, channel_number):
+		rx_step = 5.0
+		if self.rx_freq.fmt_val() > 400:
+			rx_step = 25.0
+
+		ct_mode = 'Off'
+		shift_split = ' '
+		tx_freq = self.rx_freq.fmt_val() + self.tx_offset.fmt_val(0)
+
 		output = ""
-		output += f""
-		return
+		output += f"{self.number.fmt_val()-1:04d},"
+		output += f"{self.rx_freq.fmt_val():012.06f},"
+		output += f"{rx_step:06.02f},"
+		output += f"{self.tx_offset.fmt_val(0.0):09.06f},"
+		output += f"{ct_mode},"
+		output += f"{self.rx_ctcss.fmt_val(88.5)},"
+		output += f"{self.tx_ctcss.fmt_val(88.5)},"
+		output += f"{self.rx_dcs.fmt_val(23):03d},"
+		output += f"{shift_split},"
+		output += f"Off,"
+		output += f"Off,"
+		output += f"FM,"
+		output += f"{tx_freq:010.06f},"
+		output += f"{rx_step:06.02f},"
+		output += f"{self.medium_name.fmt_val():.8s}"
+		return output
