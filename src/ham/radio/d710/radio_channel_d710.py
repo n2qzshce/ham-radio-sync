@@ -52,23 +52,38 @@ class RadioChannelD710(RadioChannel):
 			rx_step = 25.0
 
 		ct_mode = 'Off'
+		if self.tx_ctcss.fmt_val() is not None:
+			ct_mode = 'T'
+			if self.rx_ctcss.fmt_val() is not None:
+				ct_mode = 'CT'
+		if self.rx_dcs.fmt_val() is not None:
+			ct_mode = 'DCS'
+
+		dcs_code = self.rx_dcs.fmt_val(23)
+		if self.rx_dcs_invert.fmt_val(False):
+			dcs_code = radio_types.dcs_codes_inverses[dcs_code]
+
 		shift_split = ' '
-		tx_freq = self.rx_freq.fmt_val() + self.tx_offset.fmt_val(0)
+		if self.tx_offset.fmt_val() is not None:
+			if self.tx_offset.fmt_val() < 0:
+				shift_split = '-'
+			else:
+				shift_split = '+'
 
 		output = ""
 		output += f"{self.number.fmt_val()-1:04d},"
 		output += f"{self.rx_freq.fmt_val():012.06f},"
 		output += f"{rx_step:06.02f},"
-		output += f"{self.tx_offset.fmt_val(0.0):09.06f},"
+		output += f"{abs(self.tx_offset.fmt_val(0.0)):09.06f},"
 		output += f"{ct_mode},"
-		output += f"{self.rx_ctcss.fmt_val(88.5)},"
 		output += f"{self.tx_ctcss.fmt_val(88.5)},"
-		output += f"{self.rx_dcs.fmt_val(23):03d},"
+		output += f"{self.rx_ctcss.fmt_val(88.5)},"
+		output += f"{dcs_code:03d},"
 		output += f"{shift_split},"
 		output += f"Off,"
 		output += f"Off,"
 		output += f"FM,"
-		output += f"{tx_freq:010.06f},"
+		output += f"{self.rx_freq.fmt_val():010.06f},"
 		output += f"{rx_step:06.02f},"
 		output += f"{self.medium_name.fmt_val():.8s}"
 		return output
