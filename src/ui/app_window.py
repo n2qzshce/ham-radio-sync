@@ -29,7 +29,6 @@ BoxLayout:
 			ActionButton:
 				id: create_radio_plugs
 				text: "Create Radio Plugs"
-				background_color: [0.2, 1.00, 0.47, 1.0]
 			ActionToggleButton:
 				id: enable_dangerous
 				text: "Enable Dangerous Operations"
@@ -89,9 +88,9 @@ BoxLayout:
 			id: button_pool
 			spacing: 10
 			size_hint: (0.2, 1)
-			padding: [15, 15, 15, 15]
-			size_hint_min_x: 200
-			size_hint_max_x: 250
+			padding: [20,20,20,20]
+			size_hint_min_x: 225
+			size_hint_max_x: 275
 			Label:
 				id: radio_header
 				text: "Radios to Generate"
@@ -176,18 +175,18 @@ class AppWindow(App):
 		for radio in radios:
 			radio_layout = BoxLayout(orientation='horizontal', size_hint=(1, 0.1))
 
-			radio_label = Label(text=radio_types.pretty_name(radio), size_hint=(0.8, 1), font_size=11, halign='left')
-			radio_label.size_hint_min_x = 150
-			radio_checkbox = CheckBox(size_hint=(0.2, 1))
+			radio_label = Label(text=radio_types.pretty_name(radio), size_hint=(0.9, 1), font_size=11, halign='left')
+			radio_checkbox = CheckBox(size_hint=(0.1, 1))
 			radio_checkbox.active = radio == radio_types.DEFAULT
+			radio_label.bind(size=radio_label.setter('text_size'))
 
 			radio_layout.add_widget(radio_label)
 			radio_layout.add_widget(radio_checkbox)
 
 			radio_select_buttons[radio] = radio_checkbox
+
 			button_pool.add_widget(radio_layout)
 
-			radio_label.text_size = [150, None]
 		self._async_wrapper.radio_buttons = radio_select_buttons
 
 		create_button = layout.ids['create_radio_plugs']

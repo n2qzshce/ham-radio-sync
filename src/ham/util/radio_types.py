@@ -22,11 +22,11 @@ def supports_dmr(radio_type):
 def pretty_name(radio_type):
 	switch = {
 		DEFAULT: 'Default',
-		CHIRP: 'CHiRP-Compatible Radios via CHiRP',
-		FTM400_RT: 'Yaesu FTM-400 via RT Systems',
-		D878: 'Anytone D878 via D878',
-		CS800: 'Connect Systems CS800 via CPI',
-		D710: 'Kenwood 71/710 Series via MCP2',
+		CHIRP: 'CHiRP-Compatible (CHiRP)',
+		FTM400_RT: 'Yaesu FTM-400 (RT Systems)',
+		D878: 'Anytone D878 (D878)',
+		CS800: 'Connect Systems CS800 (CPI)',
+		D710: 'Kenwood 71/710 Series (MCP2)',
 	}
 
 	return switch[radio_type]
