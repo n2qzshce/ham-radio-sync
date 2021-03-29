@@ -42,7 +42,9 @@ class D710Test(BaseTestSetup):
 		cols['digital_contact_id'] = ''
 		channel = RadioChannelD710(cols, None, None)
 		result = channel.output(1)
-		self.assertEquals('0000,00146.520000,005.00,00.000000,Off,88.5,88.5,023, ,Off,Off,FM,146.520000,005.00,Natl 2m', result)
+		self.assertEqual(
+			'0000,00146.520000,005.00,00.000000,Off,88.5,88.5,023, ,Off,Off,FM,146.520000,005.00,Natl 2m', result
+		)
 
 
 
