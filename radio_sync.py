@@ -1,5 +1,6 @@
 import argparse
 import logging
+import os
 import sys
 
 import src.ham.util.radio_types
@@ -97,6 +98,16 @@ def main():
 	if arg_values.wizard:
 		logging.info("Running wizard.")
 		wizard = Wizard()
+
+		if os.path.exists('in'):
+			logging.info(f"Your input directory is located at: `{os.path.abspath('in')}`")
+			logging.warning("INPUT DIRECTORY ALREADY EXISTS!! Input files will be overwritten. Continue? (y/n)[n]")
+			prompt = input()
+			if prompt != 'y':
+				logging.info("Wizard cancelled")
+				return
+			else:
+				logging.warning('Input directory will be overwritten')
 		wizard.bootstrap(arg_values.force)
 		op_performed = True
 

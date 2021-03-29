@@ -15,16 +15,6 @@ class Wizard(object):
 	_first_cols = ""
 
 	def bootstrap(self, is_forced):
-		if os.path.exists('in'):
-			logging.warning("INPUT DIRECTORY ALREADY EXISTS!! Input files will be overwritten. Continue? (y/n)[n]")
-			if not is_forced:
-				prompt = input()
-				if prompt != 'y':
-					logging.info("Wizard cancelled")
-					return
-			else:
-				logging.warning('FORCED YES')
-
 		self._create_input(is_forced)
 		self._create_output()
 

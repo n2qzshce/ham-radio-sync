@@ -16,21 +16,42 @@ from kivy.uix.label import Label
 from src.ham.util import radio_types
 from src.ui.async_wrapper import AsyncWrapper
 
-kv = """
+
+class LayoutIds:
+	action_previous = 'action_previous'
+	create_radio_plugs = 'create_radio_plugs'
+	enable_dangerous = 'enable_dangerous'
+	exit_button = 'exit_button'
+	dangerous_operations = 'dangerous_operations'
+	dangerous_operation__delete_migrate = 'dangerous_operation__delete_migrate'
+	dangerous_operation__migrate = 'dangerous_operation__migrate'
+	dangerous_operation__wizard = 'dangerous_operation__wizard'
+	dangerous_operation__cleanup = 'dangerous_operation__cleanup'
+	getting_started = 'getting_started'
+	radio_descriptions = 'radio_descriptions'
+	cant_find_radio = 'cant_find_radio'
+	feature_request = 'feature_request'
+	debug_toggle = 'debug_toggle'
+	button_pool = 'button_pool'
+	radio_header = 'radio_header'
+	radio_labels = 'radio_labels'
+	buffer = 'buffer'
+	log_output = 'log_output'
+kv = f"""
 BoxLayout:
 	orientation: "vertical"
 	ActionBar:
 		ActionView:
 			ActionPrevious:
-				id: action_previous
+				id: {LayoutIds.action_previous}
 				title: 'Ham Radio Sync'
 				with_previous: False
 				enabled: False
 			ActionButton:
-				id: create_radio_plugs
+				id: {LayoutIds.create_radio_plugs}
 				text: "Create Radio Plugs"
 			ActionToggleButton:
-				id: enable_dangerous
+				id: {LayoutIds.enable_dangerous}
 				text: "Enable Dangerous Operations"
 			ActionSeparator:
 				important: True
@@ -38,78 +59,72 @@ BoxLayout:
 				text: "File"
 				mode: "spinner"
 				ActionButton:
-					id: exit_button
+					id: {LayoutIds.exit_button}
 					text: "Exit"
 			ActionGroup:
 				text: "Dangerous Operations"
 				mode: "spinner"
-				id: dangerous_operations
+				id: {LayoutIds.dangerous_operations}
 				dropdown_width: 225
 				ActionButton:
-					id: dangerous_operations.delete_migrate
+					id: {LayoutIds.dangerous_operation__delete_migrate}
 					text: "Remove migration backups"
 				ActionButton:
-					id: dangerous_operations.migrate
+					id: {LayoutIds.dangerous_operation__migrate}
 					text: "Migrate to latest format"
 				ActionButton:
-					id: dangerous_operations.wizard
+					id: {LayoutIds.dangerous_operation__wizard}
 					text: "Wizard"
 				ActionButton:
-					id: dangerous_operations.cleanup
+					id: {LayoutIds.dangerous_operation__cleanup}
 					text: "Cleanup"
 			ActionGroup:
 				text: "Help / Getting Started"
 				mode: "spinner"
 				dropdown_width: 250
 				ActionButton:
-					id: getting_started
-					text: "Getting started..."
+					id: {LayoutIds.getting_started}
+					text: "About/Getting started..."
 				ActionButton:
-					id: radio_descriptions
+					id: {LayoutIds.radio_descriptions}
 					text: "Radio model/program list"
 				ActionButton:
-					id: cant_find_radio
+					id: {LayoutIds.cant_find_radio}
 					text: "My radio isn't here"
 				ActionButton:
-					id: wtf_is_dangerous
-					text: "What are 'Dangerous Operations'?"
-				ActionButton:
-					id: feature_request
+					id: {LayoutIds.feature_request}
 					text: "Feature request/bug report"
 				ActionToggleButton:
-					id: debug_toggle
+					id: {LayoutIds.debug_toggle}
 					text: "Debug logging"
-				ActionButton:
-					id: about
-					text: "About..."
 	BoxLayout:
 		orientation: "horizontal"
 		StackLayout:
-			id: button_pool
+			id: {LayoutIds.button_pool}
 			spacing: 10
 			size_hint: (0.2, 1)
 			padding: [20,20,20,20]
 			size_hint_min_x: 225
 			size_hint_max_x: 275
 			Label:
-				id: radio_header
+				id: {LayoutIds.radio_header}
 				text: "Radios to Generate"
 				size_hint: (1.0, 0.1)
 				font_size: 15
 				bold: True
 			BoxLayout:
-				id: radio_labels
+				id: {LayoutIds.radio_labels}
 				orientation: "vertical"
 				spacing: 10
 				size_hint: (1, 0.4)
 			BoxLayout:
-				id: buffer
+				id: {LayoutIds.buffer}
 				orientation: "vertical"
 				size_hint: (1, 0.2)
 		AnchorLayout:
 			size_hint: (0.8, 1)
 			TextInput:
-				id: log_output
+				id: {LayoutIds.log_output}
 				font_name: 'RobotoMono-Regular'
 				text: ''
 				size_hint: (1, 1)
@@ -148,7 +163,7 @@ class AppWindow(App):
 
 		self.title = 'Ham Radio Sync'
 
-		action_previous = layout.ids['action_previous']
+		action_previous = layout.ids[LayoutIds.action_previous]
 		action_previous.app_icon = action_icon_path
 
 		self._bind_radio_menu(layout)
@@ -157,9 +172,9 @@ class AppWindow(App):
 		self._bind_dangerous_ops_menu(layout)
 		self._bind_help_menu(layout)
 
-		create_radio_button = layout.ids['create_radio_plugs']
-		dangerous_ops_button = layout.ids['enable_dangerous']
-		dangerous_ops_menu = layout.ids['dangerous_operations']
+		create_radio_button = layout.ids[LayoutIds.create_radio_plugs]
+		dangerous_ops_button = layout.ids[LayoutIds.enable_dangerous]
+		dangerous_ops_menu = layout.ids[LayoutIds.dangerous_operations]
 		buttons = [create_radio_button, dangerous_ops_button, dangerous_ops_menu]
 		self._async_wrapper.buttons = buttons
 
@@ -167,7 +182,7 @@ class AppWindow(App):
 		return layout
 
 	def _bind_radio_menu(self, layout):
-		button_pool = layout.ids['radio_labels']
+		button_pool = layout.ids[LayoutIds.radio_labels]
 
 		radio_select_buttons = dict()
 		radios = radio_types.radio_choices()
@@ -189,11 +204,11 @@ class AppWindow(App):
 
 		self._async_wrapper.radio_buttons = radio_select_buttons
 
-		create_button = layout.ids['create_radio_plugs']
+		create_button = layout.ids[LayoutIds.create_radio_plugs]
 		create_button.bind(on_press=self._async_wrapper.radio_generator)
 
 	def _bind_console_log(self, layout):
-		text_log = layout.ids['log_output']
+		text_log = layout.ids[LayoutIds.log_output]
 		self.text_log = text_log
 
 		logger = logging.getLogger('radio_sync')
@@ -213,43 +228,46 @@ class AppWindow(App):
 		logger.addHandler(handler)
 
 	def _bind_file_menu(self, layout):
-		exit_button = layout.ids['exit_button']
+		exit_button = layout.ids[LayoutIds.exit_button]
 		exit_button.bind(on_press=self.stop)
 
 	def _bind_dangerous_ops_menu(self, layout):
-		dangerous_ops_button = layout.ids['enable_dangerous']
+		dangerous_ops_button = layout.ids[LayoutIds.enable_dangerous]
 		dangerous_ops_button.bind(on_press=self._async_wrapper.arm_dangerous)
 		self._async_wrapper.dangerous_ops_toggle = dangerous_ops_button
 
-		dangerous_ops_menu = layout.ids['dangerous_operations']
+		dangerous_ops_menu = layout.ids[LayoutIds.dangerous_operations]
 		self._async_wrapper.dangerous_buttons = [dangerous_ops_menu]
 		dangerous_ops_menu.disabled = True
 
-		cleanup_button = layout.ids['dangerous_operations.cleanup']
+		cleanup_button = layout.ids[LayoutIds.dangerous_operation__cleanup]
 		cleanup_button.bind(on_press=self._async_wrapper.wizard_cleanup)
 
-		wizard_button = layout.ids['dangerous_operations.wizard']
+		wizard_button = layout.ids[LayoutIds.dangerous_operation__wizard]
 		wizard_button.bind(on_press=self._async_wrapper.wizard_bootstrap)
 
-		migrate_button = layout.ids['dangerous_operations.migrate']
+		migrate_button = layout.ids[LayoutIds.dangerous_operation__migrate]
 		migrate_button.bind(on_press=self._async_wrapper.migrations)
 
-		delete_migrate_button = layout.ids['dangerous_operations.delete_migrate']
+		delete_migrate_button = layout.ids[LayoutIds.dangerous_operation__delete_migrate]
 		delete_migrate_button.bind(on_press=self._async_wrapper.migration_backups)
 
 	def _bind_help_menu(self, layout):
-		debug_button = layout.ids['debug_toggle']
+		debug_button = layout.ids[LayoutIds.debug_toggle]
 		self._async_wrapper.debug_toggle = debug_button
 		debug_button.bind(on_press=self._async_wrapper.log_level)
 
-		contact_button = layout.ids['cant_find_radio']
+		contact_button = layout.ids[LayoutIds.cant_find_radio]
 		contact_button.bind(on_press=self._async_wrapper.contact_info)
 
-		about_button = layout.ids['feature_request']
-		about_button.bind(on_press=self._async_wrapper.contact_info)
+		feature_request_button = layout.ids[LayoutIds.feature_request]
+		feature_request_button.bind(on_press=self._async_wrapper.contact_info)
 
-		about_button = layout.ids['about']
-		about_button.bind(on_press=self._async_wrapper.display_about_info)
+		getting_started_button = layout.ids[LayoutIds.getting_started]
+		getting_started_button.bind(on_press=self._async_wrapper.display_start_info)
+
+		compatible_radios_button = layout.ids[LayoutIds.radio_descriptions]
+		compatible_radios_button.bind(on_press=self._async_wrapper.compatible_radios)
 
 
 class TextBoxHandler(TextIO, ABC):

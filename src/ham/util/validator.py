@@ -42,6 +42,7 @@ class Validator:
 
 		if len(errors) > 0:
 			logging.error("--- FILE MISSING ERRORS, CANNOT CONTINUE ---")
+			logging.info(f"Checked `{os.path.abspath('./in')}`")
 			for err in errors:
 				logging.error(f"\t\t{err.message}")
 			logging.info("Have you run `Wizard` under `Dangerous Operations`?")
