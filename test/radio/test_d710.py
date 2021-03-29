@@ -19,7 +19,7 @@ class D710Test(BaseTestSetup):
 // Memory Channels
 !!Ch,Rx Freq.,Rx Step,Offset,T/CT/DCS,TO Freq.,CT Freq.,DCS Code,Shift/Split,Rev.,L.Out,Mode,Tx Freq.,Tx Step,M.Name"""
 		generated = self.radio_channel.headers()
-		self.assertEquals(expected, generated)
+		self.assertEqual(expected, generated)
 
 	def test_simplex(self):
 		cols = dict()
