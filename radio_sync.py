@@ -62,20 +62,12 @@ def main():
 		required=False,
 		help="Defaults to 'yes' for all prompts (DANGEROUS)",
 	)
-
 	parser.add_argument(
 		'--radios', '-r',
 		choices=src.ham.util.radio_types.radio_choices(),
 		default=[],
 		nargs='+',
-		help=f"""Name of target radios to create.
-		{src.ham.util.radio_types.DEFAULT} -- This is a replication of the input, primarily used for validation/testing.
-		{src.ham.util.radio_types.CHIRP} -- Baofeng UV-5R and F8-HP via CHiRP
-		{src.ham.util.radio_types.CS800} -- Connect Systems CS800D
-		{src.ham.util.radio_types.D710} -- Kenwood TM-D710 Series
-		{src.ham.util.radio_types.D878} -- Anytone D878 or D868
-		{src.ham.util.radio_types.FTM400_RT} -- Yaesu FTM-400 via RT Systems app 
-		"""
+		help=f"""Target radios to create."""
 	)
 
 	parser.add_argument(
