@@ -72,7 +72,7 @@ class RadioGenerator:
 				continue
 
 			radio_channel = RadioChannel(line, digital_contacts, dmr_ids)
-			radio_channels[radio_channel.number] = radio_channel
+			radio_channels[radio_channel.number.fmt_val()] = radio_channel
 
 			if radio_channel.zone_id.fmt_val(None) is not None:
 				zones[radio_channel.zone_id.fmt_val()].add_channel(radio_channel)

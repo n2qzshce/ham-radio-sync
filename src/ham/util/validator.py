@@ -107,12 +107,12 @@ class Validator:
 		else:
 			self._long_names[channel.name.fmt_val()] = line_num
 
-		if channel.rx_dcs.fmt_val('023').zfill(3) not in radio_types.dcs_codes_inverses.keys():
+		if channel.rx_dcs.fmt_val(23) not in radio_types.dcs_codes_inverses.keys():
 			err = ValidationError(
 							f"Invalid RX DCS code `{channel.rx_dcs.fmt_val()}` specified.", line_num, file_name
 			)
 			errors.append(err)
-		if channel.tx_dcs.fmt_val('023').zfill(3) not in radio_types.dcs_codes_inverses.keys():
+		if channel.tx_dcs.fmt_val(23) not in radio_types.dcs_codes_inverses.keys():
 			err = ValidationError(
 							f"Invalid RX DCS code `{channel.rx_dcs.fmt_val()}` specified.", line_num, file_name
 			)
