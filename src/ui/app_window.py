@@ -278,4 +278,3 @@ class TextBoxHandler(TextIO, ABC):
 	def write(self, record):
 		self._text_log.text += record
 		return
-
