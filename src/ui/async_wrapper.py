@@ -11,8 +11,8 @@ from src.ham.wizard import Wizard
 
 class AsyncWrapper:
 	dangerous_operations_snippet = """Dangerous Operations:
-			"Create Radio Plugs" can be run repeatedly without risk, this is not true for dangerous operations.
-			Dangerous operations tamper with the `input` folder, and may delete or alter your `in` input csv files."""
+				"Create Radio Plugs" can be run repeatedly without risk, this is not true for dangerous operations.
+				Dangerous operations tamper with the `input` folder, and may delete or alter your `in` input csv files."""
 
 	def __init__(self):
 		self.buttons = []
@@ -28,9 +28,11 @@ class AsyncWrapper:
 	def arm_dangerous(self, *args):
 		if self.dangerous_ops_toggle.state == 'down':
 			logging.warning(
-							"Dangerous operations enabled, this may destroy/delete input files. "
-							"Have you backed up your `in` folder contents?\n"
-							f"{self.dangerous_operations_snippet}\nSee `Getting Started` for more info."
+							f"""Dangerous operations enabled.
+		This may destroy/delete input files.
+		Have you backed up your `in` folder contents?
+		{self.dangerous_operations_snippet}
+		See `Getting Started` for more info."""
 			)
 		else:
 			logging.info("Dangerous operations disabled")

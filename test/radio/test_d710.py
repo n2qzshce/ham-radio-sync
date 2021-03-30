@@ -43,7 +43,7 @@ class D710Test(BaseTestSetup):
 		channel = RadioChannelD710(cols, None, None)
 		result = channel.output(1)
 		self.assertEqual(
-			'0000,00146.520000,005.00,00.000000,Off,88.5,88.5,023, ,Off,Off,FM,146.520000,005.00,Natl 2m', result
+			'0000,00146.520000,005.00,00.000000,Off,88.5,88.5,023, ,Off,Off,FM,146.520000,005.00,NATL 2M', result
 		)
 
 	def test_vhf_simplex(self):
@@ -68,7 +68,7 @@ class D710Test(BaseTestSetup):
 		channel = RadioChannelD710(cols, None, None)
 		result = channel.output(2)
 		self.assertEqual(
-			'0001,00446.000000,025.00,00.000000,Off,88.5,88.5,023, ,Off,Off,FM,446.000000,025.00,Natl 70c', result
+			'0001,00446.000000,025.00,00.000000,Off,88.5,88.5,023, ,Off,Off,FM,446.000000,025.00,NATL 70C', result
 		)
 
 	def test_vhf_repeater(self):
@@ -92,7 +92,7 @@ class D710Test(BaseTestSetup):
 		cols['digital_contact_id'] = ''
 		result = RadioChannelD710(cols, None, None).output(3)
 		self.assertEqual(
-			'0002,00145.310000,005.00,00.600000,T,100.0,88.5,023,-,Off,Off,FM,145.310000,005.00,Some Rpt', result
+			'0002,00145.310000,005.00,00.600000,T,100.0,88.5,023,-,Off,Off,FM,145.310000,005.00,SOME RPT', result
 		)
 
 	def test_pos_offset(self):
@@ -117,7 +117,7 @@ class D710Test(BaseTestSetup):
 		result = RadioChannelD710(cols, None, None).output(4)
 
 		self.assertEqual(
-			'0003,00442.125000,025.00,05.000000,CT,100.0,127.3,023,+,Off,Off,FM,442.125000,025.00,Some Rpt', result
+			'0003,00442.125000,025.00,05.000000,CT,100.0,127.3,023,+,Off,Off,FM,442.125000,025.00,SOME RPT', result
 		)
 
 	def test_dcs_repeater(self):
@@ -141,7 +141,7 @@ class D710Test(BaseTestSetup):
 		cols['digital_contact_id'] = ''
 		result = RadioChannelD710(cols, None, None).output(3)
 		self.assertEqual(
-			'0005,00447.075000,025.00,05.000000,DCS,88.5,88.5,165,-,Off,Off,FM,447.075000,025.00,Dcs Rpt', result
+			'0005,00447.075000,025.00,05.000000,DCS,88.5,88.5,165,-,Off,Off,FM,447.075000,025.00,DCS RPT', result
 		)
 
 	def test_dcs_invert(self):
@@ -165,7 +165,7 @@ class D710Test(BaseTestSetup):
 		cols['digital_contact_id'] = ''
 		result = RadioChannelD710(cols, None, None).output(3)
 		self.assertEqual(
-			'0005,00447.075000,025.00,05.000000,DCS,88.5,88.5,047,-,Off,Off,FM,447.075000,025.00,Dcs Rpt', result
+			'0005,00447.075000,025.00,05.000000,DCS,88.5,88.5,047,-,Off,Off,FM,447.075000,025.00,DCS RPT', result
 		)
 
 

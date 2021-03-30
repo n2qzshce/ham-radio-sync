@@ -69,7 +69,7 @@ class RadioChannelD710(RadioChannel):
 				shift_split = '-'
 			else:
 				shift_split = '+'
-
+		medium_name = self.medium_name.fmt_val().upper()
 		output = ""
 		output += f"{self.number.fmt_val()-1:04d},"
 		output += f"{self.rx_freq.fmt_val():012.06f},"
@@ -85,5 +85,5 @@ class RadioChannelD710(RadioChannel):
 		output += f"FM,"
 		output += f"{self.rx_freq.fmt_val():010.06f},"
 		output += f"{rx_step:06.02f},"
-		output += f"{self.medium_name.fmt_val():.8s}"
+		output += f"{medium_name:.8s}"
 		return output
