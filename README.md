@@ -1,4 +1,4 @@
-# Ham Radio CSV Sync Tool
+# Ham Radio CSV Sync Tool for PC and OSx
 
 **Releases: All versions can be found on the 
 [releases page.](https://github.com/n2qzshce/ham-radio-sync/releases)**
@@ -18,15 +18,12 @@ Currently supported radios:
 
 ### How it works
 This is a command line tool that will get you setting up your radios as quickly
-as possible. Open a command window with `cmd` and navigate to the directory that
-has the executable in it. Running the executable without parameters will display a
-prompt along with explanations of the commands.
-
-Basic command format: `radio-sync.exe --help`
-
-There is now also a GUI version of the tool that has all the same features of the
-command line version! This version will be the `radio-sync_gui.exe` file in the
-release package.
+as possible.
+1. Run the Wizard to generate the input CSVs.
+2. Add your channels and configuration information to the input CSVs.
+3. Select your radios and create radio plugs!
+4. Import your radio plugs into your radio programming application.
+5. Upload to your radio, and you're done.
 
 ##### Windows defender will warn you about opening the GUI version. Click on the `more info` dialogue to run.
 
