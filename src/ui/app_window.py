@@ -1,6 +1,5 @@
 import logging
 import os
-import platform
 import sys
 from abc import ABC
 from typing import TextIO
@@ -30,16 +29,9 @@ class RightClickTextInput(TextInput):
 
 		if touch.button == 'right':
 			logging.debug("right mouse clicked")
-			system = platform.system()
-			keyboard_shortcut = "ctrl + C"
-			if system != 'Windows':
-				keyboard_shortcut = "cmd + C"
-			logging.info(f"Please use {keyboard_shortcut} to copy highlighted text.")
-			# pos = self.to_local(*self._long_touch_pos, relative=True)
-			# selection_text = self.selection_text
-			# pyperclip.copy(selection_text)
-			# self._show_cut_copy_paste(
-			# 	pos, EventLoop.window, mode='paste')
+			pos = self.to_local(*self._long_touch_pos, relative=True)
+			self._show_cut_copy_paste(
+				pos, EventLoop.window, mode='paste')
 
 
 class LayoutIds:
@@ -164,6 +156,7 @@ BoxLayout:
 				size_hint: (1, 1)
 				readonly: True
 				font_size: 11
+				use_bubble: True
 """
 
 
