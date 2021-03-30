@@ -1,10 +1,13 @@
 import logging
 import os
+import platform
 import sys
 from abc import ABC
 from typing import TextIO
 
 from kivy.app import App
+from kivy.base import EventLoop
+from kivy.config import Config
 from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.resources import resource_add_path
@@ -12,9 +15,30 @@ from kivy.resources import resource_paths
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.checkbox import CheckBox
 from kivy.uix.label import Label
+from kivy.uix.textinput import TextInput
 
 from src.ham.util import radio_types
 from src.ui.async_wrapper import AsyncWrapper
+
+Config.set('input', 'mouse', 'mouse,disable_multitouch')
+
+class RightClickTextInput(TextInput):
+	def on_touch_down(self, touch):
+
+		super().on_touch_down(touch)
+
+		if touch.button == 'right':
+			logging.debug("right mouse clicked")
+			system = platform.system()
+			keyboard_shortcut = "ctrl + C"
+			if system != 'Windows':
+				keyboard_shortcut = "cmd + C"
+			logging.info(f"Please use {keyboard_shortcut} to copy highlighted text.")
+			# pos = self.to_local(*self._long_touch_pos, relative=True)
+			# selection_text = self.selection_text
+			# pyperclip.copy(selection_text)
+			# self._show_cut_copy_paste(
+			# 	pos, EventLoop.window, mode='paste')
 
 
 class LayoutIds:
@@ -37,6 +61,8 @@ class LayoutIds:
 	radio_labels = 'radio_labels'
 	buffer = 'buffer'
 	log_output = 'log_output'
+
+
 kv = f"""
 BoxLayout:
 	orientation: "vertical"
@@ -50,6 +76,9 @@ BoxLayout:
 			ActionButton:
 				id: {LayoutIds.create_radio_plugs}
 				text: "Create Radio Plugs"
+				background_normal:''
+				background_down: ''
+				background_color: [0.00,0.40,0.13,1.0]
 			ActionToggleButton:
 				id: {LayoutIds.enable_dangerous}
 				text: "Enable Dangerous Operations"
@@ -123,12 +152,12 @@ BoxLayout:
 				size_hint: (1, 0.2)
 		AnchorLayout:
 			size_hint: (0.8, 1)
-			TextInput:
+			RightClickTextInput:
 				id: {LayoutIds.log_output}
 				font_name: 'RobotoMono-Regular'
 				text: ''
 				size_hint: (1, 1)
-				readonly: True
+				#readonly: True
 				font_size: 11
 """
 
@@ -268,6 +297,14 @@ class AppWindow(App):
 
 		compatible_radios_button = layout.ids[LayoutIds.radio_descriptions]
 		compatible_radios_button.bind(on_press=self._async_wrapper.compatible_radios)
+
+	def right_click_down(self, touch):
+		if touch.button == 'right':
+			print("right mouse clicked")
+			pos = touch.to_local(*self._long_touch_pos, relative=True)
+
+			self._show_cut_copy_paste(
+				pos, EventLoop.window, mode='paste')
 
 
 class TextBoxHandler(TextIO, ABC):
