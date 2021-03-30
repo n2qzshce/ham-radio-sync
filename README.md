@@ -4,7 +4,7 @@
 [releases page.](https://github.com/n2qzshce/ham-radio-sync/releases)**
 
 ### What it is
-This ham radio csv tool is designed to help you create csv's for different radios 
+This ham radio csv tool is designed to help you create import files for different radios 
 from a master list. Radios all use different formats for different fields, and
 keeping these in sync is a tedious task that is prone to errors.
 
