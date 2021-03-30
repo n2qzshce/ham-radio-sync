@@ -21,7 +21,7 @@ class Wizard(object):
 		logging.info(f"""Wizard is complete! You may now open `input.csv` and add your radio channels.
 				Input CSVs are located in `{abspath}`
 				What each file does:
-					input.csv: your radio channels
+					input.csv: your radio channels. For best results, ONLY FILL OUT THE COLUMNS YOU NEED
 					zones.csv: preset group that you would like your channel in (if radio supports multiple zones)
 				DMR-ONLY FILES safe to ignore for analog radios:
 					digital_contacts.csv: DMR contact IDs (e.g. Talkgroups)
