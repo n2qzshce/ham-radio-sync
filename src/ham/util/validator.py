@@ -1,10 +1,12 @@
 import logging
+import os
 
-from src.ham.dmr.dmr_contact import DmrContact
-from src.ham.dmr.dmr_id import DmrId
-from src.ham.dmr.dmr_user import DmrUser
+from src.ham.radio.default_radio.dmr_contact_default import DmrContactDefault
+from src.ham.radio.default_radio.dmr_id_default import DmrIdDefault
+from src.ham.radio.default_radio.dmr_user_default import DmrUserDefault
+from src.ham.radio.default_radio.radio_channel_default import RadioChannelDefault
+from src.ham.radio.default_radio.radio_zone_default import RadioZoneDefault
 from src.ham.radio.radio_channel import RadioChannel
-from src.ham.radio.radio_zone import RadioZone
 from src.ham.util import radio_types
 from src.ham.util.data_column import DataColumn
 from src.ham.util.validation_error import ValidationError
@@ -12,11 +14,11 @@ from src.ham.util.validation_error import ValidationError
 
 class Validator:
 	def __init__(self):
-		self._radio_channel_template = RadioChannel.create_empty()
-		self._digital_contact_template = DmrContact.create_empty()
-		self._dmr_id_template = DmrId.create_empty()
-		self._zone_template = RadioZone.create_empty()
-		self._dmr_user_template = DmrUser.create_empty()
+		self._radio_channel_template = RadioChannelDefault.create_empty()
+		self._digital_contact_template = DmrContactDefault.create_empty()
+		self._dmr_id_template = DmrIdDefault.create_empty()
+		self._zone_template = RadioZoneDefault.create_empty()
+		self._dmr_user_template = DmrUserDefault.create_empty()
 
 		self._short_names = None
 		self._medium_names = None
@@ -27,6 +29,27 @@ class Validator:
 		self._short_names = dict()
 		self._medium_names = dict()
 		self._long_names = dict()
+
+	@classmethod
+	def validate_files_exist(cls):
+		errors = []
+
+		files_list = ["in/input.csv", "in/digital_contacts.csv", "in/dmr_id.csv", 'in/zones.csv', 'in/user.csv']
+		for file_name in files_list:
+			if not os.path.exists(file_name):
+				err = ValidationError(f"Cannot open file: `{file_name}`", None, file_name)
+				errors.append(err)
+
+		if len(errors) > 0:
+			logging.error("--- FILE MISSING ERRORS, CANNOT CONTINUE ---")
+			logging.info(f"Checked `{os.path.abspath('./in')}`")
+			for err in errors:
+				logging.error(f"\t\t{err.message}")
+			logging.info("Have you run `Wizard` under `Dangerous Operations`?")
+		else:
+			logging.info("All necessary files found")
+
+		return errors
 
 	def validate_dmr_user(self, cols, line_num, file_name):
 		needed_cols_dict_gen = dict(self._dmr_user_template.__dict__)
@@ -51,38 +74,49 @@ class Validator:
 			return errors
 
 		channel = RadioChannel(cols, None, None)
-		if channel.short_name.fmt_val() in self._short_names.keys():
+		if channel.short_name.fmt_val().lower() in self._short_names.keys():
 			err = ValidationError(
 							f"Collision in {channel.short_name.get_alias(radio_types.DEFAULT)} "
 							f"(value: `{channel.short_name.fmt_val()}`) found with line"
-							f" {self._short_names[channel.short_name.fmt_val()]}."
+							f" {self._short_names[channel.short_name.fmt_val().lower()]}."
 							f" Codeplug applications do not handle this well.", line_num, file_name)
 			logging.debug(err.message)
 			errors.append(err)
 		else:
-			self._short_names[channel.short_name.fmt_val()] = line_num
+			self._short_names[channel.short_name.fmt_val().lower()] = line_num
 
-		if channel.medium_name.fmt_val() in self._medium_names.keys():
+		if channel.medium_name.fmt_val().lower() in self._medium_names.keys():
 			err = ValidationError(
 							f"Collision in {channel.medium_name.get_alias(radio_types.DEFAULT)} "
 							f"(value: `{channel.medium_name.fmt_val()}`) found with line"
-							f" {self._medium_names[channel.medium_name.fmt_val()]}."
+							f" {self._medium_names[channel.medium_name.fmt_val().lower()]}."
 							f" Codeplug applications do not handle this well.", line_num, file_name)
 			logging.debug(err.message)
 			errors.append(err)
 		else:
-			self._medium_names[channel.medium_name.fmt_val()] = line_num
+			self._medium_names[channel.medium_name.fmt_val().lower()] = line_num
 
-		if channel.name.fmt_val() in self._long_names.keys():
+		if channel.name.fmt_val().lower() in self._long_names.keys():
 			err = ValidationError(
 							f"Collision in {channel.name.get_alias(radio_types.DEFAULT)} "
 							f"(value: `{channel.name.fmt_val()}`) found with line"
-							f" {self._long_names[channel.name.fmt_val()]}."
+							f" {self._long_names[channel.name.fmt_val().lower()]}."
 							f" Codeplug applications do not handle this well.", line_num, file_name)
 			logging.debug(err.message)
 			errors.append(err)
 		else:
-			self._long_names[channel.name.fmt_val()] = line_num
+			self._long_names[channel.name.fmt_val().lower()] = line_num
+
+		if channel.rx_dcs.fmt_val(23) not in radio_types.dcs_codes_inverses.keys():
+			err = ValidationError(
+							f"Invalid RX DCS code `{channel.rx_dcs.fmt_val()}` specified.", line_num, file_name
+			)
+			errors.append(err)
+		if channel.tx_dcs.fmt_val(23) not in radio_types.dcs_codes_inverses.keys():
+			err = ValidationError(
+							f"Invalid RX DCS code `{channel.rx_dcs.fmt_val()}` specified.", line_num, file_name
+			)
+			errors.append(err)
 
 		return errors
 

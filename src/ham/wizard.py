@@ -1,31 +1,33 @@
 import logging
 import os
 
+from src.ham.radio.default_radio.dmr_contact_default import DmrContactDefault
+from src.ham.radio.default_radio.dmr_id_default import DmrIdDefault
+from src.ham.radio.default_radio.dmr_user_default import DmrUserDefault
+from src.ham.radio.default_radio.radio_channel_default import RadioChannelDefault
+from src.ham.radio.default_radio.radio_zone_default import RadioZoneDefault
+from src.ham.radio.radio_casted_builder import RadioChannelBuilder
 from src.ham.util import radio_types
-from src.ham.dmr.dmr_contact import DmrContact
-from src.ham.dmr.dmr_id import DmrId
-from src.ham.dmr.dmr_user import DmrUser
 from src.ham.util.file_util import FileUtil, RadioWriter
-from src.ham.radio.radio_channel import RadioChannel
-from src.ham.radio.radio_zone import RadioZone
 
 
 class Wizard(object):
 	_first_cols = ""
 
 	def bootstrap(self, is_forced):
-		if os.path.exists('in'):
-			logging.warning("INPUT DIRECTORY ALREADY EXISTS!! Input files will be overwritten. Continue? (y/n)[n]")
-			if not is_forced:
-				prompt = input()
-				if prompt != 'y':
-					logging.info("Wizard cancelled")
-					return
-			else:
-				logging.warning('FORCED YES')
-
 		self._create_input(is_forced)
 		self._create_output()
+		abspath = os.path.abspath('in')
+		logging.info(f"""Wizard is complete! You may now open `input.csv` and add your radio channels.
+				Input CSVs are located in `{abspath}`
+				What each file does:
+					input.csv: your radio channels. For best results, ONLY FILL OUT THE COLUMNS YOU NEED
+					zones.csv: preset group that you would like your channel in (if radio supports multiple zones)
+				DMR-ONLY FILES safe to ignore for analog radios:
+					digital_contacts.csv: DMR contact IDs (e.g. Talkgroups)
+					dmr_id.csv: Set your DMR id (from radioid.net)
+
+				Sample data has been added to each file as an example.""")
 
 	def _create_input(self, is_forced):
 		FileUtil.safe_create_dir('in')
@@ -44,7 +46,7 @@ class Wizard(object):
 
 	def _create_channel_file(self):
 		channel_file = RadioWriter('in/input.csv', '\n')
-		first_channel = RadioChannel({
+		first_channel = RadioChannelDefault({
 			'number': '1',
 			'name': 'National 2m',
 			'medium_name': 'Natl 2m',
@@ -63,7 +65,7 @@ class Wizard(object):
 			'digital_color': '',
 			'digital_contact_id': '',
 		}, digital_contacts=None, dmr_ids=None)
-		second_channel = RadioChannel({
+		second_channel = RadioChannelDefault({
 			'number': '2',
 			'name': 'Basic Repeater',
 			'medium_name': 'BasicRpt',
@@ -82,53 +84,54 @@ class Wizard(object):
 			'digital_color': '',
 			'digital_contact_id': '',
 		}, digital_contacts=None, dmr_ids=None)
-		channel_file.writerow(RadioChannel.create_empty().headers(radio_types.DEFAULT))
-		channel_file.writerow(first_channel.output(radio_types.DEFAULT, 1))
-		channel_file.writerow(second_channel.output(radio_types.DEFAULT, 2))
+		channel_file.writerow(first_channel.headers())
+		channel_file.writerow(RadioChannelBuilder.casted(first_channel, radio_types.DEFAULT).output(1))
+		channel_file.writerow(RadioChannelBuilder.casted(second_channel, radio_types.DEFAULT).output(2))
 		channel_file.close()
 
 	def _create_dmr_data(self):
 		dmr_id_file = RadioWriter('in/dmr_id.csv', '\n')
-		dmr_id = DmrId({
+		dmr_id = DmrIdDefault({
 			'number': 1,
 			'radio_id': '00000',
 			'name': 'DMR',
 		})
-		dmr_id_file.writerow(DmrId.create_empty().headers(radio_types.DEFAULT))
-		dmr_id_file.writerow(dmr_id.output(radio_types.DEFAULT))
+		dmr_id_file.writerow(dmr_id.headers())
+		dmr_id_file.writerow(dmr_id.output())
 		dmr_id_file.close()
 
 		digital_contacts_file = RadioWriter('in/digital_contacts.csv', '\n')
-		analog_contact = DmrContact({
+		analog_contact = DmrContactDefault({
 			'number': 1,
 			'digital_id':  dmr_id.radio_id.fmt_val(),
 			'name': 'Analog',
 			'call_type': 'all',
 		})
-		group_contact = DmrContact({
+		group_contact = DmrContactDefault({
 			'number': 2,
 			'digital_id':  99999,
 			'name': 'Some Repeater',
 			'call_type': 'group',
 		})
-		digital_contacts_file.writerow(DmrContact.create_empty().headers(radio_types.DEFAULT))
-		digital_contacts_file.writerow(analog_contact.output(radio_types.DEFAULT))
-		digital_contacts_file.writerow(group_contact.output(radio_types.DEFAULT))
+
+		digital_contacts_file.writerow(analog_contact.headers())
+		digital_contacts_file.writerow(analog_contact.output())
+		digital_contacts_file.writerow(group_contact.output())
 		digital_contacts_file.close()
 
 	def _create_zone_data(self):
 		zone_id_file = RadioWriter('in/zones.csv', '\n')
-		zone = RadioZone({
+		zone = RadioZoneDefault({
 			'number': 1,
 			'name': 'Zone 1',
 		})
-		zone_id_file.writerow(RadioZone.create_empty().headers(radio_types.DEFAULT))
-		zone_id_file.writerow(zone.output(radio_types.DEFAULT))
+		zone_id_file.writerow(zone.headers())
+		zone_id_file.writerow(zone.output())
 		zone_id_file.close()
 
 	def _create_dmr_user_data(self):
 		user_file = RadioWriter('in/user.csv', '\n')
-		dmr_user = DmrUser({
+		dmr_user = DmrUserDefault({
 			'RADIO_ID': '00000',
 			'CALLSIGN': 'N0CALL',
 			'FIRST_NAME': 'Sample',
@@ -138,8 +141,8 @@ class Wizard(object):
 			'COUNTRY': 'Theremany',
 			'REMARKS': 'Sample Entry',
 		})
-		user_file.writerow(DmrUser.create_empty().headers(radio_types.DEFAULT))
-		user_file.writerow(dmr_user.output(radio_types.DEFAULT))
+		user_file.writerow(dmr_user.headers())
+		user_file.writerow(dmr_user.output())
 		user_file.close()
 		return
 

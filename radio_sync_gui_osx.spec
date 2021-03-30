@@ -5,7 +5,7 @@ block_cipher = None
 
 a = Analysis(['radio_sync_gui.py'],
              binaries=[],
-             datas=[],
+             datas=[('images', 'images')],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
@@ -29,4 +29,5 @@ exe = EXE(pyz,
           upx=True,
           upx_exclude=[],
           runtime_tmpdir=None,
-          console=True )
+          console=False,
+          icon='images/radio_sync.ico' )

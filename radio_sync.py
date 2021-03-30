@@ -1,5 +1,6 @@
 import argparse
 import logging
+import os
 import sys
 
 import src.ham.util.radio_types
@@ -21,7 +22,7 @@ def main():
 	parser = argparse.ArgumentParser(
 		prog='Ham Radio channel wizard',
 		description='''Convert a ham channel list to various radio formats. All of these options can be chained
-					to run multiple steps simultaneously.''')
+					to run multiple steps in order.''')
 
 	parser.add_argument(
 		'--clean', '-c',
@@ -62,25 +63,12 @@ def main():
 		required=False,
 		help="Defaults to 'yes' for all prompts (DANGEROUS)",
 	)
-
 	parser.add_argument(
 		'--radios', '-r',
-		choices=[
-			src.ham.util.radio_types.DEFAULT,
-			src.ham.util.radio_types.BAOFENG,
-			src.ham.util.radio_types.FTM400,
-			src.ham.util.radio_types.D878,
-			src.ham.util.radio_types.CS800,
-		],
+		choices=src.ham.util.radio_types.radio_choices(),
 		default=[],
 		nargs='+',
-		help=f"""Name of target radios to create.
-		{src.ham.util.radio_types.DEFAULT} -- This is a replication of the input, primarily used for validation/testing.
-		{src.ham.util.radio_types.BAOFENG} -- Baofeng UV-5R and F8-HP via CHiRP
-		{src.ham.util.radio_types.FTM400} -- Yaesu FTM-400 via RT Systems app 
-		{src.ham.util.radio_types.D878} -- Anytone D878 or D868
-		{src.ham.util.radio_types.CS800} -- Connect Systems CS800D
-		"""
+		help=f"""Target radios to create."""
 	)
 
 	parser.add_argument(
@@ -110,6 +98,16 @@ def main():
 	if arg_values.wizard:
 		logging.info("Running wizard.")
 		wizard = Wizard()
+
+		if os.path.exists('in'):
+			logging.info(f"Your input directory is located at: `{os.path.abspath('in')}`")
+			logging.warning("INPUT DIRECTORY ALREADY EXISTS!! Input files will be overwritten. Continue? (y/n)[n]")
+			prompt = input()
+			if prompt != 'y':
+				logging.info("Wizard cancelled")
+				return
+			else:
+				logging.warning('Input directory will be overwritten')
 		wizard.bootstrap(arg_values.force)
 		op_performed = True
 

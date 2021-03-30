@@ -1,29 +1,28 @@
 from src.ham.util.data_column import DataColumn
 
 
-class RadioZone:
-	def __init__(self, cols):
-		self.number = DataColumn(fmt_name='number', fmt_val=cols['number'], shape=int)
-		self.name = DataColumn(fmt_name='name', fmt_val=cols['name'], shape=str)
-
-		self._associated_channels = list()
-		self.cols = cols
-
-	def add_channel(self, radio_channel):
-		self._associated_channels.append(radio_channel)
-
-	def has_channels(self):
-		return len(self._associated_channels) > 0
-
+class DmrContact:
 	@classmethod
 	def create_empty(cls):
-		col_vals = dict()
-		col_vals['number'] = ''
-		col_vals['name'] = ''
-		return cls(col_vals)
+		cols = dict()
+		cols['number'] = ''
+		cols['digital_id'] = ''
+		cols['name'] = ''
+		cols['call_type'] = ''
+		return cls(cols)
+
+	def __init__(self, cols):
+		self.number = DataColumn(fmt_name='number', fmt_val=cols['number'], shape=int)
+		self.radio_id = DataColumn(fmt_name='digital_id', fmt_val=cols['digital_id'], shape=int)
+		self.name = DataColumn(fmt_name='name', fmt_val=cols['name'], shape=str)
+		self.call_type = DataColumn(fmt_name='call_type', fmt_val=cols['call_type'], shape=str)
+
+		self.cols = cols
+		return
 
 	def headers(self):
 		raise Exception("Base method cannot be called!")
 
 	def output(self):
 		raise Exception("Base method cannot be called!")
+

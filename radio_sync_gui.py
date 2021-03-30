@@ -1,9 +1,8 @@
+import argparse
 import asyncio
 import logging
 import os
 import sys
-
-from src.ui.app_window import AppWindow
 
 
 def setup_logger():
@@ -24,6 +23,22 @@ def setup_logger():
 
 
 async def main():
+	from src.ui.app_window import AppWindow
+
+	parser = argparse.ArgumentParser()
+
+	parser.add_argument(
+		'--debug',
+		action='store_true',
+		default=False,
+		required=False,
+		help='Enable debug logging.',
+	)
+	arg_values = parser.parse_args()
+
+	if arg_values.debug:
+		AppWindow.force_debug = True
+
 	setup_logger()
 	app_window = AppWindow()
 	await app_window.async_run()

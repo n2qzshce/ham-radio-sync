@@ -4,7 +4,7 @@
 name: Build executeable
 
 env:
-  semver: 1.5.0.${{ github.run_number }}
+  semver: 1.5.1.${{ github.run_number }}
   python-version: 3.8
   KIVY_GL_BACKEND: 'angle_sdl2'
 
@@ -42,7 +42,7 @@ jobs:
         python -m pip install -r requirements.txt
     - name: Run Tests
       run: |
-        python -m unittest discover test "*_test.py"
+        python -m unittest discover -v
     - name: Build GUI executable
       run: |
         pyinstaller radio_sync_gui_${{ matrix.short-name }}.spec
@@ -50,7 +50,7 @@ jobs:
         7z a -tzip radio_sync-${{ matrix.short-name }}-${{ env.semver }}.zip radio_sync-${{ matrix.short-name }}_gui-${{ env.semver }}${{ matrix.exe-extension }}
     - name: Build CLI executable
       run: |
-        pyinstaller -F radio_sync.py -n radio_sync-${{ matrix.short-name }}-${{ env.semver }}${{ matrix.exe-extension }}
+        pyinstaller -F radio_sync.py -n radio_sync-${{ matrix.short-name }}-${{ env.semver }}${{ matrix.exe-extension }} --icon images/radio_sync.ico
         ${{ matrix.move-command }} dist/radio_sync-${{ matrix.short-name }}-${{ env.semver }}${{ matrix.exe-extension }} ./
         7z a -tzip radio_sync-${{ matrix.short-name }}-${{ env.semver }}.zip radio_sync-${{ matrix.short-name }}-${{ env.semver }}${{ matrix.exe-extension }}
     - name: Upload executable

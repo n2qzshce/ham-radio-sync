@@ -1,28 +1,15 @@
 import logging
 import os
-import sys
-import unittest
 from csv import DictReader
 
 from src.ham.migration.migration_manager import MigrationManager
 from src.ham.util.file_util import FileUtil
+from test.base_test_setup import BaseTestSetup
 
 
-class MigrationTest(unittest.TestCase):
-	@classmethod
-	def setUpClass(cls):
-		logger = logging.getLogger()
-		formatter = logging.Formatter(
-			fmt='%(asctime)s.%(msecs)03d %(levelname)7s %(filename).6s:%(lineno)3s:  %(message)s',
-			datefmt="%Y-%m-%d %H:%M:%S")
-
-		handler = logging.StreamHandler(stream=sys.stdout)
-		handler.setFormatter(formatter)
-
-		logger.setLevel(logging.INFO)
-		logger.addHandler(handler)
-
+class MigrationTest(BaseTestSetup):
 	def setUp(self):
+		logging.getLogger().setLevel(logging.ERROR)
 		FileUtil.safe_delete_dir('in')
 		FileUtil.safe_delete_dir('out')
 		self.manager = MigrationManager()
@@ -55,7 +42,7 @@ class MigrationTest(unittest.TestCase):
 		self.manager._migrate_two()
 		self.manager._migrate_three()
 
-		f = open('in/input.csv', encoding='utf-8', newline='\n')
+		f = FileUtil.open_file('in/input.csv', 'r')
 		first_line = f.readline()
 		self.assertEqual(
 							'number,'
@@ -81,6 +68,7 @@ class MigrationTest(unittest.TestCase):
 		f.close()
 
 	def test_three_does_not_stomp(self):
+		logging.getLogger().setLevel(logging.CRITICAL)
 		self.manager._migrate_one()
 		self.manager._migrate_two()
 

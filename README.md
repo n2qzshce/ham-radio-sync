@@ -12,8 +12,9 @@ Currently supported radios:
 * Default output: Digests the input, should expose errors
 * Baofeng uploads via CHiRP
 * Yaesu FTM400 via RT systems application
-* Anytone D8787 via D878UV software
-* Connect Systems CS-800D via Connect Systems software
+* Anytone D878, D868, D578 via D878UV
+* Connect Systems CS-800D via Connect Systems Software
+* Kenwood 71/710 Series via MCP2
 
 ### How it works
 This is a command line tool that will get you setting up your radios as quickly
