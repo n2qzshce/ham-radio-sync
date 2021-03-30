@@ -33,7 +33,7 @@ class FileUtil:
 	def safe_create_dir(cls, dir_name):
 		if not os.path.exists(dir_name):
 			logging.info(f'Creating directory `{dir_name}`')
-			os.mkdir(dir_name)
+			os.mkdir(os.path.join(dir_name))
 		else:
 			logging.info(f'Directory `{dir_name}` exists, skipping.')
 
