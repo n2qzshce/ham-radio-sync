@@ -78,7 +78,7 @@ class Validator:
 			err = ValidationError(
 							f"Collision in {channel.short_name.get_alias(radio_types.DEFAULT)} "
 							f"(value: `{channel.short_name.fmt_val()}`) found with line"
-							f" {self._short_names[channel.short_name.fmt_val()]}."
+							f" {self._short_names[channel.short_name.fmt_val().lower()]}."
 							f" Codeplug applications do not handle this well.", line_num, file_name)
 			logging.debug(err.message)
 			errors.append(err)
@@ -89,7 +89,7 @@ class Validator:
 			err = ValidationError(
 							f"Collision in {channel.medium_name.get_alias(radio_types.DEFAULT)} "
 							f"(value: `{channel.medium_name.fmt_val()}`) found with line"
-							f" {self._medium_names[channel.medium_name.fmt_val()]}."
+							f" {self._medium_names[channel.medium_name.fmt_val().lower()]}."
 							f" Codeplug applications do not handle this well.", line_num, file_name)
 			logging.debug(err.message)
 			errors.append(err)
@@ -100,7 +100,7 @@ class Validator:
 			err = ValidationError(
 							f"Collision in {channel.name.get_alias(radio_types.DEFAULT)} "
 							f"(value: `{channel.name.fmt_val()}`) found with line"
-							f" {self._long_names[channel.name.fmt_val()]}."
+							f" {self._long_names[channel.name.fmt_val().lower()]}."
 							f" Codeplug applications do not handle this well.", line_num, file_name)
 			logging.debug(err.message)
 			errors.append(err)
