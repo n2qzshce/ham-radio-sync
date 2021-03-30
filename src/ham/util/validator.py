@@ -74,7 +74,7 @@ class Validator:
 			return errors
 
 		channel = RadioChannel(cols, None, None)
-		if channel.short_name.fmt_val() in self._short_names.keys():
+		if channel.short_name.fmt_val().lower() in self._short_names.keys():
 			err = ValidationError(
 							f"Collision in {channel.short_name.get_alias(radio_types.DEFAULT)} "
 							f"(value: `{channel.short_name.fmt_val()}`) found with line"
@@ -83,9 +83,9 @@ class Validator:
 			logging.debug(err.message)
 			errors.append(err)
 		else:
-			self._short_names[channel.short_name.fmt_val()] = line_num
+			self._short_names[channel.short_name.fmt_val().lower()] = line_num
 
-		if channel.medium_name.fmt_val() in self._medium_names.keys():
+		if channel.medium_name.fmt_val().lower() in self._medium_names.keys():
 			err = ValidationError(
 							f"Collision in {channel.medium_name.get_alias(radio_types.DEFAULT)} "
 							f"(value: `{channel.medium_name.fmt_val()}`) found with line"
@@ -94,9 +94,9 @@ class Validator:
 			logging.debug(err.message)
 			errors.append(err)
 		else:
-			self._medium_names[channel.medium_name.fmt_val()] = line_num
+			self._medium_names[channel.medium_name.fmt_val().lower()] = line_num
 
-		if channel.name.fmt_val() in self._long_names.keys():
+		if channel.name.fmt_val().lower() in self._long_names.keys():
 			err = ValidationError(
 							f"Collision in {channel.name.get_alias(radio_types.DEFAULT)} "
 							f"(value: `{channel.name.fmt_val()}`) found with line"
@@ -105,7 +105,7 @@ class Validator:
 			logging.debug(err.message)
 			errors.append(err)
 		else:
-			self._long_names[channel.name.fmt_val()] = line_num
+			self._long_names[channel.name.fmt_val().lower()] = line_num
 
 		if channel.rx_dcs.fmt_val(23) not in radio_types.dcs_codes_inverses.keys():
 			err = ValidationError(
