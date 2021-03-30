@@ -22,6 +22,7 @@ from src.ui.async_wrapper import AsyncWrapper
 
 Config.set('input', 'mouse', 'mouse,disable_multitouch')
 
+
 class RightClickTextInput(TextInput):
 	def on_touch_down(self, touch):
 
@@ -45,6 +46,7 @@ class LayoutIds:
 	action_previous = 'action_previous'
 	create_radio_plugs = 'create_radio_plugs'
 	enable_dangerous = 'enable_dangerous'
+	clear_log = 'clear_log'
 	exit_button = 'exit_button'
 	dangerous_operations = 'dangerous_operations'
 	dangerous_operation__delete_migrate = 'dangerous_operation__delete_migrate'
@@ -87,6 +89,9 @@ BoxLayout:
 			ActionGroup:
 				text: "File"
 				mode: "spinner"
+				ActionButton:
+					id: {LayoutIds.clear_log}
+					text: "Clear log"
 				ActionButton:
 					id: {LayoutIds.exit_button}
 					text: "Exit"
@@ -157,7 +162,7 @@ BoxLayout:
 				font_name: 'RobotoMono-Regular'
 				text: ''
 				size_hint: (1, 1)
-				#readonly: True
+				readonly: True
 				font_size: 11
 """
 
@@ -189,6 +194,7 @@ class AppWindow(App):
 		layout = Builder.load_string(kv)
 		Window.size = (1200, 500)
 		Window.clearcolor = (0.15, 0.15, 0.15, 1)
+		Window.bind(on_keyboard=self.key_handler)
 
 		self.title = 'Ham Radio Sync'
 
@@ -209,6 +215,13 @@ class AppWindow(App):
 
 		logging.info("Welcome to the ham radio sync app.")
 		return layout
+
+	def key_handler(self, window, keycode1, keycode2, text, modifiers):
+		if keycode1 == 27 or keycode1 == 1001:
+			# Do whatever you want here - or nothing at all
+			# Returning True will eat the keypress
+			return True
+		return False
 
 	def _bind_radio_menu(self, layout):
 		button_pool = layout.ids[LayoutIds.radio_labels]
@@ -257,6 +270,9 @@ class AppWindow(App):
 		logger.addHandler(handler)
 
 	def _bind_file_menu(self, layout):
+		clear_console_button = layout.ids[LayoutIds.clear_log]
+		clear_console_button.bind(on_press=self._clear_console)
+
 		exit_button = layout.ids[LayoutIds.exit_button]
 		exit_button.bind(on_press=self.stop)
 
@@ -297,6 +313,10 @@ class AppWindow(App):
 
 		compatible_radios_button = layout.ids[LayoutIds.radio_descriptions]
 		compatible_radios_button.bind(on_press=self._async_wrapper.compatible_radios)
+
+	def _clear_console(self, event):
+		self.text_log.text = ''
+		logging.info("Console has been cleared.")
 
 	def right_click_down(self, touch):
 		if touch.button == 'right':
