@@ -60,7 +60,8 @@ class AsyncWrapper:
 		try:
 			task_func()
 		except Exception as e:
-			logging.error(f"Fatal error while processing task. PLEASE send this to the project owners.", exc_info=True)
+			logging.error(f"""Fatal error while processing task. PLEASE send this to the project owners.
+				Contact info is available under `Help / Getting Started`""", exc_info=True)
 		logging.info("---Task finished---")
 		self.dangerous_ops_toggle.state = 'normal'
 		self._set_buttons_disabled(False)

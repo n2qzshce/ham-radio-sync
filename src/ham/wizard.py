@@ -17,6 +17,17 @@ class Wizard(object):
 	def bootstrap(self, is_forced):
 		self._create_input(is_forced)
 		self._create_output()
+		abspath = os.path.abspath('in')
+		logging.info(f"""Wizard is complete! You may now open `input.csv` and add your radio channels.
+				Input CSVs are located in `{abspath}`
+				What each file does:
+					input.csv: your radio channels
+					zones.csv: preset group that you would like your channel in (if radio supports multiple zones)
+				DMR-ONLY FILES safe to ignore for analog radios:
+					digital_contacts.csv: DMR contact IDs (e.g. Talkgroups)
+					dmr_id.csv: Set your DMR id (from radioid.net)
+
+				Sample data has been added to each file as an example.""")
 
 	def _create_input(self, is_forced):
 		FileUtil.safe_create_dir('in')

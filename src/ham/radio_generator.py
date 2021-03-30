@@ -131,7 +131,8 @@ class RadioGenerator:
 			casted_additional_data = RadioAdditionalBuilder.casted(additional_data, radio)
 			casted_additional_data.output()
 
-		logging.info(f"Radio generator complete. Your output files are in `{os.path.abspath('out')}`")
+		logging.info(f"""Radio generator complete. Your output files are in `{os.path.abspath('out')}`
+			The next step is to import these files into your radio programming application. (e.g. CHiRP)""")
 		return
 
 	def _generate_digital_contact_data(self):
