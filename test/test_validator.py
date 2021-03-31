@@ -107,4 +107,26 @@ class ValidatorTest(BaseTestSetup):
 		found = errors[0].args[0].find('Cannot find digital contact')
 		self.assertEqual(found, 0)
 
+	def test_ignore_extra_column(self):
+		cols = dict()
+		cols['number'] = '1'
+		cols['name'] = 'National 2m'
+		cols['medium_name'] = 'Natl 2m'
+		cols['short_name'] = 'NATL 2M'
+		cols['zone_id'] = ''
+		cols['rx_freq'] = '146.52'
+		cols['rx_ctcss'] = ''
+		cols['rx_dcs'] = ''
+		cols['rx_dcs_invert'] = ''
+		cols['tx_power'] = ''
+		cols['tx_offset'] = ''
+		cols['tx_ctcss'] = ''
+		cols['tx_dcs'] = ''
+		cols['tx_dcs_invert'] = ''
+		cols['digital_timeslot'] = ''
+		cols['digital_color'] = ''
+		cols['digital_contact_id'] = ''
+		errors = self.validator.validate_radio_channel(cols, 1, "FILE_NO_EXIST_UNITTEST", {})
+		self.assertEqual(len(errors), 0)
+
 
