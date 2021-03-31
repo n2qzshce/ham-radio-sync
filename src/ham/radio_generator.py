@@ -64,7 +64,7 @@ class RadioGenerator:
 		radio_channels = dict()
 		line_num = 1
 		for line in csv_reader:
-			line_errors = self._validator.validate_radio_channel(line, line_num, feed.name)
+			line_errors = self._validator.validate_radio_channel(line, line_num, feed.name, digital_contacts)
 			radio_channel_errors += line_errors
 			line_num += 1
 
