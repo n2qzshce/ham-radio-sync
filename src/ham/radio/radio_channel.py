@@ -5,7 +5,6 @@ class RadioChannel:
 	@classmethod
 	def create_empty(cls):
 		col_vals = dict()
-		col_vals['number'] = ''
 		col_vals['name'] = ''
 		col_vals['medium_name'] = ''
 		col_vals['short_name'] = ''
@@ -25,7 +24,7 @@ class RadioChannel:
 		return cls(col_vals, digital_contacts=None, dmr_ids=None)
 
 	def __init__(self, cols, digital_contacts, dmr_ids):
-		self.number = DataColumn(fmt_name='number', fmt_val=cols['number'], shape=int)
+		self.number = DataColumn(fmt_name='number', fmt_val='', shape=int)
 		self.name = DataColumn(fmt_name='name', fmt_val=cols['name'], shape=str)
 		self.medium_name = DataColumn(fmt_name='medium_name', fmt_val=cols['medium_name'], shape=str)
 		self.short_name = DataColumn(fmt_name='short_name', fmt_val=cols['short_name'], shape=str)

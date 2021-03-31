@@ -107,3 +107,13 @@ class MigrationTest(BaseTestSetup):
 		self.manager.migrate()
 
 		self.assertTrue(True)
+
+	def test_migrate_four(self):
+		self.manager._migrate_one()
+		self.manager._migrate_two()
+		self.manager._migrate_three()
+		self.manager._migrate_four()
+
+		f = FileUtil.open_file('in/input.csv', 'r')
+		dict_reader = DictReader(f)
+		self.assertFalse('number' in dict_reader.fieldnames)

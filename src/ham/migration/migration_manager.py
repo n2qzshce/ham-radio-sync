@@ -48,6 +48,32 @@ class MigrationManager:
 		os.rename(f'{file_name}.tmp', f'{file_name}')
 		return
 
+	def _delete_col(self, file_name, col_name):
+		logging.info(f'Deleting column `{col_name}` in `{file_name}`')
+		reader = FileUtil.open_file(f'{file_name}', 'r')
+		cols = reader.readline().replace('\n', '').split(',')
+		if cols == ['']:
+			cols = []
+		if col_name in cols:
+			cols.remove(col_name)
+		reader.seek(0)
+
+		writer = FileUtil.open_file(f'{file_name}.tmp', 'w+')
+		dict_writer = csv.DictWriter(writer, fieldnames=cols, dialect='unix', quoting=0)
+		dict_reader = csv.DictReader(reader, fieldnames=cols)
+
+		dict_writer.writeheader()
+		for row in dict_reader:
+			if dict_reader.line_num == 1:
+				continue
+			dict_writer.writerow(row)
+
+		reader.close()
+		writer.close()
+		os.remove(file_name)
+		os.rename(f'{file_name}.tmp', f'{file_name}')
+		return
+
 	def remove_backups(self):
 		if not os.path.exists('in/'):
 			return
@@ -76,6 +102,7 @@ class MigrationManager:
 		self._migrate_one()
 		self._migrate_two()
 		self._migrate_three()
+		self._migrate_four()
 		logging.info("Migrations are complete. Your original files have been renamed to have a `.bak` extension.")
 
 	def _migrate_one(self):
@@ -125,4 +152,11 @@ class MigrationManager:
 
 		zone_columns = ['number', 'name']
 		self._add_cols_to_file('in/zones.csv', zone_columns)
+		return
+
+	def _migrate_four(self):
+		logging.info("Running migration step 4: removing 'number' columns")
+		self._delete_col('in/input.csv', 'number')
+		self._delete_col('in/dmr_id.csv', 'number')
+		self._delete_col('in/digital_contacts.csv', 'number')
 		return

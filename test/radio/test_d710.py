@@ -23,7 +23,6 @@ class D710Test(BaseTestSetup):
 
 	def test_simplex(self):
 		cols = dict()
-		cols['number'] = '1'
 		cols['name'] = 'National 2m'
 		cols['medium_name'] = 'Natl 2m'
 		cols['short_name'] = 'NATL 2M'
@@ -48,7 +47,6 @@ class D710Test(BaseTestSetup):
 
 	def test_vhf_simplex(self):
 		cols = dict()
-		cols['number'] = '2'
 		cols['name'] = 'National 70cm'
 		cols['medium_name'] = 'Natl 70c'
 		cols['short_name'] = 'NATL 70'
@@ -73,7 +71,6 @@ class D710Test(BaseTestSetup):
 
 	def test_vhf_repeater(self):
 		cols = dict()
-		cols['number'] = '3'
 		cols['name'] = 'Some Repeater'
 		cols['medium_name'] = 'Some Rpt'
 		cols['short_name'] = 'SOMERPT'
@@ -97,7 +94,6 @@ class D710Test(BaseTestSetup):
 
 	def test_pos_offset(self):
 		cols = dict()
-		cols['number'] = '4'
 		cols['name'] = 'Some Repeater'
 		cols['medium_name'] = 'Some Rpt'
 		cols['short_name'] = 'SOMERPT'
@@ -122,7 +118,6 @@ class D710Test(BaseTestSetup):
 
 	def test_dcs_repeater(self):
 		cols = dict()
-		cols['number'] = '6'
 		cols['name'] = 'Dcs Repeater'
 		cols['medium_name'] = 'Dcs Rpt'
 		cols['short_name'] = 'DCS RPT'
@@ -139,14 +134,13 @@ class D710Test(BaseTestSetup):
 		cols['digital_timeslot'] = ''
 		cols['digital_color'] = ''
 		cols['digital_contact_id'] = ''
-		result = RadioChannelD710(cols, None, None).output(3)
+		result = RadioChannelD710(cols, None, None).output(6)
 		self.assertEqual(
 			'0005,00447.075000,025.00,05.000000,DCS,88.5,88.5,165,-,Off,Off,FM,447.075000,025.00,DCS RPT', result
 		)
 
 	def test_dcs_invert(self):
 		cols = dict()
-		cols['number'] = '6'
 		cols['name'] = 'Dcs Repeater'
 		cols['medium_name'] = 'Dcs Rpt'
 		cols['short_name'] = 'DCS RPT'
@@ -163,7 +157,7 @@ class D710Test(BaseTestSetup):
 		cols['digital_timeslot'] = ''
 		cols['digital_color'] = ''
 		cols['digital_contact_id'] = ''
-		result = RadioChannelD710(cols, None, None).output(3)
+		result = RadioChannelD710(cols, None, None).output(6)
 		self.assertEqual(
 			'0005,00447.075000,025.00,05.000000,DCS,88.5,88.5,047,-,Off,Off,FM,447.075000,025.00,DCS RPT', result
 		)

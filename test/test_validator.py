@@ -37,7 +37,6 @@ class ValidatorTest(BaseTestSetup):
 
 	def test_validate_radio_channel_name_dupe(self):
 		cols = dict()
-		cols['number'] = '1'
 		cols['name'] = 'National 2m'
 		cols['medium_name'] = 'Natl 2m'
 		cols['short_name'] = 'NATL 2M'
@@ -54,9 +53,9 @@ class ValidatorTest(BaseTestSetup):
 		cols['digital_timeslot'] = ''
 		cols['digital_color'] = ''
 		cols['digital_contact_id'] = ''
-		errors = self.validator.validate_radio_channel(cols, 1, "FILE_NO_EXIST_UNITTEST", )
+		errors = self.validator.validate_radio_channel(cols, 1, "FILE_NO_EXIST_UNITTEST", {})
 		self.assertEqual(len(errors), 0)
-		errors = self.validator.validate_radio_channel(cols, 2, "FILE_NO_EXIST_UNITTEST", )
+		errors = self.validator.validate_radio_channel(cols, 2, "FILE_NO_EXIST_UNITTEST", {})
 		self.assertEqual(len(errors), 3)
 
 		short_found = False
