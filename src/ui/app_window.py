@@ -9,6 +9,7 @@ from kivy.base import EventLoop
 from kivy.config import Config
 from kivy.core.window import Window
 from kivy.lang import Builder
+from kivy.metrics import dp
 from kivy.resources import resource_add_path
 from kivy.resources import resource_paths
 from kivy.uix.boxlayout import BoxLayout
@@ -91,7 +92,7 @@ BoxLayout:
 				text: "Dangerous Operations"
 				mode: "spinner"
 				id: {LayoutIds.dangerous_operations}
-				dropdown_width: 225
+				dropdown_width: dp(225)
 				ActionButton:
 					id: {LayoutIds.dangerous_operation__delete_migrate}
 					text: "Remove migration backups"
@@ -107,7 +108,7 @@ BoxLayout:
 			ActionGroup:
 				text: "Help / Getting Started"
 				mode: "spinner"
-				dropdown_width: 250
+				dropdown_width: dp(250)
 				ActionButton:
 					id: {LayoutIds.getting_started}
 					text: "About/Getting started..."
@@ -127,21 +128,21 @@ BoxLayout:
 		orientation: "horizontal"
 		StackLayout:
 			id: {LayoutIds.button_pool}
-			spacing: 10
+			spacing: dp(10)
 			size_hint: (0.2, 1)
-			padding: [20,20,20,20]
-			size_hint_min_x: 225
-			size_hint_max_x: 275
+			padding: [dp(20), dp(20), dp(20), dp(20)]
+			size_hint_min_x: dp(225)
+			size_hint_max_x: dp(275)
 			Label:
 				id: {LayoutIds.radio_header}
 				text: "Radios to Generate"
 				size_hint: (1.0, 0.1)
-				font_size: 15
+				font_size: dp(15)
 				bold: True
 			BoxLayout:
 				id: {LayoutIds.radio_labels}
 				orientation: "vertical"
-				spacing: 10
+				spacing: dp(10)
 				size_hint: (1, 0.4)
 			BoxLayout:
 				id: {LayoutIds.buffer}
@@ -155,7 +156,7 @@ BoxLayout:
 				text: ''
 				size_hint: (1, 1)
 				readonly: True
-				font_size: 11
+				font_size: dp(11)
 				use_bubble: True
 """
 
@@ -185,7 +186,7 @@ class AppWindow(App):
 
 		self._async_wrapper = AsyncWrapper()
 		layout = Builder.load_string(kv)
-		Window.size = (1200, 500)
+		Window.size = (dp(1200), dp(500))
 		Window.clearcolor = (0.15, 0.15, 0.15, 1)
 		Window.bind(on_keyboard=self.key_handler)
 
@@ -225,7 +226,7 @@ class AppWindow(App):
 		for radio in radios:
 			radio_layout = BoxLayout(orientation='horizontal', size_hint=(1, 0.1))
 
-			radio_label = Label(text=radio_types.pretty_name(radio), size_hint=(0.9, 1), font_size=11, halign='left')
+			radio_label = Label(text=radio_types.pretty_name(radio), size_hint=(0.9, 1), font_size=dp(11), halign='left')
 			radio_checkbox = CheckBox(size_hint=(0.1, 1))
 			radio_checkbox.active = radio == radio_types.DEFAULT
 			radio_label.bind(size=radio_label.setter('text_size'))
