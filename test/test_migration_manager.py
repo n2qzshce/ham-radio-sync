@@ -119,4 +119,4 @@ class MigrationTest(BaseTestSetup):
 		self.assertFalse('number' in dict_reader.fieldnames)
 
 	def text_expected_col_definitions(self):
-		self.assertFalse(True)
+		self.fail("test not implemented")
