@@ -34,7 +34,7 @@ class RadioAdditionalCs800(RadioAdditional):
 
 		analog_num = 1
 		digital_num = 1
-		for radio_channel in self._channels.values():
+		for radio_channel in self._channels:
 			casted_channel = RadioChannelBuilder.casted(radio_channel, radio_types.CS800)
 
 			if casted_channel.is_digital():

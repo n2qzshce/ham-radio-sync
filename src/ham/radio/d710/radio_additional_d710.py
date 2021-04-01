@@ -7,7 +7,7 @@ from src.ham.util.file_util import FileUtil
 class RadioAdditionalD710(RadioAdditional):
 	def __init__(self, channels, dmr_ids, digital_contacts, zones, users):
 		super().__init__(channels, dmr_ids, digital_contacts, zones, users)
-		for k in self._channels.keys():
+		for k in range(0, len(self._channels)):
 			uncasted_channel = self._channels[k]
 			casted_channel = RadioChannelBuilder.casted(uncasted_channel, radio_types.D710)
 			self._channels[k] = casted_channel
@@ -29,7 +29,7 @@ class RadioAdditionalD710(RadioAdditional):
 	def _output(self):
 		f = FileUtil.open_file(f'out/{radio_types.D710}/{radio_types.D710}.hmk', 'a')
 		channel_number = 1
-		for channel in self._channels.values():
+		for channel in self._channels:
 			if channel.is_digital():
 				continue
 			f.writelines(channel.output(channel_number)+"\n")
