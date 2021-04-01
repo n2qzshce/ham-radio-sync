@@ -61,7 +61,7 @@ class RadioGenerator:
 		csv_reader = csv.DictReader(feed)
 
 		radio_channel_errors = []
-		radio_channels = dict()
+		radio_channels = []
 		line_num = 1
 		for line in csv_reader:
 			line_errors = self._validator.validate_radio_channel(line, line_num, feed.name, digital_contacts)
@@ -72,7 +72,7 @@ class RadioGenerator:
 				continue
 
 			radio_channel = RadioChannel(line, digital_contacts, dmr_ids)
-			radio_channels[radio_channel.number.fmt_val()] = radio_channel
+			radio_channels.append(radio_channel)
 
 			if radio_channel.zone_id.fmt_val(None) is not None:
 				zones[radio_channel.zone_id.fmt_val()].add_channel(radio_channel)
@@ -106,10 +106,11 @@ class RadioGenerator:
 			channel_numbers[radio] = 1
 
 		logging.info("Processing radio channels")
-		for radio_channel in radio_channels.values():
-			logging.debug(f"Processing radio line {radio_channel.number}")
-			if radio_channel.number.fmt_val(None) % file_util.RADIO_LINE_LOG_INTERVAL == 0:
-				logging.info(f"Processing radio line {radio_channel.number.fmt_val(None)}")
+		line = 1
+		for radio_channel in radio_channels:
+			logging.debug(f"Processing radio line {line}")
+			if line % file_util.RADIO_LINE_LOG_INTERVAL == 0:
+				logging.info(f"Processing radio line {line}")
 
 			for radio in self.radio_list:
 				if radio not in radio_files.keys():
@@ -161,15 +162,15 @@ class RadioGenerator:
 		csv_feed = csv.DictReader(feed)
 		dmr_ids = dict()
 		errors = []
-		line_num = 1
+		line_num = 0
 		for line in csv_feed:
+			line_num += 1
 			line_errors = self._validator.validate_dmr_id(line, line_num, feed.name)
 			errors += line_errors
-			line_num += 1
 			if len(line_errors) != 0:
 				continue
 			dmr_id = DmrId(line)
-			dmr_ids[dmr_id.number.fmt_val()] = dmr_id
+			dmr_ids[line_num] = dmr_id
 
 		return dmr_ids, errors
 

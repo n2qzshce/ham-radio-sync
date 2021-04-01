@@ -5,7 +5,6 @@ from src.ham.util import radio_types
 class RadioChannelD878(RadioChannel):
 	def __init__(self, cols, digital_contacts, dmr_ids):
 		super().__init__(cols, digital_contacts, dmr_ids)
-		self.number.set_alias(radio_types.D878, 'No.')
 		self.name.set_alias(radio_types.D878, 'Channel Name')
 		self.rx_freq.set_alias(radio_types.D878, 'Receive Frequency')
 		self.digital_timeslot.set_alias(radio_types.D878, 'Slot')
@@ -17,7 +16,7 @@ class RadioChannelD878(RadioChannel):
 
 	def headers(self):
 		output = list()
-		output.append(f"{self.number.get_alias(radio_types.D878)}")  # "No.,"
+		output.append(f"No.")  # "No.,"
 		output.append(f"{self.name.get_alias(radio_types.D878)}")  # "Channel Name,"
 		output.append(f"{self.rx_freq.get_alias(radio_types.D878)}")  # "Receive Frequency,"
 		output.append(f"Transmit Frequency")  # "Transmit Frequency,"

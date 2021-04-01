@@ -11,7 +11,6 @@ class RadioChannelDefault(RadioChannel):
 
 	def headers(self):
 		output = list()
-		output.append(f"{self.number.get_alias(radio_types.DEFAULT)}")
 		output.append(f"{self.name.get_alias(radio_types.DEFAULT)}")
 		output.append(f"{self.medium_name.get_alias(radio_types.DEFAULT)}")
 		output.append(f"{self.short_name.get_alias(radio_types.DEFAULT)}")
@@ -32,7 +31,6 @@ class RadioChannelDefault(RadioChannel):
 
 	def output(self, channel_number):
 		output = list()
-		output.append(f"{channel_number}")
 		output.append(f"{self.name.fmt_val('')}")
 		output.append(f"{self.medium_name.fmt_val('')}")
 		output.append(f"{self.short_name.fmt_val('')}")
