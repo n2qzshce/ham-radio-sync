@@ -9,7 +9,7 @@ env:
   KIVY_GL_BACKEND: 'angle_sdl2'
 
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
   pull_request:
     branches: [ master ]
   push:
