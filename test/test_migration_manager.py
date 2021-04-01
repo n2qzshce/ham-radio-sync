@@ -117,3 +117,6 @@ class MigrationTest(BaseTestSetup):
 		f = FileUtil.open_file('in/input.csv', 'r')
 		dict_reader = DictReader(f)
 		self.assertFalse('number' in dict_reader.fieldnames)
+
+	def text_expected_col_definitions(self):
+		self.assertFalse(True)
