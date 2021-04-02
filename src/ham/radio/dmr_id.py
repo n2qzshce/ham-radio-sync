@@ -10,7 +10,6 @@ class DmrId:
 		return cls(cols)
 
 	def __init__(self, cols):
-		self.number = DataColumn(fmt_name='number', fmt_val='', shape=int)
 		self.radio_id = DataColumn(fmt_name='radio_id', fmt_val=cols['radio_id'], shape=int)
 		self.name = DataColumn(fmt_name='name', fmt_val=cols['name'], shape=str)
 		self.cols = cols

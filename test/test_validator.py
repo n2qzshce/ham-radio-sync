@@ -17,6 +17,25 @@ class ValidatorTest(BaseTestSetup):
 		FileUtil.safe_create_dir('in')
 		FileUtil.safe_create_dir('out')
 
+		cols = dict()
+		cols['name'] = 'National 2m'
+		cols['medium_name'] = 'Natl 2m'
+		cols['short_name'] = 'NATL 2M'
+		cols['zone_id'] = ''
+		cols['rx_freq'] = '146.52'
+		cols['rx_ctcss'] = ''
+		cols['rx_dcs'] = ''
+		cols['rx_dcs_invert'] = ''
+		cols['tx_power'] = 'High'
+		cols['tx_offset'] = ''
+		cols['tx_ctcss'] = ''
+		cols['tx_dcs'] = ''
+		cols['tx_dcs_invert'] = ''
+		cols['digital_timeslot'] = ''
+		cols['digital_color'] = ''
+		cols['digital_contact_id'] = ''
+		self.radio_cols = cols
+
 	def test_validate_no_files_exist(self):
 		errors = Validator.validate_files_exist()
 		self.assertEqual(5, len(errors))
@@ -36,26 +55,9 @@ class ValidatorTest(BaseTestSetup):
 		self.assertEqual(4, len(errors))
 
 	def test_validate_radio_channel_name_dupe(self):
-		cols = dict()
-		cols['name'] = 'National 2m'
-		cols['medium_name'] = 'Natl 2m'
-		cols['short_name'] = 'NATL 2M'
-		cols['zone_id'] = ''
-		cols['rx_freq'] = '146.52'
-		cols['rx_ctcss'] = ''
-		cols['rx_dcs'] = ''
-		cols['rx_dcs_invert'] = ''
-		cols['tx_power'] = ''
-		cols['tx_offset'] = ''
-		cols['tx_ctcss'] = ''
-		cols['tx_dcs'] = ''
-		cols['tx_dcs_invert'] = ''
-		cols['digital_timeslot'] = ''
-		cols['digital_color'] = ''
-		cols['digital_contact_id'] = ''
-		errors = self.validator.validate_radio_channel(cols, 1, "FILE_NO_EXIST_UNITTEST", {})
+		errors = self.validator.validate_radio_channel(self.radio_cols, 1, "FILE_NO_EXIST_UNITTEST", {})
 		self.assertEqual(len(errors), 0)
-		errors = self.validator.validate_radio_channel(cols, 2, "FILE_NO_EXIST_UNITTEST", {})
+		errors = self.validator.validate_radio_channel(self.radio_cols, 2, "FILE_NO_EXIST_UNITTEST", {})
 		self.assertEqual(len(errors), 3)
 
 		short_found = False
@@ -81,7 +83,7 @@ class ValidatorTest(BaseTestSetup):
 		radio_cols['rx_ctcss'] = ''
 		radio_cols['rx_dcs'] = ''
 		radio_cols['rx_dcs_invert'] = ''
-		radio_cols['tx_power'] = ''
+		radio_cols['tx_power'] = 'High'
 		radio_cols['tx_offset'] = '0.6'
 		radio_cols['tx_ctcss'] = ''
 		radio_cols['tx_dcs'] = ''
@@ -108,25 +110,22 @@ class ValidatorTest(BaseTestSetup):
 		self.assertEqual(found, 0)
 
 	def test_ignore_extra_column(self):
-		cols = dict()
-		cols['number'] = '1'
-		cols['name'] = 'National 2m'
-		cols['medium_name'] = 'Natl 2m'
-		cols['short_name'] = 'NATL 2M'
-		cols['zone_id'] = ''
-		cols['rx_freq'] = '146.52'
-		cols['rx_ctcss'] = ''
-		cols['rx_dcs'] = ''
-		cols['rx_dcs_invert'] = ''
-		cols['tx_power'] = ''
-		cols['tx_offset'] = ''
-		cols['tx_ctcss'] = ''
-		cols['tx_dcs'] = ''
-		cols['tx_dcs_invert'] = ''
-		cols['digital_timeslot'] = ''
-		cols['digital_color'] = ''
-		cols['digital_contact_id'] = ''
-		errors = self.validator.validate_radio_channel(cols, 1, "FILE_NO_EXIST_UNITTEST", {})
+		self.radio_cols['foo'] = '1'
+		errors = self.validator.validate_radio_channel(self.radio_cols, 1, "FILE_NO_EXIST_UNITTEST", {})
 		self.assertEqual(len(errors), 0)
+
+	def test_validate_tx_power(self):
+		self.radio_cols['tx_power'] = 'mega'
+		errors = self.validator.validate_radio_channel(self.radio_cols, 1, "FILE_NO_EXIST_UNITTEST", {})
+		self.assertEqual(len(errors), 1)
+		found = errors[0].args[0].find('Transmit power (`tx_power`) invalid')
+		self.assertEqual(found, 0)
+
+	def test_validate_tx_power_not_present(self):
+		self.radio_cols['tx_power'] = ''
+		errors = self.validator.validate_radio_channel(self.radio_cols, 1, "FILE_NO_EXIST_UNITTEST", {})
+		self.assertEqual(len(errors), 1)
+		found = errors[0].args[0].find('Transmit power (`tx_power`) invalid')
+		self.assertEqual(found, 0)
 
 
