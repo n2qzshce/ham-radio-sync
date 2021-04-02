@@ -45,7 +45,7 @@ jobs:
         python -m pip install -r requirements.txt
     - name: Run Tests
       run: |
-        echo "version = '${{ env.semver }}'" ${{ matrix.echo-version }} ${{ env.GITHUB_WORKSPACE }}/${{ src/radio_sync_version.py
+        echo "version = '${{ env.semver }}'" ${{ matrix.echo-version }} ${{ env.GITHUB_WORKSPACE }}/src/radio_sync_version.py
         python -m unittest discover -v
     - name: Build GUI executable
       run: |
