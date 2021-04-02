@@ -1,1 +1,1 @@
-﻿version = 'DEVELOPMENT!!'
+﻿version = 'DEVELOPMENT'
