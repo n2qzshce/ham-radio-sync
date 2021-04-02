@@ -3,6 +3,7 @@ import logging
 import os
 from time import sleep
 
+from src import radio_sync_version
 from src.ham.migration.migration_manager import MigrationManager
 from src.ham.radio.dmr_contact import DmrContact
 from src.ham.radio.dmr_id import DmrId
@@ -26,7 +27,7 @@ class RadioGenerator:
 	@classmethod
 	def info(cls, dangerous_ops_info):
 		logging.info(f"""
-		HAM RADIO SYNC GENERATOR
+		HAM RADIO SYNC GENERATOR v{radio_sync_version.version}
 		Homepage: https://github.com/n2qzshce/ham-radio-sync
 
 		Purpose: The intent of this program is to generate codeplug files to import into various radio applications by 

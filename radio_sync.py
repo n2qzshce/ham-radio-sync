@@ -4,7 +4,7 @@ import os
 import sys
 
 import src.ham.util.radio_types
-import src.radio_sync_version
+from src import radio_sync_version
 from src.ham.migration.migration_manager import MigrationManager
 from src.ham.radio_generator import RadioGenerator
 from src.ham.wizard import Wizard
