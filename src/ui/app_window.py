@@ -17,6 +17,7 @@ from kivy.uix.checkbox import CheckBox
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 
+from src import radio_sync_version
 from src.ham.util import radio_types
 from src.ui.async_wrapper import AsyncWrapper
 
@@ -213,6 +214,7 @@ class AppWindow(App):
 		self._async_wrapper.buttons = buttons
 
 		logging.info("Welcome to the ham radio sync app.")
+		logging.info(f"You are running version {radio_sync_version.version}")
 		return layout
 
 	def key_handler(self, window, keycode1, keycode2, text, modifiers):
