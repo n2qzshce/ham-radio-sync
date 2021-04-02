@@ -41,11 +41,11 @@ jobs:
         python-version: ${{ env.python-version }}
     - name: Install dependencies
       run: |
-        echo "version = '${{ env.semver }}'" ${{ matrix.echo-version }}
         python -m pip install --upgrade pip
         python -m pip install -r requirements.txt
     - name: Run Tests
       run: |
+        echo "version = '${{ env.semver }}'" ${{ matrix.echo-version }}
         python -m unittest discover -v
     - name: Build GUI executable
       run: |
