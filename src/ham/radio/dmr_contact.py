@@ -21,6 +21,6 @@ class DmrContact:
 	def headers(self):
 		raise Exception("Base method cannot be called!")
 
-	def output(self):
+	def output(self, number):
 		raise Exception("Base method cannot be called!")
 

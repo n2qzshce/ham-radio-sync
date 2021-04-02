@@ -34,9 +34,11 @@ class RadioAdditionalD878(RadioAdditional):
 
 		headers = DmrIdD878.create_empty()
 		radio_id_file.writerow(headers.headers())
+		number = 1
 		for dmr_id in self._dmr_ids.values():
 			casted_id = DmrIdBuilder.casted(dmr_id, radio_types.D878)
-			radio_id_file.writerow(casted_id.output())
+			radio_id_file.writerow(casted_id.output(number))
+			number += 1
 
 		radio_id_file.close()
 		return
@@ -51,9 +53,12 @@ class RadioAdditionalD878(RadioAdditional):
 
 		headers = DmrContactD878.create_empty()
 		dmr_contact_file.writerow(headers.headers())
+		number = 1
 		for dmr_contact in self._digital_contacts.values():
 			casted_contact = DmrContactBuilder.casted(dmr_contact, self._style)
-			dmr_contact_file.writerow(casted_contact.output())
+			row_data = casted_contact.output(number)
+			dmr_contact_file.writerow(row_data)
+			number += 1
 
 		dmr_contact_file.close()
 
@@ -88,8 +93,8 @@ class RadioAdditionalD878(RadioAdditional):
 
 		rows_processed = 1
 		for user in self._users.values():
-			casted_user = DmrUserBuilder.casted(user.cols, user.number, self._style)
-			users_file.writerow(casted_user.output())
+			casted_user = DmrUserBuilder.casted(user.cols, self._style)
+			users_file.writerow(casted_user.output(None))
 			rows_processed += 1
 			logging.debug(f"Writing user row {rows_processed}")
 			if rows_processed % file_util.USER_LINE_LOG_INTERVAL == 0:

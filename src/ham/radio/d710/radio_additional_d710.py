@@ -32,6 +32,7 @@ class RadioAdditionalD710(RadioAdditional):
 		for channel in self._channels:
 			if channel.is_digital():
 				continue
-			f.writelines(channel.output(channel_number)+"\n")
+			channel_data = channel.output(channel_number)
+			f.writelines(channel_data + "\n")
 			channel_number += 1
 		f.close()
