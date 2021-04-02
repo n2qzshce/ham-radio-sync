@@ -196,7 +196,7 @@ class AppWindow(App):
 		Window.clearcolor = (0.15, 0.15, 0.15, 1)
 		Window.bind(on_keyboard=self.key_handler)
 
-		self.title = 'Ham Radio Sync'
+		self.title = f'Ham Radio Sync v{radio_sync_version.version}'
 
 		action_previous = layout.ids[LayoutIds.action_previous]
 		action_previous.app_icon = action_icon_path
@@ -214,7 +214,6 @@ class AppWindow(App):
 		self._async_wrapper.buttons = buttons
 
 		logging.info("Welcome to the ham radio sync app.")
-		logging.info(f"You are running version {radio_sync_version.version}")
 		return layout
 
 	def key_handler(self, window, keycode1, keycode2, text, modifiers):

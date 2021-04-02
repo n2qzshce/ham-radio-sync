@@ -113,6 +113,21 @@ class MigrationManager:
 
 		return not_needed_cols
 
+	def log_check_migrations(self):
+		try:
+			results = self.check_migrations_needed()
+		except Exception:
+			logging.info("Migrations check could not be run. Have you run the setup wizard?")
+			return
+
+		output_str = ""
+		for k in results.keys():
+			for v in results[k]:
+				output_str += f"{k:20s} | {v}\n"
+		if len(output_str) != 0:
+			logging.info(f"The following extra columns were found: \n{'file name':20s} | extra column\n{output_str}")
+			logging.info(f"New columns may still be needed. Create radio plugs to validate and create.")
+
 	def _migration_check(self, input_file, needed_cols):
 		f = FileUtil.open_file(input_file, 'r')
 		dict_reader = csv.DictReader(f)
