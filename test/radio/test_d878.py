@@ -249,18 +249,3 @@ class D878Test(BaseRadioTestSetup):
 				'Off', 'Off', 'Off', 'Off', 'Off', '1', '0', 'Off', '0', '1', '0', '0', '0',
 			], result
 		)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
