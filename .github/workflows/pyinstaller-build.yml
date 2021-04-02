@@ -45,6 +45,7 @@ jobs:
         python -m pip install -r requirements.txt
     - name: Write version file
       run: |
+        get-content ./src/radio_sync_version.py
         echo "version = '${{ env.semver }}'" ${{ matrix.echo-version }} ./src/radio_sync_version.py
         get-content ./src/radio_sync_version.py
     - name: Run Tests
