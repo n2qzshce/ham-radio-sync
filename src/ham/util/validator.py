@@ -45,7 +45,7 @@ class Validator:
 			logging.info(f"Checked `{os.path.abspath('./in')}`")
 			for err in errors:
 				logging.error(f"\t\t{err.message}")
-			logging.info("Have you run `Wizard` under `Dangerous Operations`?")
+			logging.info("Have you run `Wizard (new)` or `Migrations (update)` under `Dangerous Operations`?")
 		else:
 			logging.info("All necessary files found")
 
@@ -118,9 +118,9 @@ class Validator:
 			)
 			errors.append(err)
 
-		if channel.is_digital() and channel.digital_contact.fmt_val() not in digital_contacts.keys():
+		if channel.is_digital() and channel.digital_contact_id.fmt_val() not in digital_contacts.keys():
 			err = ValidationError(
-							f"Cannot find digital contact `{channel.digital_contact.fmt_val()}` specified in "
+							f"Cannot find digital contact `{channel.digital_contact_id.fmt_val()}` specified in "
 							f"digital contacts.", line_num, file_name
 			)
 			errors.append(err)
@@ -128,7 +128,7 @@ class Validator:
 		acceptable_tx_powers = ["Low", "Medium", "High"]
 		if channel.tx_power.fmt_val() is None or channel.tx_power.fmt_val() not in acceptable_tx_powers:
 			err = ValidationError(
-							f"Transmit power (`tx_power`) invalid: `{channel.digital_contact.fmt_val()}`. Valid values "
+							f"Transmit power (`tx_power`) invalid: `{channel.digital_contact_id.fmt_val()}`. Valid values "
 							f"are {acceptable_tx_powers}"
 							, line_num, file_name
 			)

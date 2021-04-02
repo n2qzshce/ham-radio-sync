@@ -11,7 +11,7 @@ class DmrContact:
 		return cls(cols)
 
 	def __init__(self, cols):
-		self.radio_id = DataColumn(fmt_name='digital_id', fmt_val=cols['digital_id'], shape=int)
+		self.digital_id = DataColumn(fmt_name='digital_id', fmt_val=cols['digital_id'], shape=int)
 		self.name = DataColumn(fmt_name='name', fmt_val=cols['name'], shape=str)
 		self.call_type = DataColumn(fmt_name='call_type', fmt_val=cols['call_type'], shape=str)
 

@@ -119,7 +119,7 @@ class RadioChannelCS800(RadioChannel):
 		output.append(f'Off')  # Emergency Call Indication
 		output.append(f'{transmit_frequency:.4f}')  # Transmit Frequency
 		output.append(f'Middle')  # TX Ref Frequency
-		output.append(f'{self.digital_contacts[self.digital_contact.fmt_val()].name.fmt_val()}')  # TX Contact
+		output.append(f'{self.digital_contacts[self.digital_contact_id.fmt_val()].name.fmt_val()}')  # TX Contact
 		output.append(f'None')  # Emergency System
 		output.append(f'{self.tx_power.fmt_val()}')  # Power Level
 		output.append(f'Color Code')  # TX Admit

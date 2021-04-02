@@ -99,6 +99,24 @@ class AsyncWrapper:
 	def _wizard_bootstrap_async(self):
 		self._wizard.bootstrap(True)
 
+	def check_migrations(self, event):
+		self._submit_blocking_task(self._check_migrations_async)
+
+	def _check_migrations_async(self):
+		try:
+			results = self._migrations.check_migrations_needed()
+		except Exception:
+			logging.info("Migrations check could not be run. Have you run the setup wizard?")
+			return
+
+		output_str = ""
+		for k in results.keys():
+			for v in results[k]:
+				output_str += f"{k:20s} | {v}\n"
+		if len(output_str) != 0:
+			logging.info(f"The following extra columns were found: \n{'file name':20s} | extra column\n{output_str}")
+			logging.info(f"New columns may still be needed. Create radio plugs to validate and create.")
+
 	def migrations(self, event):
 		self._submit_blocking_task(self._migrations_async)
 

@@ -26,7 +26,7 @@ class RadioChannelDefault(RadioChannel):
 		output.append(f"{self.tx_dcs_invert.get_alias(radio_types.DEFAULT)}")
 		output.append(f"{self.digital_timeslot.get_alias(radio_types.DEFAULT)}")
 		output.append(f"{self.digital_color.get_alias(radio_types.DEFAULT)}")
-		output.append(f"{self.digital_contact.get_alias(radio_types.DEFAULT)}")
+		output.append(f"{self.digital_contact_id.get_alias(radio_types.DEFAULT)}")
 		return output
 
 	def output(self, channel_number):
@@ -46,5 +46,5 @@ class RadioChannelDefault(RadioChannel):
 		output.append(f"{self.tx_dcs_invert.fmt_val('')}")
 		output.append(f"{self.digital_timeslot.fmt_val('')}")
 		output.append(f"{self.digital_color.fmt_val('')}")
-		output.append(f"{self.digital_contact.fmt_val('')}")
+		output.append(f"{self.digital_contact_id.fmt_val('')}")
 		return output

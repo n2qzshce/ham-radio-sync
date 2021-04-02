@@ -1,7 +1,9 @@
 import csv
 import logging
 import os
+from time import sleep
 
+from src.ham.migration.migration_manager import MigrationManager
 from src.ham.radio.dmr_contact import DmrContact
 from src.ham.radio.dmr_id import DmrId
 from src.ham.radio.dmr_user import DmrUser
@@ -19,6 +21,7 @@ class RadioGenerator:
 	def __init__(self, radio_list):
 		self.radio_list = radio_list
 		self._validator = Validator()
+		self._migrations = MigrationManager()
 
 	@classmethod
 	def info(cls, dangerous_ops_info):
@@ -50,6 +53,12 @@ class RadioGenerator:
 		self._validator.flush_names()
 		if len(file_errors) > 0:
 			return
+
+		results = self._migrations.check_migrations_needed()
+		if len(results.keys()) > 0:
+			logging.warning("You may be using an old version of the input files. Have you run migrations?")
+			logging.warning("Migrations check is under the 'File' menu.")
+			sleep(1)
 
 		digital_contacts, digi_contact_errors = self._generate_digital_contact_data()
 		dmr_ids, dmr_id_errors = self._generate_dmr_id_data()
@@ -152,7 +161,7 @@ class RadioGenerator:
 			if len(line_errors) != 0:
 				continue
 			contact = DmrContact(line)
-			digital_contacts[contact.radio_id.fmt_val()] = contact
+			digital_contacts[contact.digital_id.fmt_val()] = contact
 
 		return digital_contacts, errors
 

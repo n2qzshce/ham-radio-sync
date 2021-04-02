@@ -39,6 +39,7 @@ class LayoutIds:
 	action_previous = 'action_previous'
 	create_radio_plugs = 'create_radio_plugs'
 	enable_dangerous = 'enable_dangerous'
+	check_migrations = 'check_migrations'
 	clear_log = 'clear_log'
 	exit_button = 'exit_button'
 	dangerous_operations = 'dangerous_operations'
@@ -82,6 +83,10 @@ BoxLayout:
 			ActionGroup:
 				text: "File"
 				mode: "spinner"
+				dropdown_width: dp(225)
+				ActionButton:
+					id: {LayoutIds.check_migrations}
+					text: "Check for needed migrations"
 				ActionButton:
 					id: {LayoutIds.clear_log}
 					text: "Clear log"
@@ -212,8 +217,6 @@ class AppWindow(App):
 
 	def key_handler(self, window, keycode1, keycode2, text, modifiers):
 		if keycode1 == 27 or keycode1 == 1001:
-			# Do whatever you want here - or nothing at all
-			# Returning True will eat the keypress
 			return True
 		return False
 
@@ -264,6 +267,9 @@ class AppWindow(App):
 		logger.addHandler(handler)
 
 	def _bind_file_menu(self, layout):
+		check_migrations_button = layout.ids[LayoutIds.check_migrations]
+		check_migrations_button.bind(on_press=self._async_wrapper.check_migrations)
+
 		clear_console_button = layout.ids[LayoutIds.clear_log]
 		clear_console_button.bind(on_press=self._clear_console)
 

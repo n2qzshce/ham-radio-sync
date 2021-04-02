@@ -4,6 +4,9 @@ import os
 import re
 import shutil
 
+from src.ham.radio.default_radio.dmr_contact_default import DmrContactDefault
+from src.ham.radio.default_radio.radio_channel_default import RadioChannelDefault
+from src.ham.radio.default_radio.radio_zone_default import RadioZoneDefault
 from src.ham.util.file_util import FileUtil
 
 
@@ -83,6 +86,46 @@ class MigrationManager:
 				logging.info(f"Removing backup `in/{file_name}`")
 				os.remove(f'in/{file_name}')
 		return
+
+	def check_migrations_needed(self):
+		not_needed_cols = dict()
+
+		channels_file = 'in/input.csv'
+		channel_cols = dict(RadioChannelDefault.create_empty().__dict__)
+		extra_cols = self._migration_check(channels_file, channel_cols)
+
+		if len(extra_cols) > 0:
+			not_needed_cols['input.csv'] = extra_cols
+
+		contacts_file = 'in/digital_contacts.csv'
+		contact_cols = dict(DmrContactDefault.create_empty().__dict__)
+		extra_cols = self._migration_check(contacts_file, contact_cols)
+
+		if len(extra_cols) > 0:
+			not_needed_cols['digital_contacts.csv'] = extra_cols
+
+		zones_file = 'in/zones.csv'
+		zone_cols = dict(RadioZoneDefault.create_empty().__dict__)
+		extra_cols = self._migration_check(zones_file, zone_cols)
+
+		if len(extra_cols) > 0:
+			not_needed_cols['zones.csv'] = extra_cols
+
+		return not_needed_cols
+
+	def _migration_check(self, input_file, needed_cols):
+		f = FileUtil.open_file(input_file, 'r')
+		dict_reader = csv.DictReader(f)
+		provided_fields = dict_reader.fieldnames
+		f.close()
+
+		needed_fields = needed_cols.keys()
+
+		not_needed = []
+		for provided in provided_fields:
+			if provided not in needed_fields:
+				not_needed.append(provided)
+		return not_needed
 
 	def migrate(self):
 		existing_backups = False

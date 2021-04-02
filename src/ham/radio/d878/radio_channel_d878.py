@@ -74,7 +74,7 @@ class RadioChannelD878(RadioChannel):
 		busy_lock = 'Off'
 		dmr_mode = 0
 		contact_call_type = 'All Call'
-		contact = self.digital_contacts[self.digital_contact.fmt_val(0)]
+		contact = self.digital_contacts[self.digital_contact_id.fmt_val(0)]
 		dmr_name = self.dmr_ids[1].name.fmt_val()
 		contact_id = self.dmr_ids[1].radio_id.fmt_val()
 		call_confirmation = 'Off'

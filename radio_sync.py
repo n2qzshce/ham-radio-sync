@@ -33,6 +33,14 @@ def main():
 	)
 
 	parser.add_argument(
+		'--migrate-check',
+		action='store_true',
+		default=False,
+		required=False,
+		help='Checks for outdated columns.',
+	)
+
+	parser.add_argument(
 		'--migrate', '-m',
 		action='store_true',
 		default=False,
@@ -41,7 +49,7 @@ def main():
 	)
 
 	parser.add_argument(
-		'--migrate_cleanup',
+		'--migrate-cleanup',
 		action='store_true',
 		default=False,
 		required=False,
