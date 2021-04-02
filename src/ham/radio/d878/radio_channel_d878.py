@@ -83,7 +83,7 @@ class RadioChannelD878(RadioChannel):
 			busy_lock = 'Always'
 			dmr_mode = 1
 			contact_call_type = 'Group Call'
-			contact_id = contact.radio_id.fmt_val()
+			contact_id = contact.digital_id.fmt_val()
 			call_confirmation = 'On'
 
 		ctcs_dcs_decode = 'Off'
