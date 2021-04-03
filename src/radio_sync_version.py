@@ -1,1 +1,1 @@
-﻿version = 'DEVELOPMENT-rc'
+﻿version = 'DEVELOPMENT'
