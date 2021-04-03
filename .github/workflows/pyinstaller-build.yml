@@ -44,7 +44,7 @@ jobs:
     - name: Write version file
       run: |
         get-content ./src/radio_sync_version.py
-        echo "version = '${{ env.semver }}'" | ./src/radio_sync_version.py
+        echo "version = '${{ env.semver }}'" | out-file -encoding utf-8 ./src/radio_sync_version.py
         get-content ./src/radio_sync_version.py
     - name: Run Tests
       run: |
