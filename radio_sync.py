@@ -102,6 +102,7 @@ def main():
 
 	if arg_values.debug:
 		logger.setLevel(logging.DEBUG)
+		logging.debug("Logging level set to debug.")
 
 	if arg_values.force:
 		logging.warning("FORCE HAS BEEN SET. ALL PROMPTS WILL DEFAULT YES. Files may be destroyed.")
@@ -148,6 +149,7 @@ def main():
 
 	if arg_values.version:
 		logging.info(f"App version {src.radio_sync_version.version}")
+		op_performed = True
 
 	if len(arg_values.radios) > 0:
 		logging.info("Running radio generator.")
