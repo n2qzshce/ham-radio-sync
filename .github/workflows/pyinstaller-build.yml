@@ -27,12 +27,12 @@ jobs:
             exe-extension: .exe
             short-name: win
             move-command: move
-            version-command: ${{ "|" }} out-file -encoding utf-8 ./src/radio_sync_version.py
+            version-command: ${{ '|' }} out-file -encoding utf-8 ./src/radio_sync_version.py
           - os: macos-10.15
             exe-extension: .app
             short-name: osx
             move-command: mv
-            version-command: ${{ ">" }} ./src/radio_sync_version.py
+            version-command: ${{ '>' }} ./src/radio_sync_version.py
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ env.python-version }}
