@@ -5,7 +5,6 @@ class RadioChannel:
 	@classmethod
 	def create_empty(cls):
 		col_vals = dict()
-		col_vals['number'] = ''
 		col_vals['name'] = ''
 		col_vals['medium_name'] = ''
 		col_vals['short_name'] = ''
@@ -25,7 +24,6 @@ class RadioChannel:
 		return cls(col_vals, digital_contacts=None, dmr_ids=None)
 
 	def __init__(self, cols, digital_contacts, dmr_ids):
-		self.number = DataColumn(fmt_name='number', fmt_val=cols['number'], shape=int)
 		self.name = DataColumn(fmt_name='name', fmt_val=cols['name'], shape=str)
 		self.medium_name = DataColumn(fmt_name='medium_name', fmt_val=cols['medium_name'], shape=str)
 		self.short_name = DataColumn(fmt_name='short_name', fmt_val=cols['short_name'], shape=str)
@@ -40,7 +38,7 @@ class RadioChannel:
 		self.tx_dcs_invert = DataColumn(fmt_name='tx_dcs_invert', fmt_val=cols['tx_dcs_invert'], shape=bool)
 		self.digital_timeslot = DataColumn(fmt_name='digital_timeslot', fmt_val=cols['digital_timeslot'], shape=int)
 		self.digital_color = DataColumn(fmt_name='digital_color', fmt_val=cols['digital_color'], shape=int)
-		self.digital_contact = DataColumn(fmt_name='digital_contact_id', fmt_val=cols['digital_contact_id'], shape=int)
+		self.digital_contact_id = DataColumn(fmt_name='digital_contact_id', fmt_val=cols['digital_contact_id'], shape=int)
 		self.tx_power = DataColumn(fmt_name='tx_power', fmt_val=cols['tx_power'], shape=str)
 
 		self.cols = cols

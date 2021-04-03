@@ -34,14 +34,14 @@ class RadioAdditionalCs800(RadioAdditional):
 
 		analog_num = 1
 		digital_num = 1
-		for radio_channel in self._channels.values():
+		for radio_channel in self._channels:
 			casted_channel = RadioChannelBuilder.casted(radio_channel, radio_types.CS800)
 
 			if casted_channel.is_digital():
-				digital_sheet.append(casted_channel.output(digital_num))
+				digital_sheet.append(casted_channel.output(None))
 				digital_num += 1
 			else:
-				analog_sheet.append(casted_channel.output(analog_num))
+				analog_sheet.append(casted_channel.output(None))
 				analog_num += 1
 		channels_workbook.save(f'out/{self._style}/{self._style}_channels.xlsx')
 		channels_workbook.close()
@@ -61,21 +61,19 @@ class RadioAdditionalCs800(RadioAdditional):
 			casted_contact = DmrContactBuilder.casted(dmr_contact, self._style)
 			if casted_contact.name.fmt_val() == 'Analog':
 				continue
-			casted_contact.number._fmt_val = number
-			dmr_contacts_sheet.append(casted_contact.output())
+			dmr_contacts_sheet.append(casted_contact.output(None))
 			number += 1
 
 		logging.info(f"Writing DMR users for {self._style}")
 		for dmr_user in self._users.values():
-			dmr_user.number._fmt_val = number
-			casted_user = DmrUserBuilder.casted(dmr_user.cols, number, self._style)
-			dmr_contacts_sheet.append(casted_user.output())
+			casted_user = DmrUserBuilder.casted(dmr_user.cols, self._style)
+			dmr_contacts_sheet.append(casted_user.output(number))
 			number += 1
 			logging.debug(f"Writing user row {number}")
 			if number % file_util.USER_LINE_LOG_INTERVAL == 0:
 				logging.info(f"Writing user row {number}")
 
-		logging.info("Saving workbook...")
+		logging.info(f"Saving {self._style} workbook...")
 		user_workbook.save(f'out/{self._style}/{self._style}_user.xlsx')
 		logging.info("Save done.")
 		user_workbook.close()

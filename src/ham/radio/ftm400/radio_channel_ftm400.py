@@ -5,7 +5,6 @@ from src.ham.util import radio_types
 class RadioChannelFtm400(RadioChannel):
 	def __init__(self, cols, digital_contacts, dmr_ids):
 		super().__init__(cols, digital_contacts, dmr_ids)
-		self.number.set_alias(radio_types.FTM400_RT, 'Channel Number')
 		self.medium_name.set_alias(radio_types.FTM400_RT, 'Name')
 		self.rx_freq.set_alias(radio_types.FTM400_RT, 'Receive Frequency')
 		self.rx_ctcss.set_alias(radio_types.FTM400_RT, 'CTCSS')
@@ -19,7 +18,7 @@ class RadioChannelFtm400(RadioChannel):
 	def headers(self):
 		output = list()
 
-		output.append(f"{self.number.get_alias(radio_types.FTM400_RT)}")
+		output.append(f"Channel Number")
 		output.append(f"{self.rx_freq.get_alias(radio_types.FTM400_RT)}")
 		output.append(f"Transmit Frequency")
 		output.append(f"{self.tx_offset.get_alias(radio_types.FTM400_RT)}")

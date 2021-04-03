@@ -5,7 +5,6 @@ from src.ham.util import radio_types
 class RadioChannelCS800(RadioChannel):
 	def __init__(self, cols, digital_contacts, dmr_ids):
 		super().__init__(cols, digital_contacts, dmr_ids)
-		self.number.set_alias(radio_types.CS800, 'No')
 		self.name.set_alias(radio_types.CS800, 'Channel Alias')
 		self.rx_freq.set_alias(radio_types.CS800, 'Receive Frequency')
 		self.digital_timeslot.set_alias(radio_types.CS800, 'Time Slot')
@@ -23,7 +22,7 @@ class RadioChannelCS800(RadioChannel):
 
 	def _headers_cs800_digital(self):
 		output = list()
-		output.append(self.number.get_alias(radio_types.CS800))  # No
+		output.append('No')  # No
 		output.append(self.name.get_alias(radio_types.CS800))  # Channel Alias
 		output.append('Digital Id')  # Digital Id
 		output.append(self.digital_color.get_alias(radio_types.CS800))  # Color Code
@@ -57,7 +56,7 @@ class RadioChannelCS800(RadioChannel):
 
 	def _headers_cs800_analog(self):
 		output = list()
-		output.append(f'{self.number.get_alias(radio_types.CS800)}')  # No
+		output.append(f'No')  # No
 		output.append(f'{self.name.get_alias(radio_types.CS800)}')  # Channel Alias
 		output.append(f'Squelch Level')  # Squelch Level
 		output.append(f'Channel Band[KHz]')  # Channel Band[KHz]
@@ -120,7 +119,7 @@ class RadioChannelCS800(RadioChannel):
 		output.append(f'Off')  # Emergency Call Indication
 		output.append(f'{transmit_frequency:.4f}')  # Transmit Frequency
 		output.append(f'Middle')  # TX Ref Frequency
-		output.append(f'{self.digital_contacts[self.digital_contact.fmt_val()].name.fmt_val()}')  # TX Contact
+		output.append(f'{self.digital_contacts[self.digital_contact_id.fmt_val()].name.fmt_val()}')  # TX Contact
 		output.append(f'None')  # Emergency System
 		output.append(f'{self.tx_power.fmt_val()}')  # Power Level
 		output.append(f'Color Code')  # TX Admit

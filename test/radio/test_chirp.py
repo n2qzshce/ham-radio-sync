@@ -1,25 +1,20 @@
-from src.ham.radio.d710.radio_channel_d710 import RadioChannelD710
+from src.ham.radio.chirp.radio_channel_chirp import RadioChannelChirp
 from test.base_test_setup import BaseTestSetup
 
 
-class D710Test(BaseTestSetup):
+class ChirpTest(BaseTestSetup):
 	def setUp(self):
-		self.radio_channel = RadioChannelD710.create_empty()
+		self.radio_channel = RadioChannelChirp.create_empty()
 
 	def test_headers(self):
-		expected = """KENWOOD MCP FOR AMATEUR MOBILE TRANSCEIVER
-[Export Software]=MCP-2A Version 3.22
-[Export File Version]=1
-[Type]=K
-[Language]=English
-
-// Comments
-!!Comments=
-
-// Memory Channels
-!!Ch,Rx Freq.,Rx Step,Offset,T/CT/DCS,TO Freq.,CT Freq.,DCS Code,Shift/Split,Rev.,L.Out,Mode,Tx Freq.,Tx Step,M.Name"""
-		generated = self.radio_channel.headers()
-		self.assertEqual(expected, generated)
+		result = self.radio_channel.headers()
+		self.assertEqual(
+			[
+				"Location", "Name", "Frequency", "Duplex", "Offset", "Tone", "rToneFreq", "cToneFreq",
+				"DtcsCode", "DtcsPolarity", "Mode", "TStep", "Skip", "Comment", "URCALL", "RPT1CALL",
+				"RPT2CALL", "DVCODE",
+			], result
+		)
 
 	def test_simplex(self):
 		cols = dict()
@@ -39,10 +34,13 @@ class D710Test(BaseTestSetup):
 		cols['digital_timeslot'] = ''
 		cols['digital_color'] = ''
 		cols['digital_contact_id'] = ''
-		channel = RadioChannelD710(cols, None, None)
+		channel = RadioChannelChirp(cols, None, None)
 		result = channel.output(1)
 		self.assertEqual(
-			'0000,00146.520000,005.00,00.000000,Off,88.5,88.5,023, ,Off,Off,FM,146.520000,005.00,NATL 2M', result
+			[
+				'0', 'NATL 2M', '146.520000', '', '0.000000', '', '67.0', '67.0',
+				'023', 'NN', 'FM', '5.00', '', '', '', '', '', '',
+			], result
 		)
 
 	def test_uhf_simplex(self):
@@ -63,10 +61,13 @@ class D710Test(BaseTestSetup):
 		cols['digital_timeslot'] = ''
 		cols['digital_color'] = ''
 		cols['digital_contact_id'] = ''
-		channel = RadioChannelD710(cols, None, None)
+		channel = RadioChannelChirp(cols, None, None)
 		result = channel.output(2)
 		self.assertEqual(
-			'0001,00446.000000,025.00,00.000000,Off,88.5,88.5,023, ,Off,Off,FM,446.000000,025.00,NATL 70C', result
+			[
+				'1', 'NATL 70', '446.000000', '', '0.000000', '', '67.0', '67.0',
+				'023', 'NN', 'FM', '5.00', '', '', '', '', '', '',
+			], result
 		)
 
 	def test_vhf_repeater(self):
@@ -87,9 +88,12 @@ class D710Test(BaseTestSetup):
 		cols['digital_timeslot'] = ''
 		cols['digital_color'] = ''
 		cols['digital_contact_id'] = ''
-		result = RadioChannelD710(cols, None, None).output(3)
+		result = RadioChannelChirp(cols, None, None).output(3)
 		self.assertEqual(
-			'0002,00145.310000,005.00,00.600000,T,100.0,88.5,023,-,Off,Off,FM,145.310000,005.00,SOME RPT', result
+			[
+				'2', 'SOMERPT', '145.310000', '-', '0.600000', 'Tone', '100.0', '67.0',
+				'023', 'NN', 'FM', '5.00', '', '', '', '', '', '',
+			], result
 		)
 
 	def test_positive_offset(self):
@@ -110,10 +114,12 @@ class D710Test(BaseTestSetup):
 		cols['digital_timeslot'] = ''
 		cols['digital_color'] = ''
 		cols['digital_contact_id'] = ''
-		result = RadioChannelD710(cols, None, None).output(4)
-
+		result = RadioChannelChirp(cols, None, None).output(4)
 		self.assertEqual(
-			'0003,00442.125000,025.00,05.000000,CT,100.0,127.3,023,+,Off,Off,FM,442.125000,025.00,SOME RPT', result
+			[
+				'3', 'SOMERPT', '442.125000', '+', '5.000000', 'TSQL', '100.0', '127.3',
+				'023', 'NN', 'FM', '5.00', '', '', '', '', '', '',
+			], result
 		)
 
 	def test_dcs_repeater(self):
@@ -134,9 +140,12 @@ class D710Test(BaseTestSetup):
 		cols['digital_timeslot'] = ''
 		cols['digital_color'] = ''
 		cols['digital_contact_id'] = ''
-		result = RadioChannelD710(cols, None, None).output(6)
+		result = RadioChannelChirp(cols, None, None).output(6)
 		self.assertEqual(
-			'0005,00447.075000,025.00,05.000000,DCS,88.5,88.5,165,-,Off,Off,FM,447.075000,025.00,DCS RPT', result
+			[
+				'5', 'DCS RPT', '447.075000', '-', '5.000000', 'DTCS', '67.0', '67.0',
+				'165', 'NN', 'FM', '5.00', '', '', '', '', '', '',
+			], result
 		)
 
 	def test_dcs_invert(self):
@@ -157,21 +166,10 @@ class D710Test(BaseTestSetup):
 		cols['digital_timeslot'] = ''
 		cols['digital_color'] = ''
 		cols['digital_contact_id'] = ''
-		result = RadioChannelD710(cols, None, None).output(6)
+		result = RadioChannelChirp(cols, None, None).output(6)
 		self.assertEqual(
-			'0005,00447.075000,025.00,05.000000,DCS,88.5,88.5,047,-,Off,Off,FM,447.075000,025.00,DCS RPT', result
+			[
+				'5', 'DCS RPT', '447.075000', '-', '5.000000', 'DTCS', '67.0', '67.0',
+				'023', 'RN', 'FM', '5.00', '', '', '', '', '', '',
+			], result
 		)
-
-
-
-
-
-
-
-
-
-
-
-
-
-

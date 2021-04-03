@@ -99,6 +99,12 @@ class AsyncWrapper:
 	def _wizard_bootstrap_async(self):
 		self._wizard.bootstrap(True)
 
+	def check_migrations(self, event):
+		self._submit_blocking_task(self._check_migrations_async)
+
+	def _check_migrations_async(self):
+		self._migrations.log_check_migrations()
+
 	def migrations(self, event):
 		self._submit_blocking_task(self._migrations_async)
 

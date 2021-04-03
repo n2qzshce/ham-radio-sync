@@ -1,7 +1,10 @@
 import csv
 import logging
 import os
+from time import sleep
 
+from src import radio_sync_version
+from src.ham.migration.migration_manager import MigrationManager
 from src.ham.radio.dmr_contact import DmrContact
 from src.ham.radio.dmr_id import DmrId
 from src.ham.radio.dmr_user import DmrUser
@@ -19,11 +22,12 @@ class RadioGenerator:
 	def __init__(self, radio_list):
 		self.radio_list = radio_list
 		self._validator = Validator()
+		self._migrations = MigrationManager()
 
 	@classmethod
 	def info(cls, dangerous_ops_info):
 		logging.info(f"""
-		HAM RADIO SYNC GENERATOR
+		HAM RADIO SYNC GENERATOR v{radio_sync_version.version}
 		Homepage: https://github.com/n2qzshce/ham-radio-sync
 
 		Purpose: The intent of this program is to generate codeplug files to import into various radio applications by 
@@ -51,6 +55,12 @@ class RadioGenerator:
 		if len(file_errors) > 0:
 			return
 
+		results = self._migrations.check_migrations_needed()
+		if len(results.keys()) > 0:
+			logging.warning("You may be using an old version of the input files. Have you run migrations?")
+			logging.warning("Migrations check is under the 'File' menu.")
+			sleep(1)
+
 		digital_contacts, digi_contact_errors = self._generate_digital_contact_data()
 		dmr_ids, dmr_id_errors = self._generate_dmr_id_data()
 		zones, zone_errors = self._generate_zone_data()
@@ -61,10 +71,10 @@ class RadioGenerator:
 		csv_reader = csv.DictReader(feed)
 
 		radio_channel_errors = []
-		radio_channels = dict()
+		radio_channels = []
 		line_num = 1
 		for line in csv_reader:
-			line_errors = self._validator.validate_radio_channel(line, line_num, feed.name)
+			line_errors = self._validator.validate_radio_channel(line, line_num, feed.name, digital_contacts)
 			radio_channel_errors += line_errors
 			line_num += 1
 
@@ -72,7 +82,7 @@ class RadioGenerator:
 				continue
 
 			radio_channel = RadioChannel(line, digital_contacts, dmr_ids)
-			radio_channels[radio_channel.number.fmt_val()] = radio_channel
+			radio_channels.append(radio_channel)
 
 			if radio_channel.zone_id.fmt_val(None) is not None:
 				zones[radio_channel.zone_id.fmt_val()].add_channel(radio_channel)
@@ -106,10 +116,11 @@ class RadioGenerator:
 			channel_numbers[radio] = 1
 
 		logging.info("Processing radio channels")
-		for radio_channel in radio_channels.values():
-			logging.debug(f"Processing radio line {radio_channel.number}")
-			if radio_channel.number.fmt_val(None) % file_util.RADIO_LINE_LOG_INTERVAL == 0:
-				logging.info(f"Processing radio line {radio_channel.number.fmt_val(None)}")
+		line = 1
+		for radio_channel in radio_channels:
+			logging.debug(f"Processing radio line {line}")
+			if line % file_util.RADIO_LINE_LOG_INTERVAL == 0:
+				logging.info(f"Processing radio line {line}")
 
 			for radio in self.radio_list:
 				if radio not in radio_files.keys():
@@ -131,8 +142,9 @@ class RadioGenerator:
 			casted_additional_data = RadioAdditionalBuilder.casted(additional_data, radio)
 			casted_additional_data.output()
 
-		logging.info(f"""Radio generator complete. Your output files are in `{os.path.abspath('out')}`
-			The next step is to import these files into your radio programming application. (e.g. CHiRP)""")
+		logging.info(f"""Radio generator complete. Your output files are in 
+					`{os.path.abspath('out')}`
+					The next step is to import these files into your radio programming application. (e.g. CHiRP)""")
 		return
 
 	def _generate_digital_contact_data(self):
@@ -150,7 +162,7 @@ class RadioGenerator:
 			if len(line_errors) != 0:
 				continue
 			contact = DmrContact(line)
-			digital_contacts[contact.radio_id.fmt_val()] = contact
+			digital_contacts[contact.digital_id.fmt_val()] = contact
 
 		return digital_contacts, errors
 
@@ -160,15 +172,15 @@ class RadioGenerator:
 		csv_feed = csv.DictReader(feed)
 		dmr_ids = dict()
 		errors = []
-		line_num = 1
+		line_num = 0
 		for line in csv_feed:
+			line_num += 1
 			line_errors = self._validator.validate_dmr_id(line, line_num, feed.name)
 			errors += line_errors
-			line_num += 1
 			if len(line_errors) != 0:
 				continue
 			dmr_id = DmrId(line)
-			dmr_ids[dmr_id.number.fmt_val()] = dmr_id
+			dmr_ids[line_num] = dmr_id
 
 		return dmr_ids, errors
 

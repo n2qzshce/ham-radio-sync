@@ -6,7 +6,6 @@ class RadioChannelD710(RadioChannel):
 	def __init__(self, cols, digital_contacts, dmr_ids):
 		super().__init__(cols, digital_contacts, dmr_ids)
 
-		self.number.set_alias(radio_types.D710, 'Ch')
 		self.rx_freq.set_alias(radio_types.D710, 'Rx Freq.')
 		self.tx_offset.set_alias(radio_types.D710, 'Offset')
 		self.tx_ctcss.set_alias(radio_types.D710, 'TO Freq.')
@@ -29,7 +28,7 @@ class RadioChannelD710(RadioChannel):
 
 // Memory Channels
 !!"""
-		result += f"{self.number.get_alias(radio_types.D710)},"
+		result += f"Ch,"
 		result += f"{self.rx_freq.get_alias(radio_types.D710)},"
 		result += f"Rx Step,"
 		result += f"{self.tx_offset.get_alias(radio_types.D710)},"
@@ -71,7 +70,7 @@ class RadioChannelD710(RadioChannel):
 				shift_split = '+'
 		medium_name = self.medium_name.fmt_val().upper()
 		output = ""
-		output += f"{self.number.fmt_val()-1:04d},"
+		output += f"{channel_number-1:04d},"
 		output += f"{self.rx_freq.fmt_val():012.06f},"
 		output += f"{rx_step:06.02f},"
 		output += f"{abs(self.tx_offset.fmt_val(0.0)):09.06f},"

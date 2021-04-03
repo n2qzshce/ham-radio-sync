@@ -47,7 +47,6 @@ class Wizard(object):
 	def _create_channel_file(self):
 		channel_file = RadioWriter('in/input.csv', '\n')
 		first_channel = RadioChannelDefault({
-			'number': '1',
 			'name': 'National 2m',
 			'medium_name': 'Natl 2m',
 			'short_name': 'NATL 2M',
@@ -66,7 +65,6 @@ class Wizard(object):
 			'digital_contact_id': '',
 		}, digital_contacts=None, dmr_ids=None)
 		second_channel = RadioChannelDefault({
-			'number': '2',
 			'name': 'Basic Repeater',
 			'medium_name': 'BasicRpt',
 			'short_name': 'BASRPTR',
@@ -92,31 +90,28 @@ class Wizard(object):
 	def _create_dmr_data(self):
 		dmr_id_file = RadioWriter('in/dmr_id.csv', '\n')
 		dmr_id = DmrIdDefault({
-			'number': 1,
 			'radio_id': '00000',
 			'name': 'DMR',
 		})
 		dmr_id_file.writerow(dmr_id.headers())
-		dmr_id_file.writerow(dmr_id.output())
+		dmr_id_file.writerow(dmr_id.output(1))
 		dmr_id_file.close()
 
 		digital_contacts_file = RadioWriter('in/digital_contacts.csv', '\n')
 		analog_contact = DmrContactDefault({
-			'number': 1,
 			'digital_id':  dmr_id.radio_id.fmt_val(),
 			'name': 'Analog',
 			'call_type': 'all',
 		})
 		group_contact = DmrContactDefault({
-			'number': 2,
 			'digital_id':  99999,
 			'name': 'Some Repeater',
 			'call_type': 'group',
 		})
 
 		digital_contacts_file.writerow(analog_contact.headers())
-		digital_contacts_file.writerow(analog_contact.output())
-		digital_contacts_file.writerow(group_contact.output())
+		digital_contacts_file.writerow(analog_contact.output(1))
+		digital_contacts_file.writerow(group_contact.output(2))
 		digital_contacts_file.close()
 
 	def _create_zone_data(self):
@@ -142,7 +137,7 @@ class Wizard(object):
 			'REMARKS': 'Sample Entry',
 		})
 		user_file.writerow(dmr_user.headers())
-		user_file.writerow(dmr_user.output())
+		user_file.writerow(dmr_user.output(None))
 		user_file.close()
 		return
 

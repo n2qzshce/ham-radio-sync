@@ -5,7 +5,6 @@ from src.ham.util import radio_types
 class RadioChannelChirp(RadioChannel):
 	def __init__(self, cols, digital_contacts, dmr_ids):
 		super().__init__(cols, digital_contacts, dmr_ids)
-		self.number.set_alias(radio_types.CHIRP, 'Location')
 		self.short_name.set_alias(radio_types.CHIRP, 'Name')
 		self.rx_freq.set_alias(radio_types.CHIRP, 'Frequency')
 		self.rx_ctcss.set_alias(radio_types.CHIRP, 'cToneFreq')
@@ -18,7 +17,7 @@ class RadioChannelChirp(RadioChannel):
 
 	def headers(self):
 		output = list()
-		output.append(f"{self.number.get_alias(radio_types.CHIRP)}")
+		output.append(f"Location")
 		output.append(f"{self.short_name.get_alias(radio_types.CHIRP)}")
 		output.append(f"{self.rx_freq.get_alias(radio_types.CHIRP)}")
 		output.append(f"Duplex")

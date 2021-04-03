@@ -4,6 +4,7 @@ import os
 import sys
 
 import src.ham.util.radio_types
+from src import radio_sync_version
 from src.ham.migration.migration_manager import MigrationManager
 from src.ham.radio_generator import RadioGenerator
 from src.ham.wizard import Wizard
@@ -33,6 +34,14 @@ def main():
 	)
 
 	parser.add_argument(
+		'--migrate-check',
+		action='store_true',
+		default=False,
+		required=False,
+		help='Checks for outdated columns.',
+	)
+
+	parser.add_argument(
 		'--migrate', '-m',
 		action='store_true',
 		default=False,
@@ -41,7 +50,7 @@ def main():
 	)
 
 	parser.add_argument(
-		'--migrate_cleanup',
+		'--migrate-cleanup',
 		action='store_true',
 		default=False,
 		required=False,
@@ -72,6 +81,14 @@ def main():
 	)
 
 	parser.add_argument(
+		'--version',
+		action='store_true',
+		default=False,
+		required=False,
+		help='Display app version.',
+	)
+
+	parser.add_argument(
 		'--debug',
 		action='store_true',
 		default=False,
@@ -85,6 +102,7 @@ def main():
 
 	if arg_values.debug:
 		logger.setLevel(logging.DEBUG)
+		logging.debug("Logging level set to debug.")
 
 	if arg_values.force:
 		logging.warning("FORCE HAS BEEN SET. ALL PROMPTS WILL DEFAULT YES. Files may be destroyed.")
@@ -111,6 +129,12 @@ def main():
 		wizard.bootstrap(arg_values.force)
 		op_performed = True
 
+	if arg_values.migrate_check:
+		logging.info("Running migration check")
+		migrations = MigrationManager()
+		migrations.log_check_migrations()
+		op_performed = True
+
 	if arg_values.migrate:
 		logging.info("Running migration")
 		migrations = MigrationManager()
@@ -121,6 +145,10 @@ def main():
 		logging.info("Running migration")
 		migrations = MigrationManager()
 		migrations.remove_backups()
+		op_performed = True
+
+	if arg_values.version:
+		logging.info(f"App version {src.radio_sync_version.version}")
 		op_performed = True
 
 	if len(arg_values.radios) > 0:

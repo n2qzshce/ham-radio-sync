@@ -45,7 +45,7 @@ class Validator:
 			logging.info(f"Checked `{os.path.abspath('./in')}`")
 			for err in errors:
 				logging.error(f"\t\t{err.message}")
-			logging.info("Have you run `Wizard` under `Dangerous Operations`?")
+			logging.info("Have you run `Wizard (new)` or `Migrations (update)` under `Dangerous Operations`?")
 		else:
 			logging.info("All necessary files found")
 
@@ -67,7 +67,7 @@ class Validator:
 		needed_cols_dict_gen = dict(self._digital_contact_template.__dict__)
 		return self._validate_generic(cols, line_num, file_name, needed_cols_dict_gen)
 
-	def validate_radio_channel(self, cols, line_num, file_name):
+	def validate_radio_channel(self, cols, line_num, file_name, digital_contacts):
 		needed_cols_dict_gen = dict(self._radio_channel_template.__dict__)
 		errors = self._validate_generic(cols, line_num, file_name, needed_cols_dict_gen)
 		if len(errors) > 0:
@@ -115,6 +115,22 @@ class Validator:
 		if channel.tx_dcs.fmt_val(23) not in radio_types.dcs_codes_inverses.keys():
 			err = ValidationError(
 							f"Invalid RX DCS code `{channel.rx_dcs.fmt_val()}` specified.", line_num, file_name
+			)
+			errors.append(err)
+
+		if channel.is_digital() and channel.digital_contact_id.fmt_val() not in digital_contacts.keys():
+			err = ValidationError(
+							f"Cannot find digital contact `{channel.digital_contact_id.fmt_val()}` specified in "
+							f"digital contacts.", line_num, file_name
+			)
+			errors.append(err)
+
+		acceptable_tx_powers = ["Low", "Medium", "High"]
+		if channel.tx_power.fmt_val() is None or channel.tx_power.fmt_val() not in acceptable_tx_powers:
+			err = ValidationError(
+							f"Transmit power (`tx_power`) invalid: `{channel.digital_contact_id.fmt_val()}`. Valid values "
+							f"are {acceptable_tx_powers}"
+							, line_num, file_name
 			)
 			errors.append(err)
 

@@ -34,9 +34,11 @@ class RadioAdditionalDefault(RadioAdditional):
 
 		headers = DmrIdDefault.create_empty()
 		radio_id_file.writerow(headers.headers())
+		number = 1
 		for dmr_id in self._dmr_ids.values():
 			casted_id = DmrIdBuilder.casted(dmr_id, self._style)
-			radio_id_file.writerow(casted_id.output())
+			radio_id_file.writerow(casted_id.output(None))
+			number += 1
 
 		writer.close()
 		return
@@ -69,7 +71,8 @@ class RadioAdditionalDefault(RadioAdditional):
 		dmr_contact_file.writerow(headers.headers())
 		for dmr_contact in self._digital_contacts.values():
 			casted_contact = DmrContactBuilder.casted(dmr_contact, self._style)
-			dmr_contact_file.writerow(casted_contact.output())
+			row_data = casted_contact.output(None)
+			dmr_contact_file.writerow(row_data)
 
 		writer.close()
 
@@ -84,7 +87,7 @@ class RadioAdditionalDefault(RadioAdditional):
 		headers = DmrUserDefault.create_empty()
 		users_file.writerow(headers.headers())
 		for user in self._users.values():
-			casted_user = DmrUserBuilder.casted(user.cols, user.number, self._style)
-			users_file.writerow(casted_user.output())
+			casted_user = DmrUserBuilder.casted(user.cols, self._style)
+			users_file.writerow(casted_user.output(None))
 
 		writer.close()

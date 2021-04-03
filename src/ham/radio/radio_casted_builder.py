@@ -57,11 +57,11 @@ class DmrIdBuilder:
 
 class DmrUserBuilder:
 	@classmethod
-	def casted(cls, cols, number, style):
+	def casted(cls, cols, style):
 		switch = {
-			radio_types.DEFAULT: DmrUserDefault(cols, number),
-			radio_types.D878: DmrUserD878(cols, number),
-			radio_types.CS800: DmrUserCs800(cols, number),
+			radio_types.DEFAULT: DmrUserDefault(cols),
+			radio_types.D878: DmrUserD878(cols),
+			radio_types.CS800: DmrUserCs800(cols),
 		}
 
 		return switch[style]
