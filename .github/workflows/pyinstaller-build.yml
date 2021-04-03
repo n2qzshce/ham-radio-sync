@@ -27,10 +27,12 @@ jobs:
             exe-extension: .exe
             short-name: win
             move-command: move
+            version-command: echo "version = '${{ env.semver }}'" | out-file -encoding utf-8 ./src/radio_sync_version.py
           - os: macos-10.15
             exe-extension: .app
             short-name: osx
             move-command: mv
+            version-command: echo "version = '${{ env.semver }}'" > ./src/radio_sync_version.py
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ env.python-version }}
@@ -43,9 +45,7 @@ jobs:
         python -m pip install -r requirements.txt
     - name: Write version file
       run: |
-        get-content ./src/radio_sync_version.py
-        echo "version = '${{ env.semver }}'" | out-file -encoding utf-8 ./src/radio_sync_version.py
-        get-content ./src/radio_sync_version.py
+        ${{ matrix.version-write }}
     - name: Run Tests
       run: |
         python -m unittest discover -v
