@@ -1,6 +1,7 @@
 import logging
 
 from src.ham.radio.dmr_contact import DmrContact
+from src.ham.radio.radio_zone import RadioZone
 from src.ham.util.file_util import FileUtil
 from src.ham.util.validator import Validator
 from test.base_test_setup import BaseTestSetup
@@ -55,9 +56,9 @@ class ValidatorTest(BaseTestSetup):
 		self.assertEqual(4, len(errors))
 
 	def test_validate_radio_channel_name_dupe(self):
-		errors = self.validator.validate_radio_channel(self.radio_cols, 1, "FILE_NO_EXIST_UNITTEST", {})
+		errors = self.validator.validate_radio_channel(self.radio_cols, 1, "FILE_NO_EXIST_UNITTEST", {}, {})
 		self.assertEqual(len(errors), 0)
-		errors = self.validator.validate_radio_channel(self.radio_cols, 2, "FILE_NO_EXIST_UNITTEST", {})
+		errors = self.validator.validate_radio_channel(self.radio_cols, 2, "FILE_NO_EXIST_UNITTEST", {}, {})
 		self.assertEqual(len(errors), 3)
 
 		short_found = False
@@ -100,32 +101,47 @@ class ValidatorTest(BaseTestSetup):
 		digital_contacts = {
 			314: DmrContact(digital_contact_cols),
 		}
-		errors = self.validator.validate_radio_channel(radio_cols, 1, 'FILE_NO_EXIST_UNITTEST', digital_contacts)
+		errors = self.validator.validate_radio_channel(radio_cols, 1, 'FILE_NO_EXIST_UNITTEST', digital_contacts, {})
 		self.assertEqual(len(errors), 0)
 		self.validator.flush_names()
 
-		errors = self.validator.validate_radio_channel(radio_cols, 1, 'FILE_NO_EXIST_UNITTEST', {})
+		errors = self.validator.validate_radio_channel(radio_cols, 1, 'FILE_NO_EXIST_UNITTEST', {}, {})
 		self.assertEqual(len(errors), 1)
 		found = errors[0].args[0].find('Cannot find digital contact')
 		self.assertEqual(found, 0)
 
 	def test_ignore_extra_column(self):
 		self.radio_cols['foo'] = '1'
-		errors = self.validator.validate_radio_channel(self.radio_cols, 1, "FILE_NO_EXIST_UNITTEST", {})
+		errors = self.validator.validate_radio_channel(self.radio_cols, 1, "FILE_NO_EXIST_UNITTEST", {}, {})
 		self.assertEqual(len(errors), 0)
 
 	def test_validate_tx_power(self):
 		self.radio_cols['tx_power'] = 'mega'
-		errors = self.validator.validate_radio_channel(self.radio_cols, 1, "FILE_NO_EXIST_UNITTEST", {})
+		errors = self.validator.validate_radio_channel(self.radio_cols, 1, "FILE_NO_EXIST_UNITTEST", {}, {})
 		self.assertEqual(len(errors), 1)
 		found = errors[0].args[0].find('Transmit power (`tx_power`) invalid')
 		self.assertEqual(found, 0)
 
 	def test_validate_tx_power_not_present(self):
 		self.radio_cols['tx_power'] = ''
-		errors = self.validator.validate_radio_channel(self.radio_cols, 1, "FILE_NO_EXIST_UNITTEST", {})
+		errors = self.validator.validate_radio_channel(self.radio_cols, 1, "FILE_NO_EXIST_UNITTEST", {}, {})
 		self.assertEqual(len(errors), 1)
 		found = errors[0].args[0].find('Transmit power (`tx_power`) invalid')
 		self.assertEqual(found, 0)
 
+	def test_validate_zone_not_present(self):
+		self.radio_cols['zone_id'] = '1'
+		errors = self.validator.validate_radio_channel(self.radio_cols, 1, "FILE_NO_EXIST_UNITTEST", {}, {})
+		self.assertEqual(len(errors), 1)
+		found = errors[0].args[0].find('Zone ID not found:')
+		self.assertEqual(found, 0)
 
+	def test_validate_zone_present(self):
+		self.radio_cols['zone_id'] = '1'
+		zone = RadioZone({
+			'number': 1,
+			'name': 'Zone 1',
+		})
+		zones = {1: zone}
+		errors = self.validator.validate_radio_channel(self.radio_cols, 1, "FILE_NO_EXIST_UNITTEST", {}, zones)
+		self.assertEqual(len(errors), 0)
