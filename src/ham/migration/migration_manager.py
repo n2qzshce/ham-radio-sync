@@ -25,7 +25,7 @@ class MigrationManager:
 	def _add_col(self, file_name, col_name, default_val):
 		logging.info(f'Adding column `{col_name}` to `{file_name}`')
 		reader = FileUtil.open_file(f'{file_name}', 'r')
-		cols = reader.readline().replace('\n', '').split(',')
+		cols = reader.readline().replace('\n', '').replace('\r', '').split(',')
 		if cols == ['']:
 			cols = []
 		if col_name not in cols:
@@ -54,7 +54,10 @@ class MigrationManager:
 	def _delete_col(self, file_name, col_name):
 		logging.info(f'Deleting column `{col_name}` in `{file_name}`')
 		reader = FileUtil.open_file(f'{file_name}', 'r')
-		cols = reader.readline().replace('\n', '').split(',')
+		text_line = reader.readline().replace('\n', '')
+
+		old_cols = text_line.split(',')
+		cols = text_line.split(',')
 		if cols == ['']:
 			cols = []
 		if col_name in cols:
@@ -62,13 +65,15 @@ class MigrationManager:
 		reader.seek(0)
 
 		writer = FileUtil.open_file(f'{file_name}.tmp', 'w+')
+		dict_reader = csv.DictReader(reader, fieldnames=old_cols)
 		dict_writer = csv.DictWriter(writer, fieldnames=cols, dialect='unix', quoting=0)
-		dict_reader = csv.DictReader(reader, fieldnames=cols)
 
 		dict_writer.writeheader()
 		for row in dict_reader:
 			if dict_reader.line_num == 1:
 				continue
+			if col_name in row.keys():
+				row.pop(col_name)
 			dict_writer.writerow(row)
 
 		reader.close()
