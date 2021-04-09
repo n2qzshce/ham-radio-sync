@@ -18,9 +18,15 @@ class VersionTest(unittest.TestCase):
 
 	def test_version_incremented(self):
 		ref = 'DEV'
+		headers = {}
 		if 'GITHUB_REF' in os.environ.keys():
 			ref = os.environ['GITHUB_REF']
-		logging.info(f"Current ref is `{ref}`")
+		if 'GITHUB_TOKEN' in os.environ.keys():
+			headers['Authorization'] = f"Bearer {os.environ['GITHUB_TOKEN']}"
+		else:
+			logging.critical('GITHUB_TOKEN not set')
+
+		logging.critical(f"Current ref is `{ref}`")
 		is_master = ref == 'refs/heads/version-check-fix'
 		if is_master:
 			logging.critical("Skipping version increment check on master.")
