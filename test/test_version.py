@@ -31,7 +31,7 @@ class VersionTest(unittest.TestCase):
 		if is_master:
 			logging.critical("Skipping version increment check on master.")
 		endpoint = "https://api.github.com/repos/n2qzshce/ham-radio-sync/tags"
-		result = requests.get(endpoint)
+		result = requests.get(endpoint, headers=headers)
 		result_json = result.json()
 		logging.critical(f"0 not found in keys. Valid keys:`{result_json}`")
 		logging.critical(f"1 not found in keys. Valid keys:`{result_json[0]}`")
