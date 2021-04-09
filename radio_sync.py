@@ -4,6 +4,7 @@ import os
 import sys
 
 import src.ham.util.radio_types
+import src.radio_sync_version_check
 from src import radio_sync_version
 from src.ham.migration.migration_manager import MigrationManager
 from src.ham.radio_generator import RadioGenerator
@@ -149,6 +150,7 @@ def main():
 
 	if arg_values.version:
 		logging.info(f"App version {src.radio_sync_version.version}")
+		src.radio_sync_version_check.check_version()
 		op_performed = True
 
 	if len(arg_values.radios) > 0:
