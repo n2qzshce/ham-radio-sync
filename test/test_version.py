@@ -18,6 +18,7 @@ class VersionTest(unittest.TestCase):
 
 	def test_version_incremented(self):
 		ref = os.environ['GITHUB_REF']
+		logging.info(f"Current ref is `{ref}`")
 		is_master = ref == 'refs/heads/version-check-fix'
 		if is_master:
 			logging.info("Skipping version increment check on master.")
