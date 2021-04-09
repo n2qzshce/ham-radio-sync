@@ -3,6 +3,10 @@ import logging
 import threading
 import webbrowser
 
+import requests
+from semantic_version import Version
+
+from src import radio_sync_version
 from src.ham.migration.migration_manager import MigrationManager
 from src.ham.radio_generator import RadioGenerator
 from src.ham.util import radio_types
@@ -116,6 +120,28 @@ class AsyncWrapper:
 
 	def _migration_backups_async(self):
 		self._migrations.remove_backups()
+
+	def check_version(self, event):
+		self._submit_blocking_task(self._check_version_async)
+
+	def _check_version_async(self):
+		endpoint = "https://api.github.com/repos/n2qzshce/ham-radio-sync/tags"
+		try:
+			result = requests.get(endpoint)
+			latest_version = result.json()[0]['name']
+			latest = Version.coerce(latest_version)
+			current = Version.coerce(radio_sync_version.version)
+		except Exception as e:
+			logging.info("Unable to fetch version info.")
+			logging.debug("Unable to fetch version info", e)
+			return
+
+		if latest > current:
+			logging.warning(f"You are running version `{radio_sync_version.version}`. Latest is `{latest_version}`")
+			logging.info(f"Update at: `https://github.com/n2qzshce/ham-radio-sync/releases`")
+		else:
+			logging.info("You are on the latest version")
+		return
 
 	def log_level(self, value):
 		if value.state == 'down':

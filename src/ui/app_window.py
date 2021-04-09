@@ -214,6 +214,7 @@ class AppWindow(App):
 		self._async_wrapper.buttons = buttons
 
 		logging.info("Welcome to the ham radio sync app.")
+		self._async_wrapper.check_version(None)
 		return layout
 
 	def key_handler(self, window, keycode1, keycode2, text, modifiers):
