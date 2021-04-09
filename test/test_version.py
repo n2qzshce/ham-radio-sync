@@ -17,7 +17,9 @@ class VersionTest(unittest.TestCase):
 		logging.critical(f"Version found: {radio_sync_version.version}")
 
 	def test_version_incremented(self):
-		ref = os.environ['GITHUB_REF']
+		ref = 'DEV'
+		if 'GITHUB_REF' in os.environ.keys():
+			ref = os.environ['GITHUB_REF']
 		logging.info(f"Current ref is `{ref}`")
 		is_master = ref == 'refs/heads/version-check-fix'
 		if is_master:
@@ -25,8 +27,9 @@ class VersionTest(unittest.TestCase):
 		endpoint = "https://api.github.com/repos/n2qzshce/ham-radio-sync/tags"
 		result = requests.get(endpoint)
 		result_json = result.json()
-		if 0 not in result_json.keys():
-			logging.critical(f"0 not found in keys. Valid keys:`{result_json.keys()}` in `{result_json}")
+		logging.critical(f"0 not found in keys. Valid keys:`{result_json}`")
+		logging.critical(f"1 not found in keys. Valid keys:`{result_json[0]}`")
+		logging.critical(f"2 not found in keys. Valid keys:`{result_json[0]['name']}`")
 		latest_version = result_json[0]['name']
 		latest = Version.coerce(latest_version)
 		current = Version.coerce(radio_sync_version.version)
