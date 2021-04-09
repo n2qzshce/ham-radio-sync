@@ -67,7 +67,7 @@ class Validator:
 		needed_cols_dict_gen = dict(self._digital_contact_template.__dict__)
 		return self._validate_generic(cols, line_num, file_name, needed_cols_dict_gen)
 
-	def validate_radio_channel(self, cols, line_num, file_name, digital_contacts):
+	def validate_radio_channel(self, cols, line_num, file_name, digital_contacts, zones):
 		needed_cols_dict_gen = dict(self._radio_channel_template.__dict__)
 		errors = self._validate_generic(cols, line_num, file_name, needed_cols_dict_gen)
 		if len(errors) > 0:
@@ -130,6 +130,13 @@ class Validator:
 			err = ValidationError(
 							f"Transmit power (`tx_power`) invalid: `{channel.digital_contact_id.fmt_val()}`. Valid values "
 							f"are {acceptable_tx_powers}"
+							, line_num, file_name
+			)
+			errors.append(err)
+
+		if channel.zone_id.fmt_val() is not None and channel.zone_id.fmt_val() not in zones.keys():
+			err = ValidationError(
+							f"Zone ID not found: `{channel.zone_id.fmt_val()}`. in `zones.csv` and was not left empty."
 							, line_num, file_name
 			)
 			errors.append(err)

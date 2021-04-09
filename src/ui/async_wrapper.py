@@ -3,6 +3,7 @@ import logging
 import threading
 import webbrowser
 
+import src.radio_sync_version_check
 from src.ham.migration.migration_manager import MigrationManager
 from src.ham.radio_generator import RadioGenerator
 from src.ham.util import radio_types
@@ -116,6 +117,12 @@ class AsyncWrapper:
 
 	def _migration_backups_async(self):
 		self._migrations.remove_backups()
+
+	def check_version(self, event):
+		self._submit_blocking_task(self._check_version_async)
+
+	def _check_version_async(self):
+		src.radio_sync_version_check.check_version()
 
 	def log_level(self, value):
 		if value.state == 'down':
