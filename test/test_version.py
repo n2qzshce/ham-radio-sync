@@ -27,7 +27,7 @@ class VersionTest(unittest.TestCase):
 			logging.critical('GITHUB_TOKEN not set')
 
 		logging.critical(f"Current ref is `{ref}`")
-		is_master = ref == 'refs/heads/version-check-fix'
+		is_master = ref == 'refs/heads/master'
 		if is_master:
 			logging.critical("Skipping version increment check on master.")
 		endpoint = "https://api.github.com/repos/n2qzshce/ham-radio-sync/tags"
