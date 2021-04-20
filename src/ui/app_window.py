@@ -4,6 +4,7 @@ import sys
 from abc import ABC
 from typing import TextIO
 
+from kivy import metrics
 from kivy.app import App
 from kivy.base import EventLoop
 from kivy.config import Config
@@ -29,9 +30,13 @@ class RightClickTextInput(TextInput):
 
 		super().on_touch_down(touch)
 
+		if not self.focused:
+			return
+
 		if touch.button == 'right':
 			logging.debug("right mouse clicked")
-			pos = self.to_local(*self._long_touch_pos, relative=True)
+			pos = self.to_local(*self._long_touch_pos, relative=False)
+			pos = (pos[0], pos[1] - metrics.inch(.25))
 			self._show_cut_copy_paste(
 				pos, EventLoop.window, mode='paste')
 
