@@ -95,7 +95,7 @@ BoxLayout:
 					text: "Check for needed migrations"
 				ActionButton:
 					id: {LayoutIds.clear_log}
-					text: "Clear log"
+					text: "Clear screen log"
 				ActionButton:
 					id: {LayoutIds.exit_button}
 					text: "Exit"
