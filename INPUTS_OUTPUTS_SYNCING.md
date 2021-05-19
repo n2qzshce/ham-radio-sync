@@ -44,6 +44,21 @@ At the moment, all fields are case-sensitive and all csv's are required.
 |digital_id|Talkgroup or contact ID|
 |name|Name of contact|
 |call_type|Either `group` or `all`
+### user.csv
+#### You do not need to create one of these manually! 
+`user.csv` can be created at https://www.radioid.net/generator/contacts
+You will need an account for access.
+
+| **Column Name** | Description |
+|---|---|
+|RADIO_ID | Radio ID assigned at https://www.radioid.net
+|CALLSIGN | Their licensed callsign
+|FIRST_NAME | The caller's first name
+|LAST_NAME | The caller's last name
+|CITY | City of origin
+|STATE | State or district
+|COUNTRY | Country of origin
+|REMARKS | Any additional comments (not used anywhere)
 
 ### Yaesu FTM-400
 This is the "RT Systems" branded sync software.
@@ -63,6 +78,12 @@ This is the "RT Systems" branded sync software.
 1. Create/open your rdt file.
 1. Import Channel, Radio ID List, Zone, Talk Groups CSVs
 1. Final user touchup
+
+### Kenwood TM-V71A
+1. Select File -> Open -> HMK file
+    * Be sure to select the `*.hmk` file type or you may not see your output!
+1. Navigate to and import your HMK file.
+1. Final user touchup.
 
 ***
 # Known radio issues:
