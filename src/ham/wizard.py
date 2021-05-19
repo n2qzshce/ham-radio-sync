@@ -27,6 +27,8 @@ class Wizard(object):
 					digital_contacts.csv: DMR contact IDs (e.g. Talkgroups)
 					dmr_id.csv: Set your DMR id (from radioid.net)
 
+				Be sure to check the "help" menu for more guidance!
+				
 				Sample data has been added to each file as an example.""")
 
 	def _create_input(self, is_forced):
@@ -55,7 +57,7 @@ class Wizard(object):
 			'rx_ctcss': '',
 			'rx_dcs': '',
 			'rx_dcs_invert': '',
-			'tx_power': '',
+			'tx_power': 'Low',
 			'tx_offset': '',
 			'tx_ctcss': '',
 			'tx_dcs': '',
@@ -73,7 +75,7 @@ class Wizard(object):
 			'rx_ctcss': '',
 			'rx_dcs': '',
 			'rx_dcs_invert': '',
-			'tx_power': '',
+			'tx_power': 'High',
 			'tx_offset': '-0.600',
 			'tx_ctcss': '88.5',
 			'tx_dcs': '',
@@ -82,9 +84,28 @@ class Wizard(object):
 			'digital_color': '',
 			'digital_contact_id': '',
 		}, digital_contacts=None, dmr_ids=None)
+		third_channel = RadioChannelDefault({
+			'name': 'DMR Repeater',
+			'medium_name': 'DMR Rpt',
+			'short_name': 'DMR RPT',
+			'zone_id': '1',
+			'rx_freq': '144.310',
+			'rx_ctcss': '',
+			'rx_dcs': '',
+			'rx_dcs_invert': '',
+			'tx_power': 'High',
+			'tx_offset': '-0.600',
+			'tx_ctcss': '',
+			'tx_dcs': '',
+			'tx_dcs_invert': '',
+			'digital_timeslot': '1',
+			'digital_color': '4',
+			'digital_contact_id': '99999',
+		}, digital_contacts=None, dmr_ids=None)
 		channel_file.writerow(first_channel.headers())
 		channel_file.writerow(RadioChannelBuilder.casted(first_channel, radio_types.DEFAULT).output(1))
 		channel_file.writerow(RadioChannelBuilder.casted(second_channel, radio_types.DEFAULT).output(2))
+		channel_file.writerow(RadioChannelBuilder.casted(third_channel, radio_types.DEFAULT).output(3))
 		channel_file.close()
 
 	def _create_dmr_data(self):

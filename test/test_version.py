@@ -33,9 +33,6 @@ class VersionTest(unittest.TestCase):
 		endpoint = "https://api.github.com/repos/n2qzshce/ham-radio-sync/tags"
 		result = requests.get(endpoint, headers=headers)
 		result_json = result.json()
-		# logging.critical(f"0 not found in keys. Valid keys:`{result_json}`")
-		# logging.critical(f"1 not found in keys. Valid keys:`{result_json[0]}`")
-		# logging.critical(f"2 not found in keys. Valid keys:`{result_json[0]['name']}`")
 		latest_version = result_json[0]['name']
 		latest = Version.coerce(latest_version)
 		current = Version.coerce(radio_sync_version.version)

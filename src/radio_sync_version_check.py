@@ -12,10 +12,18 @@ def check_version():
 		result = requests.get(endpoint)
 		latest_version = result.json()[0]['name']
 		latest = Version.coerce(latest_version)
-		current = Version.coerce(version)
 	except Exception as e:
 		logging.info("Unable to fetch version info.")
 		logging.debug("Unable to fetch version info", e)
+		return
+
+	try:
+		current = Version.coerce(version)
+	except Exception as e:
+		if version == 'DEVELOPMENT':
+			logging.info("You're running a dev version of the code!")
+		else:
+			logging.error("Could not parse version number.", e)
 		return
 
 	if latest > current:
