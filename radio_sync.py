@@ -67,12 +67,27 @@ def main():
 	)
 
 	parser.add_argument(
+		'--input', '-i',
+		default=False,
+		required=False,
+		help='Sets the input folder',
+	)
+
+	parser.add_argument(
+		'--output', '-o',
+		default=False,
+		required=False,
+		help='Sets the output folder',
+	)
+
+	parser.add_argument(
 		'--force', '-f',
 		action='store_true',
 		default=False,
 		required=False,
 		help="Defaults to 'yes' for all prompts (DANGEROUS)",
 	)
+
 	parser.add_argument(
 		'--radios', '-r',
 		choices=src.ham.util.radio_types.radio_choices(),
@@ -104,6 +119,16 @@ def main():
 	if arg_values.debug:
 		logger.setLevel(logging.DEBUG)
 		logging.debug("Logging level set to debug.")
+
+	PathManager.set_input_path('in')
+	if arg_values.input:
+		PathManager.set_input_path(arg_values.input)
+		logging.info(f"Input directory set to {PathManager.get_input_path()}")
+
+	PathManager.set_output_path('out')
+	if arg_values.output:
+		PathManager.set_output_path(arg_values.output)
+		logging.info(f"Input directory set to {PathManager.get_output_path()}")
 
 	if arg_values.force:
 		logging.warning("FORCE HAS BEEN SET. ALL PROMPTS WILL DEFAULT YES. Files may be destroyed.")
