@@ -13,12 +13,16 @@ class VersionTest(unittest.TestCase):
 		self.assertIsNotNone(radio_sync_version.version)
 
 	def test_version_ci(self):
+		if 'GITHUB_REF' not in os.environ.keys():
+			return
 		self.assertNotEqual(radio_sync_version.version, 'DEVELOPMENT')
 		logging.critical(f"Version found: {radio_sync_version.version}")
 
 	def test_version_incremented(self):
 		ref = 'DEV'
 		headers = {}
+		if 'GITHUB_REF' not in os.environ.keys():
+			return
 		if 'GITHUB_REF' in os.environ.keys():
 			ref = os.environ['GITHUB_REF']
 		if 'GITHUB_TOKEN' in os.environ.keys():

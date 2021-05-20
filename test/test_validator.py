@@ -3,6 +3,7 @@ import logging
 from src.ham.radio.dmr_contact import DmrContact
 from src.ham.radio.radio_zone import RadioZone
 from src.ham.util.file_util import FileUtil
+from src.ham.util.path_manager import PathManager
 from src.ham.util.validator import Validator
 from test.base_test_setup import BaseTestSetup
 
@@ -42,23 +43,23 @@ class ValidatorTest(BaseTestSetup):
 		self.assertEqual(5, len(errors))
 
 	def test_validate_files_exist(self):
-		files = ["in/input.csv", "in/digital_contacts.csv", "in/dmr_id.csv", 'in/zones.csv', 'in/user.csv']
+		files = ['input.csv', 'digital_contacts.csv', 'dmr_id.csv', 'zones.csv', 'user.csv']
 		for filename in files:
-			f = FileUtil.open_file(filename, 'w+')
+			f = PathManager.open_input_file(filename, 'w+')
 			f.close()
 		errors = Validator.validate_files_exist()
 		self.assertEqual(0, len(errors))
 
 	def test_only_some_files_exist(self):
-		f = FileUtil.open_file("in/input.csv", 'w+')
+		f = PathManager.open_input_file('input.csv', 'w+')
 		f.close()
 		errors = Validator.validate_files_exist()
 		self.assertEqual(4, len(errors))
 
 	def test_validate_radio_channel_name_dupe(self):
-		errors = self.validator.validate_radio_channel(self.radio_cols, 1, "FILE_NO_EXIST_UNITTEST", {}, {})
+		errors = self.validator.validate_radio_channel(self.radio_cols, 1, 'FILE_NO_EXIST_UNITTEST', {}, {})
 		self.assertEqual(len(errors), 0)
-		errors = self.validator.validate_radio_channel(self.radio_cols, 2, "FILE_NO_EXIST_UNITTEST", {}, {})
+		errors = self.validator.validate_radio_channel(self.radio_cols, 2, 'FILE_NO_EXIST_UNITTEST', {}, {})
 		self.assertEqual(len(errors), 3)
 
 		short_found = False
@@ -112,26 +113,26 @@ class ValidatorTest(BaseTestSetup):
 
 	def test_ignore_extra_column(self):
 		self.radio_cols['foo'] = '1'
-		errors = self.validator.validate_radio_channel(self.radio_cols, 1, "FILE_NO_EXIST_UNITTEST", {}, {})
+		errors = self.validator.validate_radio_channel(self.radio_cols, 1, 'FILE_NO_EXIST_UNITTEST', {}, {})
 		self.assertEqual(len(errors), 0)
 
 	def test_validate_tx_power(self):
 		self.radio_cols['tx_power'] = 'mega'
-		errors = self.validator.validate_radio_channel(self.radio_cols, 1, "FILE_NO_EXIST_UNITTEST", {}, {})
+		errors = self.validator.validate_radio_channel(self.radio_cols, 1, 'FILE_NO_EXIST_UNITTEST', {}, {})
 		self.assertEqual(len(errors), 1)
 		found = errors[0].args[0].find('Transmit power (`tx_power`) invalid')
 		self.assertEqual(found, 0)
 
 	def test_validate_tx_power_not_present(self):
 		self.radio_cols['tx_power'] = ''
-		errors = self.validator.validate_radio_channel(self.radio_cols, 1, "FILE_NO_EXIST_UNITTEST", {}, {})
+		errors = self.validator.validate_radio_channel(self.radio_cols, 1, 'FILE_NO_EXIST_UNITTEST', {}, {})
 		self.assertEqual(len(errors), 1)
 		found = errors[0].args[0].find('Transmit power (`tx_power`) invalid')
 		self.assertEqual(found, 0)
 
 	def test_validate_zone_not_present(self):
 		self.radio_cols['zone_id'] = '1'
-		errors = self.validator.validate_radio_channel(self.radio_cols, 1, "FILE_NO_EXIST_UNITTEST", {}, {})
+		errors = self.validator.validate_radio_channel(self.radio_cols, 1, 'FILE_NO_EXIST_UNITTEST', {}, {})
 		self.assertEqual(len(errors), 1)
 		found = errors[0].args[0].find('Zone ID not found:')
 		self.assertEqual(found, 0)
@@ -143,5 +144,5 @@ class ValidatorTest(BaseTestSetup):
 			'name': 'Zone 1',
 		})
 		zones = {1: zone}
-		errors = self.validator.validate_radio_channel(self.radio_cols, 1, "FILE_NO_EXIST_UNITTEST", {}, zones)
+		errors = self.validator.validate_radio_channel(self.radio_cols, 1, 'FILE_NO_EXIST_UNITTEST', {}, zones)
 		self.assertEqual(len(errors), 0)

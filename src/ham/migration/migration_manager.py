@@ -16,12 +16,15 @@ class MigrationManager:
 		return
 
 	def _add_cols_to_file(self, file_name, cols):
-		os.rename(f'{PathManager.get_input_path(file_name)}', f'{PathManager.get_input_path(file_name)}.bak')
-		shutil.copyfile(f'{file_name}.bak', f'{file_name}.tmp')
+		original_name = PathManager.get_input_path(file_name)
+		backup_name = f'{original_name}.bak'
+		temp_name = f'{original_name}.tmp'
+		os.rename(original_name, backup_name)
+		shutil.copyfile(backup_name, temp_name)
 		for col in cols:
 			self._add_col(f'{file_name}.tmp', col, '')
 
-		os.rename(f'{file_name}.tmp', f'{file_name}')
+		os.rename(temp_name, original_name)
 
 	def _add_col(self, file_name, col_name, default_val):
 		logging.info(f'Adding column `{col_name}` to `{file_name}`')
@@ -48,8 +51,13 @@ class MigrationManager:
 
 		reader.close()
 		writer.close()
-		os.remove(file_name)
-		os.rename(f'{file_name}.tmp', f'{file_name}')
+
+		original_name = PathManager.get_input_path(file_name)
+		backup_name = f'{original_name}.bak'
+		temp_name = f'{original_name}.tmp'
+
+		os.remove(original_name)
+		os.rename(temp_name, original_name)
 		return
 
 	def _delete_col(self, file_name, col_name):
