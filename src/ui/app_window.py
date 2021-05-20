@@ -70,6 +70,7 @@ class LayoutIds:
 	radio_header = 'radio_header'
 	radio_labels = 'radio_labels'
 
+
 kv = f"""
 BoxLayout:
 	orientation: "vertical"
@@ -325,7 +326,11 @@ class AppWindow(App):
 
 		input_folder = layout.ids[LayoutIds.input_folder]
 		output_folder = layout.ids[LayoutIds.output_folder]
-		self.path_manager = PathManager(input_folder, output_folder)
+
+		PathManager.input_folder_label = input_folder
+		PathManager.output_folder_label = output_folder
+		PathManager.set_input_path('./in')
+		PathManager.set_output_path('./out')
 
 		logger = logging.getLogger('radio_sync')
 		formatter = logging.Formatter(
@@ -354,7 +359,7 @@ class AppWindow(App):
 		input_folder_button.bind(on_press=self._select_input_folder_dialog)
 
 		output_folder_button = layout.ids[LayoutIds.output_folder_select]
-		output_folder_button.bind(on_press=self._set_output_folder)
+		output_folder_button.bind(on_press=self._select_output_folder_dialog)
 
 		exit_button = layout.ids[LayoutIds.exit_button]
 		exit_button.bind(on_press=self.stop)
@@ -410,19 +415,19 @@ class AppWindow(App):
 				pos, EventLoop.window, mode='paste')
 
 	def _select_input_folder_dialog(self, event):
-		self._select_folder_dialog(event, 'Set input directory', self._select_input_folder)
+		self._select_folder_dialog(event, 'Set input directory', PathManager.get_input_path(), self._select_input_folder)
 
 	def _select_output_folder_dialog(self, event):
-		self._select_folder_dialog(event, 'Set output directory', self._select_output_folder)
+		self._select_folder_dialog(event, 'Set output directory', PathManager.get_output_path(), self._select_output_folder)
 
-	def _select_folder_dialog(self, event, title, load_button_action):
+	def _select_folder_dialog(self, event, title, starting_path, load_button_action):
 		dialog_content = Builder.load_string(load_dialog)
 		file_chooser = dialog_content.ids[PopupIds.file_chooser]
-		file_chooser.path = self.path_manager.get_input_path()
+		file_chooser.path = starting_path
 		file_chooser.bind(selection=self._update_display_path)
 
 		file_label = dialog_content.ids[PopupIds.file_path]
-		file_label.text = self.path_manager.get_input_path()
+		file_label.text = file_chooser.path
 
 		self._popup = Popup(title=title, content=dialog_content, size_hint=(0.9, 0.9))
 		dialog_content.ids[PopupIds.cancel_button].bind(on_press=self._dismiss_popup)
@@ -434,12 +439,12 @@ class AppWindow(App):
 
 	def _select_input_folder(self, event):
 		path = self._get_selected_path()
-		self.path_manager.set_input_path(path)
+		PathManager.set_input_path(path)
 		self._dismiss_popup(None)
 
 	def _select_output_folder(self, event):
 		path = self._get_selected_path()
-		self.path_manager.set_output_path(path)
+		PathManager.set_output_path(path)
 		self._dismiss_popup(None)
 
 	def _update_display_path(self, *args):
@@ -453,9 +458,6 @@ class AppWindow(App):
 		if len(file_chooser.selection) == 1:
 			result = file_chooser.selection[0]
 		return result
-
-	def _set_output_folder(self, event):
-		pass
 
 	def _dismiss_popup(self, event):
 		self._popup.dismiss()

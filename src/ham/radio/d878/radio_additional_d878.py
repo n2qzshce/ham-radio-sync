@@ -30,7 +30,7 @@ class RadioAdditionalD878(RadioAdditional):
 			logging.error(f"No DMR ids found for {self._style}.")
 			return
 
-		radio_id_file = RadioWriter(f'out/{self._style}/{self._style}_radioid.csv', '\r\n')
+		radio_id_file = RadioWriter.output_writer(f'{self._style}/{self._style}_radioid.csv', '\r\n')
 
 		headers = DmrIdD878.create_empty()
 		radio_id_file.writerow(headers.headers())
@@ -49,7 +49,7 @@ class RadioAdditionalD878(RadioAdditional):
 			logging.error(f"No digital contacts found for {self._style}.")
 			return
 
-		dmr_contact_file = RadioWriter(f'out/{self._style}/{self._style}_talkgroup.csv', '\r\n')
+		dmr_contact_file = RadioWriter.output_writer(f'{self._style}/{self._style}_talkgroup.csv', '\r\n')
 
 		headers = DmrContactD878.create_empty()
 		dmr_contact_file.writerow(headers.headers())
@@ -68,7 +68,7 @@ class RadioAdditionalD878(RadioAdditional):
 			logging.error(f"No zones list found for {self._style}.")
 			return
 
-		zone_file = RadioWriter(f'out/{self._style}/{self._style}_zone.csv', '\r\n')
+		zone_file = RadioWriter.output_writer(f'{self._style}/{self._style}_zone.csv', '\r\n')
 
 		headers = RadioZoneD878.create_empty()
 		zone_file.writerow(headers.headers())
@@ -86,7 +86,7 @@ class RadioAdditionalD878(RadioAdditional):
 			logging.error(f"No zones list found for {self._style}.")
 			return
 
-		users_file = RadioWriter(f'out/{self._style}/{self._style}_digital_contacts.csv', '\n')
+		users_file = RadioWriter.output_writer(f'{self._style}/{self._style}_digital_contacts.csv', '\n')
 
 		headers = DmrUserD878.create_empty()
 		users_file.writerow(headers.headers())

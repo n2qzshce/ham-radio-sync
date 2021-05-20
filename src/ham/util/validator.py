@@ -1,5 +1,4 @@
 import logging
-import os
 
 from src.ham.radio.default_radio.dmr_contact_default import DmrContactDefault
 from src.ham.radio.default_radio.dmr_id_default import DmrIdDefault
@@ -9,6 +8,7 @@ from src.ham.radio.default_radio.radio_zone_default import RadioZoneDefault
 from src.ham.radio.radio_channel import RadioChannel
 from src.ham.util import radio_types
 from src.ham.util.data_column import DataColumn
+from src.ham.util.path_manager import PathManager
 from src.ham.util.validation_error import ValidationError
 
 
@@ -34,15 +34,15 @@ class Validator:
 	def validate_files_exist(cls):
 		errors = []
 
-		files_list = ["in/input.csv", "in/digital_contacts.csv", "in/dmr_id.csv", 'in/zones.csv', 'in/user.csv']
+		files_list = ['input.csv', 'digital_contacts.csv', 'dmr_id.csv', 'zones.csv', 'user.csv']
 		for file_name in files_list:
-			if not os.path.exists(file_name):
+			if not PathManager.input_path_exists(file_name):
 				err = ValidationError(f"Cannot open file: `{file_name}`", None, file_name)
 				errors.append(err)
 
 		if len(errors) > 0:
 			logging.error("--- FILE MISSING ERRORS, CANNOT CONTINUE ---")
-			logging.info(f"Checked `{os.path.abspath('./in')}`")
+			logging.info(f"Checked `{PathManager.get_input_path()}`")
 			for err in errors:
 				logging.error(f"\t\t{err.message}")
 			logging.info("Have you run `Wizard (new)` or `Migrations (update)` under `Dangerous Operations`?")

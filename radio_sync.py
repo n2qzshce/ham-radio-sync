@@ -1,6 +1,5 @@
 import argparse
 import logging
-import os
 import sys
 
 import src.ham.util.radio_types
@@ -32,7 +31,7 @@ def main():
 		action='store_true',
 		default=False,
 		required=False,
-		help='Destroys `in` and `out` directories along with all their contents.',
+		help='Destroys input and output directories along with all their contents.',
 	)
 
 	parser.add_argument(
@@ -111,18 +110,16 @@ def main():
 
 	if arg_values.clean:
 		logging.info("Running cleanup.")
-		path_manager = PathManager(None, None)
-		wizard = Wizard(path_manager)
+		wizard = Wizard()
 		wizard.cleanup()
 		op_performed = True
 
 	if arg_values.wizard:
 		logging.info("Running wizard.")
-		path_manager = PathManager(None, None)
-		wizard = Wizard(path_manager)
+		wizard = Wizard()
 
-		if os.path.exists('in'):
-			logging.info(f"Your input directory is located at: `{os.path.abspath('in')}`")
+		if PathManager.input_path_exists(''):
+			logging.info(f"Your input directory is located at: `{PathManager.get_input_path()}`")
 			logging.warning("INPUT DIRECTORY ALREADY EXISTS!! Input files will be overwritten. Continue? (y/n)[n]")
 			prompt = input()
 			if prompt != 'y':
