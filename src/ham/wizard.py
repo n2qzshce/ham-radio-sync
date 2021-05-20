@@ -14,6 +14,9 @@ from src.ham.util.file_util import FileUtil, RadioWriter
 class Wizard(object):
 	_first_cols = ""
 
+	def __init__(self, path_manager):
+		self._path_manager = path_manager
+
 	def bootstrap(self, is_forced):
 		self._create_input(is_forced)
 		self._create_output()

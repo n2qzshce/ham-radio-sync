@@ -16,10 +16,12 @@ from kivy.resources import resource_paths
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.checkbox import CheckBox
 from kivy.uix.label import Label
+from kivy.uix.popup import Popup
 from kivy.uix.textinput import TextInput
 
 from src import radio_sync_version
 from src.ham.util import radio_types
+from src.ham.util.path_manager import PathManager
 from src.ui.async_wrapper import AsyncWrapper
 
 Config.set('input', 'mouse', 'mouse,disable_multitouch')
@@ -43,27 +45,30 @@ class RightClickTextInput(TextInput):
 
 class LayoutIds:
 	action_previous = 'action_previous'
+	buffer = 'buffer'
+	button_pool = 'button_pool'
 	create_radio_plugs = 'create_radio_plugs'
-	enable_dangerous = 'enable_dangerous'
+	cant_find_radio = 'cant_find_radio'
 	check_migrations = 'check_migrations'
 	clear_log = 'clear_log'
-	exit_button = 'exit_button'
+	debug_toggle = 'debug_toggle'
 	dangerous_operations = 'dangerous_operations'
 	dangerous_operation__delete_migrate = 'dangerous_operation__delete_migrate'
 	dangerous_operation__migrate = 'dangerous_operation__migrate'
 	dangerous_operation__wizard = 'dangerous_operation__wizard'
 	dangerous_operation__cleanup = 'dangerous_operation__cleanup'
-	getting_started = 'getting_started'
-	radio_descriptions = 'radio_descriptions'
-	cant_find_radio = 'cant_find_radio'
+	enable_dangerous = 'enable_dangerous'
+	exit_button = 'exit_button'
 	feature_request = 'feature_request'
-	debug_toggle = 'debug_toggle'
-	button_pool = 'button_pool'
+	getting_started = 'getting_started'
+	input_folder = 'input_folder'
+	input_folder_select = 'input_folder_select'
+	output_folder = 'output_folder'
+	output_folder_select = 'output_folder_select'
+	log_output = 'log_output'
+	radio_descriptions = 'radio_descriptions'
 	radio_header = 'radio_header'
 	radio_labels = 'radio_labels'
-	buffer = 'buffer'
-	log_output = 'log_output'
-
 
 kv = f"""
 BoxLayout:
@@ -93,6 +98,12 @@ BoxLayout:
 				ActionButton:
 					id: {LayoutIds.check_migrations}
 					text: "Check for needed migrations"
+				ActionButton:
+					id: {LayoutIds.input_folder_select}
+					text: "Set input directory"
+				ActionButton:
+					id: {LayoutIds.output_folder_select}
+					text: "Set output directory"
 				ActionButton:
 					id: {LayoutIds.clear_log}
 					text: "Clear screen log"
@@ -159,8 +170,21 @@ BoxLayout:
 				id: {LayoutIds.buffer}
 				orientation: "vertical"
 				size_hint: (1, 0.2)
-		AnchorLayout:
+		BoxLayout:
+			orientation: "vertical"
 			size_hint: (0.8, 1)
+			Label:
+				id: {LayoutIds.input_folder}
+				text: "Input folder: None"
+				valign: 'middle'
+				size_hint: (1, 0.1)
+				text_size: self.size
+			Label:
+				id: {LayoutIds.output_folder}
+				text: "Output folder: None"
+				valign: 'middle'
+				size_hint: (1, 0.1)
+				text_size: self.size
 			RightClickTextInput:
 				id: {LayoutIds.log_output}
 				font_name: 'RobotoMono-Regular'
@@ -172,10 +196,52 @@ BoxLayout:
 """
 
 
+class PopupIds:
+	cancel_button = "cancel_button"
+	file_chooser = "file_chooser"
+	file_path = "file_path"
+	load_button = "load_button"
+	mode = "mode"
+
+
+load_dialog = f"""
+BoxLayout:
+	size: root.size
+	pos: root.pos
+	orientation: "vertical"
+	Label:
+		id: {PopupIds.mode}
+		size_hint_y: 0
+		text: "mode"
+	TextInput:
+		size_hint: (1, 0.1)
+		id: {PopupIds.file_path}
+		text: "None"
+		multiline: False
+	FileChooserListView:
+		size_hint: (1, 0.9)
+		id: {PopupIds.file_chooser}
+		dirselect: True
+		filters: ["!*"]
+
+	BoxLayout:
+		size_hint_y: None
+		height: 30
+
+		Button:
+			id: {PopupIds.load_button}
+			text: "Load"
+		Button:
+			id: {PopupIds.cancel_button}
+			text: "Cancel"
+"""
+
+
 class AppWindow(App):
 	text_log = None
 	_async_wrapper = None
 	force_debug = False
+	path_manager = None
 
 	def build(self):
 		icon_path = './images/radio_sync.ico'
@@ -197,7 +263,7 @@ class AppWindow(App):
 
 		self._async_wrapper = AsyncWrapper()
 		layout = Builder.load_string(kv)
-		Window.size = (dp(1200), dp(500))
+		Window.size = (dp(1200), dp(550))
 		Window.clearcolor = (0.15, 0.15, 0.15, 1)
 		Window.bind(on_keyboard=self.key_handler)
 
@@ -257,6 +323,10 @@ class AppWindow(App):
 		text_log = layout.ids[LayoutIds.log_output]
 		self.text_log = text_log
 
+		input_folder = layout.ids[LayoutIds.input_folder]
+		output_folder = layout.ids[LayoutIds.output_folder]
+		self.path_manager = PathManager(input_folder, output_folder)
+
 		logger = logging.getLogger('radio_sync')
 		formatter = logging.Formatter(
 			fmt='%(asctime)s.%(msecs)03d %(levelname)7s %(filename).6s:%(lineno)3s:  %(message)s',
@@ -279,6 +349,12 @@ class AppWindow(App):
 
 		clear_console_button = layout.ids[LayoutIds.clear_log]
 		clear_console_button.bind(on_press=self._clear_console)
+
+		input_folder_button = layout.ids[LayoutIds.input_folder_select]
+		input_folder_button.bind(on_press=self._select_input_folder_dialog)
+
+		output_folder_button = layout.ids[LayoutIds.output_folder_select]
+		output_folder_button.bind(on_press=self._set_output_folder)
 
 		exit_button = layout.ids[LayoutIds.exit_button]
 		exit_button.bind(on_press=self.stop)
@@ -332,6 +408,57 @@ class AppWindow(App):
 
 			self._show_cut_copy_paste(
 				pos, EventLoop.window, mode='paste')
+
+	def _select_input_folder_dialog(self, event):
+		self._select_folder_dialog(event, 'Set input directory', self._select_input_folder)
+
+	def _select_output_folder_dialog(self, event):
+		self._select_folder_dialog(event, 'Set output directory', self._select_output_folder)
+
+	def _select_folder_dialog(self, event, title, load_button_action):
+		dialog_content = Builder.load_string(load_dialog)
+		file_chooser = dialog_content.ids[PopupIds.file_chooser]
+		file_chooser.path = self.path_manager.get_input_path()
+		file_chooser.bind(selection=self._update_display_path)
+
+		file_label = dialog_content.ids[PopupIds.file_path]
+		file_label.text = self.path_manager.get_input_path()
+
+		self._popup = Popup(title=title, content=dialog_content, size_hint=(0.9, 0.9))
+		dialog_content.ids[PopupIds.cancel_button].bind(on_press=self._dismiss_popup)
+
+		dialog_content.ids[PopupIds.load_button].bind(on_press=load_button_action)
+
+		self._popup.open()
+		return
+
+	def _select_input_folder(self, event):
+		path = self._get_selected_path()
+		self.path_manager.set_input_path(path)
+		self._dismiss_popup(None)
+
+	def _select_output_folder(self, event):
+		path = self._get_selected_path()
+		self.path_manager.set_output_path(path)
+		self._dismiss_popup(None)
+
+	def _update_display_path(self, *args):
+		file_label = self._popup.content.ids[PopupIds.file_path]
+		file_label.text = self._get_selected_path()
+
+	def _get_selected_path(self):
+		file_chooser = self._popup.content.ids[PopupIds.file_chooser]
+
+		result = file_chooser.path
+		if len(file_chooser.selection) == 1:
+			result = file_chooser.selection[0]
+		return result
+
+	def _set_output_folder(self, event):
+		pass
+
+	def _dismiss_popup(self, event):
+		self._popup.dismiss()
 
 
 class TextBoxHandler(TextIO, ABC):

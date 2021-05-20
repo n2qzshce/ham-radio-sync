@@ -19,10 +19,11 @@ from src.ham.util.validator import Validator
 
 
 class RadioGenerator:
-	def __init__(self, radio_list):
+	def __init__(self, radio_list, path_manager):
 		self.radio_list = radio_list
+		self._path_manager = path_manager
 		self._validator = Validator()
-		self._migrations = MigrationManager()
+		self._migrations = MigrationManager(path_manager)
 
 	@classmethod
 	def info(cls, dangerous_ops_info):

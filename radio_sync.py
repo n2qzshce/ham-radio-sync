@@ -8,6 +8,7 @@ import src.radio_sync_version_check
 from src import radio_sync_version
 from src.ham.migration.migration_manager import MigrationManager
 from src.ham.radio_generator import RadioGenerator
+from src.ham.util.path_manager import PathManager
 from src.ham.wizard import Wizard
 
 
@@ -110,13 +111,15 @@ def main():
 
 	if arg_values.clean:
 		logging.info("Running cleanup.")
-		wizard = Wizard()
+		path_manager = PathManager(None, None)
+		wizard = Wizard(path_manager)
 		wizard.cleanup()
 		op_performed = True
 
 	if arg_values.wizard:
 		logging.info("Running wizard.")
-		wizard = Wizard()
+		path_manager = PathManager(None, None)
+		wizard = Wizard(path_manager)
 
 		if os.path.exists('in'):
 			logging.info(f"Your input directory is located at: `{os.path.abspath('in')}`")

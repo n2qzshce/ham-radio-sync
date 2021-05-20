@@ -11,7 +11,8 @@ from src.ham.util.file_util import FileUtil
 
 
 class MigrationManager:
-	def __init__(self):
+	def __init__(self, path_manager):
+		self._path_manager = path_manager
 		return
 
 	def _add_cols_to_file(self, file_name, cols):
