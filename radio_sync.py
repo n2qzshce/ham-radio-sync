@@ -21,6 +21,8 @@ def main():
 	logger.setLevel(logging.INFO)
 	logger.addHandler(handler)
 
+	logging.warning("COMMAND LINE IS DEPRECATED. NEWER FEATURES MAY NOT BE SUPPORTED.")
+
 	parser = argparse.ArgumentParser(
 		prog='Ham Radio channel wizard',
 		description='''Convert a ham channel list to various radio formats. All of these options can be chained
