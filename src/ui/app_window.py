@@ -197,52 +197,11 @@ BoxLayout:
 """
 
 
-class PopupIds:
-	cancel_button = "cancel_button"
-	file_chooser = "file_chooser"
-	file_path = "file_path"
-	load_button = "load_button"
-	mode = "mode"
-
-
-load_dialog = f"""
-BoxLayout:
-	size: root.size
-	pos: root.pos
-	orientation: "vertical"
-	Label:
-		id: {PopupIds.mode}
-		size_hint_y: 0
-		text: "mode"
-	TextInput:
-		size_hint: (1, 0.1)
-		id: {PopupIds.file_path}
-		text: "None"
-		multiline: False
-	FileChooserListView:
-		size_hint: (1, 0.9)
-		id: {PopupIds.file_chooser}
-		dirselect: True
-		filters: ["!*"]
-
-	BoxLayout:
-		size_hint_y: None
-		height: 30
-
-		Button:
-			id: {PopupIds.load_button}
-			text: "Load"
-		Button:
-			id: {PopupIds.cancel_button}
-			text: "Cancel"
-"""
-
-
 class AppWindow(App):
 	text_log = None
 	_async_wrapper = None
 	force_debug = False
-	path_manager = None
+	popup_manager = None
 
 	def build(self):
 		icon_path = './images/radio_sync.ico'
@@ -355,11 +314,12 @@ class AppWindow(App):
 		clear_console_button = layout.ids[LayoutIds.clear_log]
 		clear_console_button.bind(on_press=self._clear_console)
 
+		self.popup_manager = PopupManager()
 		input_folder_button = layout.ids[LayoutIds.input_folder_select]
-		input_folder_button.bind(on_press=self._select_input_folder_dialog)
+		input_folder_button.bind(on_press=self.popup_manager.select_input_folder_dialog)
 
 		output_folder_button = layout.ids[LayoutIds.output_folder_select]
-		output_folder_button.bind(on_press=self._select_output_folder_dialog)
+		output_folder_button.bind(on_press=self.popup_manager.select_output_folder_dialog)
 
 		exit_button = layout.ids[LayoutIds.exit_button]
 		exit_button.bind(on_press=self.stop)
@@ -414,10 +374,53 @@ class AppWindow(App):
 			self._show_cut_copy_paste(
 				pos, EventLoop.window, mode='paste')
 
-	def _select_input_folder_dialog(self, event):
+
+class PopupIds:
+	cancel_button = "cancel_button"
+	file_chooser = "file_chooser"
+	file_path = "file_path"
+	load_button = "load_button"
+	mode = "mode"
+
+
+load_dialog = f"""
+BoxLayout:
+	size: root.size
+	pos: root.pos
+	orientation: "vertical"
+	Label:
+		id: {PopupIds.mode}
+		size_hint_y: 0
+		text: "mode"
+	TextInput:
+		size_hint: (1, 0.1)
+		id: {PopupIds.file_path}
+		text: "None"
+		multiline: False
+	FileChooserListView:
+		size_hint: (1, 0.9)
+		id: {PopupIds.file_chooser}
+		dirselect: True
+		filters: ["!*"]
+
+	BoxLayout:
+		size_hint_y: None
+		height: 30
+
+		Button:
+			id: {PopupIds.load_button}
+			text: "Load"
+		Button:
+			id: {PopupIds.cancel_button}
+			text: "Cancel"
+"""
+
+
+class PopupManager:
+	def select_input_folder_dialog(self, event):
 		self._select_folder_dialog(event, 'Set input directory', PathManager.get_input_path(), self._select_input_folder)
 
-	def _select_output_folder_dialog(self, event):
+	def select_output_folder_dialog(self, event):
 		self._select_folder_dialog(event, 'Set output directory', PathManager.get_output_path(), self._select_output_folder)
 
 	def _select_folder_dialog(self, event, title, starting_path, load_button_action):
@@ -447,6 +450,9 @@ class AppWindow(App):
 		PathManager.set_output_path(path)
 		self._dismiss_popup(None)
 
+	def _dismiss_popup(self, event):
+		self._popup.dismiss()
+
 	def _update_display_path(self, *args):
 		file_label = self._popup.content.ids[PopupIds.file_path]
 		file_label.text = self._get_selected_path()
@@ -458,9 +464,6 @@ class AppWindow(App):
 		if len(file_chooser.selection) == 1:
 			result = file_chooser.selection[0]
 		return result
-
-	def _dismiss_popup(self, event):
-		self._popup.dismiss()
 
 
 class TextBoxHandler(TextIO, ABC):
