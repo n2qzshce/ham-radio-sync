@@ -431,6 +431,7 @@ class PopupManager:
 
 		file_label = dialog_content.ids[PopupIds.file_path]
 		file_label.text = file_chooser.path
+		file_label.bind(on_text_validate=self._update_file_browser)
 
 		self._popup = Popup(title=title, content=dialog_content, size_hint=(0.9, 0.9))
 		dialog_content.ids[PopupIds.cancel_button].bind(on_press=self._dismiss_popup)
@@ -439,6 +440,15 @@ class PopupManager:
 
 		self._popup.open()
 		return
+
+	def _update_file_browser(self, event):
+		file_label = self._popup.content.ids[PopupIds.file_path]
+		potential_path = file_label.text
+		file_chooser = self._popup.content.ids[PopupIds.file_chooser]
+		if os.path.exists(potential_path):
+			file_chooser.path = potential_path
+		else:
+			file_label.text = self._get_selected_path()
 
 	def _select_input_folder(self, event):
 		path = self._get_selected_path()
