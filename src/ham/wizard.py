@@ -1,5 +1,4 @@
 import logging
-import os
 
 from src.ham.radio.default_radio.dmr_contact_default import DmrContactDefault
 from src.ham.radio.default_radio.dmr_id_default import DmrIdDefault
@@ -9,16 +8,17 @@ from src.ham.radio.default_radio.radio_zone_default import RadioZoneDefault
 from src.ham.radio.radio_casted_builder import RadioChannelBuilder
 from src.ham.util import radio_types
 from src.ham.util.file_util import FileUtil, RadioWriter
+from src.ham.util.path_manager import PathManager
 
 
 class Wizard(object):
-	_first_cols = ""
+	_first_cols = ''
 
 	def bootstrap(self, is_forced):
 		self._create_input(is_forced)
 		self._create_output()
-		abspath = os.path.abspath('in')
-		logging.info(f"""Wizard is complete! You may now open `input.csv` and add your radio channels.
+		abspath = PathManager.get_input_path()
+		logging.info(f'''Wizard is complete! You may now open `input.csv` and add your radio channels.
 				Input CSVs are located in `{abspath}`
 				What each file does:
 					input.csv: your radio channels. For best results, ONLY FILL OUT THE COLUMNS YOU NEED
@@ -27,12 +27,12 @@ class Wizard(object):
 					digital_contacts.csv: DMR contact IDs (e.g. Talkgroups)
 					dmr_id.csv: Set your DMR id (from radioid.net)
 
-				Be sure to check the "help" menu for more guidance!
+				Be sure to check the 'help' menu for more guidance!
 				
-				Sample data has been added to each file as an example.""")
+				Sample data has been added to each file as an example.''')
 
 	def _create_input(self, is_forced):
-		FileUtil.safe_create_dir('in')
+		FileUtil.safe_create_dir(PathManager.get_input_path())
 		create_files = {
 			'channels': self._create_channel_file,
 			'digital_contacts': self._create_dmr_data,
@@ -41,13 +41,13 @@ class Wizard(object):
 		}
 
 		for key in create_files:
-			if not os.path.exists(f"in/{key}.csv") or is_forced:
+			if not PathManager.get_input_path(f'{key}.csv') or is_forced:
 				create_files[key]()
 			else:
-				logging.info(f"`{key}.csv` already exists! Skipping.")
+				logging.info(f'`{key}.csv` already exists! Skipping.')
 
 	def _create_channel_file(self):
-		channel_file = RadioWriter('in/input.csv', '\n')
+		channel_file = RadioWriter.input_writer('input.csv', '\n')
 		first_channel = RadioChannelDefault({
 			'name': 'National 2m',
 			'medium_name': 'Natl 2m',
@@ -109,7 +109,7 @@ class Wizard(object):
 		channel_file.close()
 
 	def _create_dmr_data(self):
-		dmr_id_file = RadioWriter('in/dmr_id.csv', '\n')
+		dmr_id_file = RadioWriter.input_writer('dmr_id.csv', '\n')
 		dmr_id = DmrIdDefault({
 			'radio_id': '00000',
 			'name': 'DMR',
@@ -118,7 +118,7 @@ class Wizard(object):
 		dmr_id_file.writerow(dmr_id.output(1))
 		dmr_id_file.close()
 
-		digital_contacts_file = RadioWriter('in/digital_contacts.csv', '\n')
+		digital_contacts_file = RadioWriter.input_writer('digital_contacts.csv', '\n')
 		analog_contact = DmrContactDefault({
 			'digital_id':  dmr_id.radio_id.fmt_val(),
 			'name': 'Analog',
@@ -136,7 +136,7 @@ class Wizard(object):
 		digital_contacts_file.close()
 
 	def _create_zone_data(self):
-		zone_id_file = RadioWriter('in/zones.csv', '\n')
+		zone_id_file = RadioWriter.input_writer('zones.csv', '\n')
 		zone = RadioZoneDefault({
 			'number': 1,
 			'name': 'Zone 1',
@@ -146,7 +146,7 @@ class Wizard(object):
 		zone_id_file.close()
 
 	def _create_dmr_user_data(self):
-		user_file = RadioWriter('in/user.csv', '\n')
+		user_file = RadioWriter.input_writer('user.csv', '\n')
 		dmr_user = DmrUserDefault({
 			'RADIO_ID': '00000',
 			'CALLSIGN': 'N0CALL',
@@ -163,12 +163,12 @@ class Wizard(object):
 		return
 
 	def _create_output(self):
-		FileUtil.safe_create_dir('out')
+		FileUtil.safe_create_dir(PathManager.get_output_path())
 		return
 
 	def cleanup(self):
-		FileUtil.safe_delete_dir('in')
-		FileUtil.safe_delete_dir('out')
+		FileUtil.safe_delete_dir(PathManager.get_input_path())
+		FileUtil.safe_delete_dir(PathManager.get_output_path())
 
 	def readme(self):
 		return

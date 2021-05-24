@@ -1,6 +1,5 @@
 import argparse
 import logging
-import os
 import sys
 
 import src.ham.util.radio_types
@@ -8,6 +7,7 @@ import src.radio_sync_version_check
 from src import radio_sync_version
 from src.ham.migration.migration_manager import MigrationManager
 from src.ham.radio_generator import RadioGenerator
+from src.ham.util.path_manager import PathManager
 from src.ham.wizard import Wizard
 
 
@@ -21,6 +21,8 @@ def main():
 	logger.setLevel(logging.INFO)
 	logger.addHandler(handler)
 
+	logging.warning("COMMAND LINE IS DEPRECATED. NEWER FEATURES MAY NOT BE SUPPORTED.")
+
 	parser = argparse.ArgumentParser(
 		prog='Ham Radio channel wizard',
 		description='''Convert a ham channel list to various radio formats. All of these options can be chained
@@ -31,7 +33,7 @@ def main():
 		action='store_true',
 		default=False,
 		required=False,
-		help='Destroys `in` and `out` directories along with all their contents.',
+		help='Destroys input and output directories along with all their contents.',
 	)
 
 	parser.add_argument(
@@ -67,12 +69,27 @@ def main():
 	)
 
 	parser.add_argument(
+		'--input', '-i',
+		default=False,
+		required=False,
+		help='Sets the input folder',
+	)
+
+	parser.add_argument(
+		'--output', '-o',
+		default=False,
+		required=False,
+		help='Sets the output folder',
+	)
+
+	parser.add_argument(
 		'--force', '-f',
 		action='store_true',
 		default=False,
 		required=False,
 		help="Defaults to 'yes' for all prompts (DANGEROUS)",
 	)
+
 	parser.add_argument(
 		'--radios', '-r',
 		choices=src.ham.util.radio_types.radio_choices(),
@@ -105,6 +122,16 @@ def main():
 		logger.setLevel(logging.DEBUG)
 		logging.debug("Logging level set to debug.")
 
+	PathManager.set_input_path('in')
+	if arg_values.input:
+		PathManager.set_input_path(arg_values.input)
+		logging.info(f"Input directory set to {PathManager.get_input_path()}")
+
+	PathManager.set_output_path('out')
+	if arg_values.output:
+		PathManager.set_output_path(arg_values.output)
+		logging.info(f"Input directory set to {PathManager.get_output_path()}")
+
 	if arg_values.force:
 		logging.warning("FORCE HAS BEEN SET. ALL PROMPTS WILL DEFAULT YES. Files may be destroyed.")
 
@@ -118,8 +145,8 @@ def main():
 		logging.info("Running wizard.")
 		wizard = Wizard()
 
-		if os.path.exists('in'):
-			logging.info(f"Your input directory is located at: `{os.path.abspath('in')}`")
+		if PathManager.input_path_exists(''):
+			logging.info(f"Your input directory is located at: `{PathManager.get_input_path()}`")
 			logging.warning("INPUT DIRECTORY ALREADY EXISTS!! Input files will be overwritten. Continue? (y/n)[n]")
 			prompt = input()
 			if prompt != 'y':

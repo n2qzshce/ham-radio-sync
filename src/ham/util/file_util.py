@@ -3,6 +3,8 @@ import logging
 import os
 import shutil
 
+from src.ham.util.path_manager import PathManager
+
 USER_LINE_LOG_INTERVAL = 50000
 RADIO_LINE_LOG_INTERVAL = 5
 
@@ -12,6 +14,16 @@ class RadioWriter:
 		logging.debug(f'Creating CSV at {file_path}')
 		self._writer = open(f'{file_path}', 'w+', encoding='utf-8', newline=newline_char)
 		self._csv_writer = csv.writer(self._writer, dialect='unix', quoting=0)
+
+	@classmethod
+	def input_writer(cls, file_path, newline_char):
+		input_path = PathManager.get_output_path(file_path)
+		return RadioWriter(input_path, newline_char)
+
+	@classmethod
+	def output_writer(cls, file_path, newline_char):
+		output_path = PathManager.get_output_path(file_path)
+		return RadioWriter(output_path, newline_char)
 
 	def writerow(self, row):
 		return self._csv_writer.writerow(row)
@@ -36,7 +48,3 @@ class FileUtil:
 			os.mkdir(os.path.join(dir_name))
 		else:
 			logging.info(f'Directory `{dir_name}` exists, skipping.')
-
-	@classmethod
-	def open_file(cls, file_name, mode):
-		return open(f'{file_name}', f'{mode}', encoding='utf-8', newline='\n')

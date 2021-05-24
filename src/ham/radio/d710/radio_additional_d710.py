@@ -1,7 +1,7 @@
 from src.ham.radio.radio_additional import RadioAdditional
 from src.ham.radio.radio_casted_builder import RadioChannelBuilder
 from src.ham.util import radio_types
-from src.ham.util.file_util import FileUtil
+from src.ham.util.path_manager import PathManager
 
 
 class RadioAdditionalD710(RadioAdditional):
@@ -20,14 +20,14 @@ class RadioAdditionalD710(RadioAdditional):
 		self._output()
 
 	def _headers(self):
-		f = FileUtil.open_file(f'out/{radio_types.D710}/{radio_types.D710}.hmk', 'w+')
+		f = PathManager.open_output_file(f'{radio_types.D710}/{radio_types.D710}.hmk', 'w+')
 		headers = self._channels[1].headers()
 		f.write(headers+"\n")
 		f.close()
 		pass
 
 	def _output(self):
-		f = FileUtil.open_file(f'out/{radio_types.D710}/{radio_types.D710}.hmk', 'a')
+		f = PathManager.open_output_file(f'{radio_types.D710}/{radio_types.D710}.hmk', 'a')
 		channel_number = 1
 		for channel in self._channels:
 			if channel.is_digital():

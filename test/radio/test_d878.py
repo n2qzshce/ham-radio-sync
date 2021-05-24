@@ -1,10 +1,11 @@
 from src.ham.radio.d878.radio_channel_d878 import RadioChannelD878
 from src.ham.radio.dmr_contact import DmrContact
 from src.ham.radio.dmr_id import DmrId
-from test.radio.base_radio_test_setup import BaseRadioTestSetup
+
+from test.base_test_setup import BaseTestSetup
 
 
-class D878Test(BaseRadioTestSetup):
+class D878Test(BaseTestSetup):
 	def setUp(self):
 		self.radio_channel = RadioChannelD878.create_empty()
 		self.digital_contacts = dict()

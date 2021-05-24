@@ -8,7 +8,7 @@ from src.ham.radio.default_radio.radio_zone_default import RadioZoneDefault
 from src.ham.radio.radio_additional import RadioAdditional
 from src.ham.radio.radio_casted_builder import DmrIdBuilder, RadioZoneBuilder, DmrContactBuilder, DmrUserBuilder
 from src.ham.util import radio_types
-from src.ham.util.file_util import FileUtil
+from src.ham.util.path_manager import PathManager
 
 
 class RadioAdditionalDefault(RadioAdditional):
@@ -29,7 +29,7 @@ class RadioAdditionalDefault(RadioAdditional):
 			logging.error(f"No DMR ids found for {self._style}.")
 			return
 
-		writer = FileUtil.open_file(f'out/{self._style}/{self._style}_radioid.csv', 'w+')
+		writer = PathManager.open_output_file(f'{self._style}/{self._style}_radioid.csv', 'w+')
 		radio_id_file = csv.writer(writer, lineterminator='\n')
 
 		headers = DmrIdDefault.create_empty()
@@ -48,7 +48,7 @@ class RadioAdditionalDefault(RadioAdditional):
 			logging.error(f"No zones list found for {self._style}.")
 			return
 
-		writer = FileUtil.open_file(f'out/{self._style}/{self._style}_zone.csv', 'w+')
+		writer = PathManager.open_output_file(f'{self._style}/{self._style}_zone.csv', 'w+')
 		zone_file = csv.writer(writer, lineterminator='\n')
 
 		headers = RadioZoneDefault.create_empty()
@@ -64,7 +64,7 @@ class RadioAdditionalDefault(RadioAdditional):
 			logging.error(f"No digital contacts found for {self._style}.")
 			return
 
-		writer = FileUtil.open_file(f'out/{self._style}/{self._style}_contacts.csv', 'w+')
+		writer = PathManager.open_output_file(f'{self._style}/{self._style}_contacts.csv', 'w+')
 		dmr_contact_file = csv.writer(writer, lineterminator='\n')
 
 		headers = DmrContactDefault.create_empty()
@@ -81,7 +81,7 @@ class RadioAdditionalDefault(RadioAdditional):
 			logging.error(f"No zones list found for {self._style}.")
 			return
 
-		writer = FileUtil.open_file(f'out/{self._style}/{self._style}_user.csv', 'w+')
+		writer = PathManager.open_output_file(f'{self._style}/{self._style}_user.csv', 'w+')
 		users_file = csv.writer(writer, lineterminator='\n')
 
 		headers = DmrUserDefault.create_empty()

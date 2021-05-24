@@ -13,7 +13,7 @@ from src.ham.wizard import Wizard
 class AsyncWrapper:
 	dangerous_operations_snippet = """Dangerous Operations:
 				"Create Radio Plugs" can be run repeatedly without risk, this is not true for dangerous operations.
-				Dangerous operations tamper with the `input` folder, and may delete or alter your `in` input csv files."""
+				Dangerous operations tamper with the `input` folder, and may delete or alter your input csv files."""
 
 	def __init__(self):
 		self.buttons = []
@@ -31,7 +31,7 @@ class AsyncWrapper:
 			logging.warning(
 							f"""Dangerous operations enabled.
 		This may destroy/delete input files.
-		Have you backed up your `in` folder contents?
+		Have you backed up your input folder contents?
 		{self.dangerous_operations_snippet}
 		See `Getting Started` for more info."""
 			)

@@ -4,6 +4,7 @@ from csv import DictReader
 
 from src.ham.migration.migration_manager import MigrationManager
 from src.ham.util.file_util import FileUtil
+from src.ham.util.path_manager import PathManager
 from test.base_test_setup import BaseTestSetup
 
 
@@ -12,6 +13,8 @@ class MigrationTest(BaseTestSetup):
 		logging.getLogger().setLevel(logging.ERROR)
 		FileUtil.safe_delete_dir('in')
 		FileUtil.safe_delete_dir('out')
+		PathManager.set_input_path('in')
+		PathManager.set_output_path('out')
 		self.manager = MigrationManager()
 
 	def test_migration_one(self):
@@ -42,7 +45,7 @@ class MigrationTest(BaseTestSetup):
 		self.manager._migrate_two()
 		self.manager._migrate_three()
 
-		f = FileUtil.open_file('in/input.csv', 'r')
+		f = PathManager._open_file('in/input.csv', 'r')
 		first_line = f.readline()
 		self.assertEqual(
 							'number,'
@@ -72,18 +75,18 @@ class MigrationTest(BaseTestSetup):
 		self.manager._migrate_one()
 		self.manager._migrate_two()
 
-		f = FileUtil.open_file('in/input.csv', 'w+')
+		f = PathManager.open_input_file('input.csv', 'w+')
 		f.write('foo\nspecial')
 		f.close()
 
 		self.manager._migrate_three()
 
-		f = FileUtil.open_file('in/input.csv.bak', 'r')
+		f = PathManager.open_input_file('input.csv.bak', 'r')
 		contents = f.read()
 		self.assertEqual('foo\nspecial', contents)
 		f.close()
 
-		f = FileUtil.open_file('in/input.csv', 'r')
+		f = PathManager.open_input_file('input.csv', 'r')
 		dict_reader = DictReader(f)
 		first_row = dict_reader.__next__()
 		self.assertTrue('foo' in first_row.keys())
@@ -114,7 +117,7 @@ class MigrationTest(BaseTestSetup):
 		self.manager._migrate_three()
 		self.manager._migrate_four()
 
-		f = FileUtil.open_file('in/input.csv', 'r')
+		f = PathManager.open_input_file('input.csv', 'r')
 		dict_reader = DictReader(f)
 		self.assertFalse('number' in dict_reader.fieldnames)
 		f.close()
