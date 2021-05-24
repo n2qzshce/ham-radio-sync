@@ -15,7 +15,8 @@ class ValidatorTest(BaseTestSetup):
 		logging.getLogger().setLevel(logging.CRITICAL)
 		FileUtil.safe_delete_dir('in')
 		FileUtil.safe_delete_dir('out')
-
+		PathManager.set_input_path('in')
+		PathManager.set_input_path('out')
 		FileUtil.safe_create_dir('in')
 		FileUtil.safe_create_dir('out')
 
