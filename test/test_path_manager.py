@@ -38,4 +38,5 @@ class PathManagerTest(BaseTestSetup):
 		w.close()
 		f = open('./whoa_different/x.tst', 'r')
 		line = f.readline()
+		f.close()
 		self.assertEqual(line, 'different test success')
