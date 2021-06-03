@@ -123,7 +123,7 @@ class RadioGenerator:
 			logging.debug(f'Processing radio line {line}')
 			if line % file_util.RADIO_LINE_LOG_INTERVAL == 0:
 				logging.info(f'Processing radio line {line}')
-
+			line += 1
 			for radio in self.radio_list:
 				if radio not in radio_files.keys():
 					continue
@@ -158,6 +158,7 @@ class RadioGenerator:
 
 		line_num = 1
 		for line in csv_feed:
+			logging.debug(f'Processing line {line_num}: `{line}`')
 			line_errors = self._validator.validate_digital_contact(line, 1, feed.name)
 			errors += line_errors
 			line_num += 1
@@ -176,6 +177,7 @@ class RadioGenerator:
 		errors = []
 		line_num = 0
 		for line in csv_feed:
+			logging.debug(f'Processing line {line_num}: `{line}`')
 			line_num += 1
 			line_errors = self._validator.validate_dmr_id(line, line_num, feed.name)
 			errors += line_errors
@@ -194,6 +196,7 @@ class RadioGenerator:
 		errors = []
 		line_num = 1
 		for line in csv_feed:
+			logging.debug(f'Processing line {line_num}: `{line}`')
 			line_errors = self._validator.validate_radio_zone(line, line_num, feed.name)
 			errors += line_errors
 			line_num += 1
@@ -212,6 +215,7 @@ class RadioGenerator:
 		errors = []
 		rows_processed = 0
 		for line in csv_feed:
+			logging.debug(f'Processing line {line_num}: `{line}`')
 			line_errors = self._validator.validate_dmr_user(line, rows_processed + 1, feed.name)
 			errors += line_errors
 			rows_processed += 1
