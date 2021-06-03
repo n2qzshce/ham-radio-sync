@@ -48,3 +48,10 @@ class FileUtil:
 			os.mkdir(os.path.join(dir_name))
 		else:
 			logging.info(f'Directory `{dir_name}` exists, skipping.')
+
+
+class GlobalConstants:
+	logging_formatter = logging.Formatter(
+		fmt='%(asctime)s.%(msecs)03d %(levelname)7s %(filename).6s:%(lineno)3s:  %(message)s',
+		datefmt="%Y-%m-%d %H:%M:%S"
+	)

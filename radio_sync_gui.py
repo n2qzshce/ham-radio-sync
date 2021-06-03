@@ -4,15 +4,14 @@ import logging
 import os
 import sys
 
+from src.ham.util.file_util import GlobalConstants
+
 
 def setup_logger():
 	os.environ["KIVY_NO_CONSOLELOG"] = "1"
 	os.environ["KIVY_NO_FILELOG"] = "1"
 	logger = logging.getLogger('radio_sync')
-	formatter = logging.Formatter(
-								fmt='%(asctime)s.%(msecs)03d %(levelname)7s %(filename).6s:%(lineno)3s:  %(message)s',
-								datefmt="%Y-%m-%d %H:%M:%S"
-	)
+	formatter = GlobalConstants.logging_formatter
 
 	handler = logging.StreamHandler(stream=sys.stdout)
 	handler.setFormatter(formatter)
@@ -41,8 +40,11 @@ async def main():
 
 	setup_logger()
 	app_window = AppWindow()
-	await app_window.async_run()
-
+	try:
+		await app_window.async_run()
+		logging.info("---APP EXIT SUCCESSFULLY---")
+	except Exception as e:
+		logging.error("---FATAL ERROR ENCOUNTERED. APP EXITED.---", e)
 	return
 
 

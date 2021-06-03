@@ -7,6 +7,7 @@ import src.radio_sync_version_check
 from src.ham.migration.migration_manager import MigrationManager
 from src.ham.radio_generator import RadioGenerator
 from src.ham.util import radio_types
+from src.ham.util.file_util import GlobalConstants
 from src.ham.wizard import Wizard
 
 
@@ -24,6 +25,7 @@ class AsyncWrapper:
 		self._buttons_disabled = False
 		self.radio_buttons = dict()
 		self.debug_toggle = None
+		self._file_logger = None
 		return
 
 	def arm_dangerous(self, *args):
@@ -123,6 +125,18 @@ class AsyncWrapper:
 
 	def _check_version_async(self):
 		src.radio_sync_version_check.check_version()
+
+	def toggle_file_log(self, value):
+		if value.state == 'down':
+			logger = logging.getLogger('radio_sync')
+			handler = logging.FileHandler('ham-radio-sync.log')
+			handler.setFormatter(GlobalConstants.logging_formatter)
+			logger.addHandler(handler)
+			self._file_logger = handler
+		else:
+			logger = logging.getLogger('radio_sync')
+			handler = self._file_logger
+			logger.removeHandler(handler)
 
 	def log_level(self, value):
 		if value.state == 'down':
