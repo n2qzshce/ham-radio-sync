@@ -215,7 +215,6 @@ class RadioGenerator:
 		errors = []
 		rows_processed = 0
 		for line in csv_feed:
-			logging.debug(f'Processing line {line_num}: `{line}`')
 			line_errors = self._validator.validate_dmr_user(line, rows_processed + 1, feed.name)
 			errors += line_errors
 			rows_processed += 1

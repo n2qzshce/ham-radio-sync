@@ -24,6 +24,7 @@ class PathManagerTest(BaseTestSetup):
 		w.close()
 		f = open('./in/x.tst', 'r')
 		line = f.readline()
+		f.close()
 		self.assertEqual(line, 'test success')
 
 	def test_sets_different_path(self):
@@ -36,3 +37,4 @@ class PathManagerTest(BaseTestSetup):
 		line = f.readline()
 		f.close()
 		self.assertEqual(line, 'different test success')
+		FileUtil.safe_delete_dir('./whoa_different')
