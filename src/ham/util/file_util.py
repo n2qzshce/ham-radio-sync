@@ -17,7 +17,7 @@ class RadioWriter:
 
 	@classmethod
 	def input_writer(cls, file_path, newline_char):
-		input_path = PathManager.get_output_path(file_path)
+		input_path = PathManager.get_input_path(file_path)
 		return RadioWriter(input_path, newline_char)
 
 	@classmethod
