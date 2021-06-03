@@ -100,7 +100,7 @@ class AsyncWrapper:
 		self._submit_blocking_task(self._wizard_bootstrap_async)
 
 	def _wizard_bootstrap_async(self):
-		self._wizard.bootstrap(True)
+		self._wizard.bootstrap()
 
 	def check_migrations(self, event):
 		self._submit_blocking_task(self._check_migrations_async)

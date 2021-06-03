@@ -4,7 +4,7 @@ from kivy_deps import sdl2, glew
 block_cipher = None
 
 
-a = Analysis(['radio_sync_gui.py'],
+a = Analysis(['radio_sync.py'],
              binaries=[],
              datas=[('images', 'images')],
              hiddenimports=['win32timezone'],

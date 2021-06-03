@@ -1,14 +1,14 @@
 import logging
 import os
-import unittest
 
 import requests
 from semantic_version import Version
 
 from src import radio_sync_version
+from test.base_test_setup import BaseTestSetup
 
 
-class VersionTest(unittest.TestCase):
+class VersionTest(BaseTestSetup):
 	def test_version_present(self):
 		self.assertIsNotNone(radio_sync_version.version)
 

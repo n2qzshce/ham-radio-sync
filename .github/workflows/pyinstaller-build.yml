@@ -4,7 +4,7 @@
 name: Build executeable
 
 env:
-  semver: 1.7.3.${{ github.run_number }}
+  semver: 1.8.0.${{ github.run_number }}
   python-version: 3.8
   KIVY_GL_BACKEND: 'angle_sdl2'
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -52,9 +52,9 @@ jobs:
         python -m unittest discover -v
     - name: Build GUI executable
       run: |
-        pyinstaller radio_sync_gui_${{ matrix.short-name }}.spec
-        ${{ matrix.move-command }} dist/radio_sync_gui${{ matrix.exe-extension }} radio_sync-${{ matrix.short-name }}_gui-${{ env.semver }}${{ matrix.exe-extension }}
-        7z a -tzip radio_sync-${{ matrix.short-name }}-${{ env.semver }}.zip radio_sync-${{ matrix.short-name }}_gui-${{ env.semver }}${{ matrix.exe-extension }}
+        pyinstaller radio_sync_${{ matrix.short-name }}.spec
+        ${{ matrix.move-command }} dist/radio_sync${{ matrix.exe-extension }} radio_sync-${{ matrix.short-name }}-${{ env.semver }}${{ matrix.exe-extension }}
+        7z a -tzip radio_sync-${{ matrix.short-name }}-${{ env.semver }}.zip radio_sync-${{ matrix.short-name }}-${{ env.semver }}${{ matrix.exe-extension }}
     - name: Upload executable
       id: upload_executable
       uses: actions/upload-artifact@v2
