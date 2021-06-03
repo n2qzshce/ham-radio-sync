@@ -9,6 +9,7 @@ In order to keep the code maintainable, the following guidelines are in place.
 unit-testable manner.
 * Line endings are CRLF.
 * Implementations of classes should have methods in the same order.
+* Use f-strings and single quoted strings where possible.
 
 ### Required development software
 * Python 3.8
