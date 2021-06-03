@@ -10,13 +10,12 @@ from test.base_test_setup import BaseTestSetup
 
 class ValidatorTest(BaseTestSetup):
 	def setUp(self):
+		super(ValidatorTest, self).setUp()
 		self.validator = Validator()
 		self.validator.flush_names()
 		logging.getLogger().setLevel(logging.CRITICAL)
 		FileUtil.safe_delete_dir('in')
 		FileUtil.safe_delete_dir('out')
-		PathManager.set_input_path('in')
-		PathManager.set_input_path('out')
 		FileUtil.safe_create_dir('in')
 		FileUtil.safe_create_dir('out')
 

@@ -17,7 +17,7 @@ class RadioWriter:
 
 	@classmethod
 	def input_writer(cls, file_path, newline_char):
-		input_path = PathManager.get_output_path(file_path)
+		input_path = PathManager.get_input_path(file_path)
 		return RadioWriter(input_path, newline_char)
 
 	@classmethod
@@ -48,3 +48,10 @@ class FileUtil:
 			os.mkdir(os.path.join(dir_name))
 		else:
 			logging.info(f'Directory `{dir_name}` exists, skipping.')
+
+
+class GlobalConstants:
+	logging_formatter = logging.Formatter(
+		fmt='%(asctime)s.%(msecs)03d %(levelname)7s %(filename).6s:%(lineno)3s:  %(message)s',
+		datefmt="%Y-%m-%d %H:%M:%S"
+	)

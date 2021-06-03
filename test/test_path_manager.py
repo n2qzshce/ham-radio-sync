@@ -1,23 +1,19 @@
 import logging
 import os
-import shutil
 
 from src.ham.migration.migration_manager import MigrationManager
+from src.ham.util.file_util import FileUtil
 from src.ham.util.path_manager import PathManager
 from test.base_test_setup import BaseTestSetup
 
 
 class PathManagerTest(BaseTestSetup):
 	def setUp(self):
+		super(PathManagerTest, self).setUp()
 		logging.getLogger().setLevel(logging.ERROR)
-		try:
-			shutil.rmtree('./in')
-			shutil.rmtree('./out')
-			shutil.rmtree('./whoa_different')
-		except Exception:
-			pass
-		PathManager.set_input_path('./in')
-		PathManager.set_output_path('./out')
+		FileUtil.safe_delete_dir('./in')
+		FileUtil.safe_delete_dir('./out')
+		FileUtil.safe_delete_dir('./whoa_different')
 		os.mkdir('./in')
 		os.mkdir('./out')
 		self.manager = MigrationManager()
@@ -28,6 +24,7 @@ class PathManagerTest(BaseTestSetup):
 		w.close()
 		f = open('./in/x.tst', 'r')
 		line = f.readline()
+		f.close()
 		self.assertEqual(line, 'test success')
 
 	def test_sets_different_path(self):
@@ -40,3 +37,4 @@ class PathManagerTest(BaseTestSetup):
 		line = f.readline()
 		f.close()
 		self.assertEqual(line, 'different test success')
+		FileUtil.safe_delete_dir('./whoa_different')

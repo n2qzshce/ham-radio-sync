@@ -21,6 +21,7 @@ from kivy.uix.textinput import TextInput
 
 from src import radio_sync_version
 from src.ham.util import radio_types
+from src.ham.util.file_util import GlobalConstants
 from src.ham.util.path_manager import PathManager
 from src.ui.async_wrapper import AsyncWrapper
 
@@ -60,6 +61,7 @@ class LayoutIds:
 	enable_dangerous = 'enable_dangerous'
 	exit_button = 'exit_button'
 	feature_request = 'feature_request'
+	file_log_toggle = 'file_log_toggle'
 	getting_started = 'getting_started'
 	input_folder = 'input_folder'
 	input_folder_select = 'input_folder_select'
@@ -144,6 +146,9 @@ BoxLayout:
 				ActionButton:
 					id: {LayoutIds.feature_request}
 					text: "Feature request/bug report"
+				ActionToggleButton:
+					id: {LayoutIds.file_log_toggle}
+					text: "Enable logging to text file"
 				ActionToggleButton:
 					id: {LayoutIds.debug_toggle}
 					text: "Debug logging"
@@ -292,10 +297,7 @@ class AppWindow(App):
 		PathManager.set_output_path('./out')
 
 		logger = logging.getLogger('radio_sync')
-		formatter = logging.Formatter(
-			fmt='%(asctime)s.%(msecs)03d %(levelname)7s %(filename).6s:%(lineno)3s:  %(message)s',
-			datefmt="%Y-%m-%d %H:%M:%S"
-		)
+		formatter = GlobalConstants.logging_formatter
 
 		text_box_logger = TextBoxHandler(self.text_log)
 		handler = logging.StreamHandler(stream=text_box_logger)
@@ -349,6 +351,9 @@ class AppWindow(App):
 		debug_button = layout.ids[LayoutIds.debug_toggle]
 		self._async_wrapper.debug_toggle = debug_button
 		debug_button.bind(on_press=self._async_wrapper.log_level)
+
+		file_log_button = layout.ids[LayoutIds.file_log_toggle]
+		file_log_button.bind(on_press=self._async_wrapper.toggle_file_log)
 
 		contact_button = layout.ids[LayoutIds.cant_find_radio]
 		contact_button.bind(on_press=self._async_wrapper.contact_info)

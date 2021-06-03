@@ -10,11 +10,10 @@ from test.base_test_setup import BaseTestSetup
 
 class MigrationTest(BaseTestSetup):
 	def setUp(self):
+		super(MigrationTest, self).setUp()
 		logging.getLogger().setLevel(logging.ERROR)
 		FileUtil.safe_delete_dir('in')
 		FileUtil.safe_delete_dir('out')
-		PathManager.set_input_path('in')
-		PathManager.set_output_path('out')
 		self.manager = MigrationManager()
 
 	def test_migration_one(self):

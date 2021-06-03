@@ -54,7 +54,7 @@ class RadioGenerator:
 		file_errors = self._validator.validate_files_exist()
 		self._validator.flush_names()
 		if len(file_errors) > 0:
-			return
+			return False
 
 		results = self._migrations.check_migrations_needed()
 		if len(results.keys()) > 0:
@@ -87,13 +87,14 @@ class RadioGenerator:
 
 			if radio_channel.zone_id.fmt_val(None) is not None:
 				zones[radio_channel.zone_id.fmt_val()].add_channel(radio_channel)
+		feed.close()
 
 		all_errors = preload_errors + radio_channel_errors
 		if len(all_errors) > 0:
 			logging.error('--- VALIDATION ERRORS, CANNOT CONTINUE ---')
 			for err in all_errors:
 				logging.error(f'\t\tfile: `{err.file_name}` line:{err.line_num} validation error: {err.message}')
-			return
+			return False
 		else:
 			logging.info('File validation complete, no obvious formatting errors found')
 
@@ -122,7 +123,7 @@ class RadioGenerator:
 			logging.debug(f'Processing radio line {line}')
 			if line % file_util.RADIO_LINE_LOG_INTERVAL == 0:
 				logging.info(f'Processing radio line {line}')
-
+			line += 1
 			for radio in self.radio_list:
 				if radio not in radio_files.keys():
 					continue
@@ -146,7 +147,7 @@ class RadioGenerator:
 		logging.info(f'''Radio generator complete. Your output files are in 
 					`{os.path.abspath('out')}`
 					The next step is to import these files into your radio programming application. (e.g. CHiRP)''')
-		return
+		return True
 
 	def _generate_digital_contact_data(self):
 		logging.info('Processing digital contacts')
@@ -157,6 +158,7 @@ class RadioGenerator:
 
 		line_num = 1
 		for line in csv_feed:
+			logging.debug(f'Processing line {line_num}: `{line}`')
 			line_errors = self._validator.validate_digital_contact(line, 1, feed.name)
 			errors += line_errors
 			line_num += 1
@@ -164,7 +166,7 @@ class RadioGenerator:
 				continue
 			contact = DmrContact(line)
 			digital_contacts[contact.digital_id.fmt_val()] = contact
-
+		feed.close()
 		return digital_contacts, errors
 
 	def _generate_dmr_id_data(self):
@@ -175,6 +177,7 @@ class RadioGenerator:
 		errors = []
 		line_num = 0
 		for line in csv_feed:
+			logging.debug(f'Processing line {line_num}: `{line}`')
 			line_num += 1
 			line_errors = self._validator.validate_dmr_id(line, line_num, feed.name)
 			errors += line_errors
@@ -182,7 +185,7 @@ class RadioGenerator:
 				continue
 			dmr_id = DmrId(line)
 			dmr_ids[line_num] = dmr_id
-
+		feed.close()
 		return dmr_ids, errors
 
 	def _generate_zone_data(self):
@@ -193,6 +196,7 @@ class RadioGenerator:
 		errors = []
 		line_num = 1
 		for line in csv_feed:
+			logging.debug(f'Processing line {line_num}: `{line}`')
 			line_errors = self._validator.validate_radio_zone(line, line_num, feed.name)
 			errors += line_errors
 			line_num += 1
@@ -200,7 +204,7 @@ class RadioGenerator:
 				continue
 			zone = RadioZone(line)
 			zones[zone.number.fmt_val()] = zone
-
+		feed.close()
 		return zones, errors
 
 	def _generate_user_data(self):
@@ -221,5 +225,5 @@ class RadioGenerator:
 			logging.debug(f'Writing user row {rows_processed}')
 			if rows_processed % file_util.USER_LINE_LOG_INTERVAL == 0:
 				logging.info(f'Processed {rows_processed} DMR users')
-
+		feed.close()
 		return users, errors

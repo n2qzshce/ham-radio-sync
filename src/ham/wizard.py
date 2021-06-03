@@ -14,8 +14,8 @@ from src.ham.util.path_manager import PathManager
 class Wizard(object):
 	_first_cols = ''
 
-	def bootstrap(self, is_forced):
-		self._create_input(is_forced)
+	def bootstrap(self):
+		self._create_input()
 		self._create_output()
 		abspath = PathManager.get_input_path()
 		logging.info(f'''Wizard is complete! You may now open `input.csv` and add your radio channels.
@@ -31,7 +31,7 @@ class Wizard(object):
 				
 				Sample data has been added to each file as an example.''')
 
-	def _create_input(self, is_forced):
+	def _create_input(self):
 		FileUtil.safe_create_dir(PathManager.get_input_path())
 		create_files = {
 			'channels': self._create_channel_file,
@@ -41,10 +41,7 @@ class Wizard(object):
 		}
 
 		for key in create_files:
-			if not PathManager.get_input_path(f'{key}.csv') or is_forced:
-				create_files[key]()
-			else:
-				logging.info(f'`{key}.csv` already exists! Skipping.')
+			create_files[key]()
 
 	def _create_channel_file(self):
 		channel_file = RadioWriter.input_writer('input.csv', '\n')

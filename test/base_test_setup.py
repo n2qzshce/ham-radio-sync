@@ -3,6 +3,8 @@ import os
 import sys
 import unittest
 
+from src.ham.util.path_manager import PathManager
+
 
 class BaseTestSetup(unittest.TestCase):
 	@classmethod
@@ -19,3 +21,7 @@ class BaseTestSetup(unittest.TestCase):
 		if 'CI' in os.environ.keys():
 			logger.setLevel(logging.ERROR)
 		logger.addHandler(handler)
+
+	def setUp(self):
+		PathManager.set_input_path('./in')
+		PathManager.set_output_path('./out')
