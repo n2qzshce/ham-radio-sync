@@ -10,6 +10,10 @@ unit-testable manner.
 * Line endings are CRLF.
 * Implementations of classes should have methods in the same order.
 
+### Required development software
+* Python 3.8
+* pip3
+
 ### Features and functionality
 * Please discuss any new features or changes you'd like to make with the
 repository owner(s) before submitting your pull request: we're excited to

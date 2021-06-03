@@ -17,7 +17,7 @@ Currently supported radios:
 * Kenwood 71/710 Series via MCP2
 
 ### How it works
-This is a command line tool that will get you setting up your radios as quickly
+This is a tool that will get you setting up your radios as quickly
 as possible.
 1. Run the Wizard to generate the input CSVs.
 2. Add your channels and configuration information to the input CSVs.
@@ -25,10 +25,25 @@ as possible.
 4. Import your radio plugs into your radio programming application.
 5. Upload to your radio, and you're done.
 
-##### Windows defender will warn you about opening the GUI version. Click on the `more info` dialogue to run.
+### Windows defender will warn you about opening the GUI version. Click on the `more info` dialogue to run.
+##### Why does Windows Defender warn about this executable?
+Microsoft wants a signed executable, which requires a purchase from one of their licensed vendors. [Read more about it 
+here](https://docs.microsoft.com/en-us/windows-hardware/drivers/dashboard/get-a-code-signing-certificate). These purchases
+are in the hundreds of dollars, which is outside the budget of this open-source project.
 
+Static text link: https://docs.microsoft.com/en-us/windows-hardware/drivers/dashboard/get-a-code-signing-certificate
+
+Please thoroughly research any program you run on your computer to verify its origin and trustworthiness!
+
+##### I don't want to run an executable I don't trust, but I still want to use Ham Radio Sync.
+
+Ham Radio Sync is written in Python 3, and can be run and built using a python 3 runtime environment: https://www.python.org
+
+If you are unfamiliar with the process of building and writing executables, consider asking a knowledgeable individual for
+their input, and you can always send a message to the developers through Github if you have any questions.
+ 
 ### General requirements
-* You may want some knowledge of how to run a command line application.
+* A Windows or Mac computer you can use to run an executable.
 * The executable should be placed in a directory by itself. This will allow for
 the `wizard` to create the necessary `in` and `out` folders.
 
