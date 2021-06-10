@@ -4,6 +4,7 @@ FTM400_RT = 'ftm400'
 D710 = 'dm710'
 D878 = 'd878'
 CS800 = 'cs800'
+GPX = 'gpx'
 
 compatible_radios = {
 	DEFAULT: 'Ham Radio Sync App',
@@ -12,6 +13,7 @@ compatible_radios = {
 	D710: 'Kenwood TM-V71A, TM-V71E, TM-D710A, TM-D710E, RC-D710',
 	D878: 'Anytone 878, 868, 578',
 	CS800: 'Connect Systems CS800, CS800D',
+	GPX: 'GPX for GPS systems',
 }
 
 
@@ -23,6 +25,7 @@ def supports_dmr(radio_type):
 		D878: True,
 		CS800: True,
 		D710: False,
+		GPX: False,
 	}
 
 	return switch[radio_type]
@@ -36,6 +39,7 @@ def pretty_name(radio_type):
 		D878: 'Anytone D878 (D878)',
 		CS800: 'Connect Systems CS800 (CPI)',
 		D710: 'Kenwood 71/710 Series (MCP2)',
+		GPX: 'GPX for GPS mappers',
 	}
 
 	return switch[radio_type]
@@ -49,6 +53,7 @@ def radio_choices():
 		D710,
 		D878,
 		CS800,
+		GPX
 	]
 
 

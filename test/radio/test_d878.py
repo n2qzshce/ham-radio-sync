@@ -27,6 +27,26 @@ class D878Test(BaseTestSetup):
 		cols['name'] = 'N0CALL DMR'
 		self.digital_ids = {1: DmrId(cols)}
 
+		self.cols = dict()
+		self.cols['name'] = ''
+		self.cols['medium_name'] = ''
+		self.cols['short_name'] = ''
+		self.cols['zone_id'] = ''
+		self.cols['rx_freq'] = ''
+		self.cols['rx_ctcss'] = ''
+		self.cols['rx_dcs'] = ''
+		self.cols['rx_dcs_invert'] = ''
+		self.cols['tx_power'] = ''
+		self.cols['tx_offset'] = ''
+		self.cols['tx_ctcss'] = ''
+		self.cols['tx_dcs'] = ''
+		self.cols['tx_dcs_invert'] = ''
+		self.cols['digital_timeslot'] = ''
+		self.cols['digital_color'] = ''
+		self.cols['digital_contact_id'] = ''
+		self.cols['latitude'] = ''
+		self.cols['longitude'] = ''
+
 	def test_headers(self):
 		expected = [
 					"No.", "Channel Name", "Receive Frequency", "Transmit Frequency", "Channel Type", "Transmit Power",
@@ -43,24 +63,12 @@ class D878Test(BaseTestSetup):
 		self.assertEqual(expected, generated)
 
 	def test_simplex(self):
-		cols = dict()
-		cols['name'] = 'National 2m'
-		cols['medium_name'] = 'Natl 2m'
-		cols['short_name'] = 'NATL 2M'
-		cols['zone_id'] = ''
-		cols['rx_freq'] = '146.52'
-		cols['rx_ctcss'] = ''
-		cols['rx_dcs'] = ''
-		cols['rx_dcs_invert'] = ''
-		cols['tx_power'] = 'High'
-		cols['tx_offset'] = ''
-		cols['tx_ctcss'] = ''
-		cols['tx_dcs'] = ''
-		cols['tx_dcs_invert'] = ''
-		cols['digital_timeslot'] = ''
-		cols['digital_color'] = ''
-		cols['digital_contact_id'] = ''
-		channel = RadioChannelD878(cols, self.digital_contacts, self.digital_ids)
+		self.cols['name'] = 'National 2m'
+		self.cols['medium_name'] = 'Natl 2m'
+		self.cols['short_name'] = 'NATL 2M'
+		self.cols['rx_freq'] = '146.52'
+		self.cols['tx_power'] = 'High'
+		channel = RadioChannelD878(self.cols, self.digital_contacts, self.digital_ids)
 
 		result = channel.output(1)
 		expected = [
@@ -74,24 +82,12 @@ class D878Test(BaseTestSetup):
 		)
 
 	def test_uhf_simplex(self):
-		cols = dict()
-		cols['name'] = 'National 70cm'
-		cols['medium_name'] = 'Natl 70c'
-		cols['short_name'] = 'NATL 70'
-		cols['zone_id'] = ''
-		cols['rx_freq'] = '446.0'
-		cols['rx_ctcss'] = ''
-		cols['rx_dcs'] = ''
-		cols['rx_dcs_invert'] = ''
-		cols['tx_power'] = 'High'
-		cols['tx_offset'] = ''
-		cols['tx_ctcss'] = ''
-		cols['tx_dcs'] = ''
-		cols['tx_dcs_invert'] = ''
-		cols['digital_timeslot'] = ''
-		cols['digital_color'] = ''
-		cols['digital_contact_id'] = ''
-		channel = RadioChannelD878(cols, self.digital_contacts, self.digital_ids)
+		self.cols['name'] = 'National 70cm'
+		self.cols['medium_name'] = 'Natl 70c'
+		self.cols['short_name'] = 'NATL 70'
+		self.cols['rx_freq'] = '446.0'
+		self.cols['tx_power'] = 'High'
+		channel = RadioChannelD878(self.cols, self.digital_contacts, self.digital_ids)
 
 		result = channel.output(1)
 		expected = [
@@ -105,24 +101,14 @@ class D878Test(BaseTestSetup):
 		)
 
 	def test_vhf_repeater(self):
-		cols = dict()
-		cols['name'] = 'Some Repeater'
-		cols['medium_name'] = 'Some Rpt'
-		cols['short_name'] = 'SOMERPT'
-		cols['zone_id'] = ''
-		cols['rx_freq'] = '145.310'
-		cols['rx_ctcss'] = ''
-		cols['rx_dcs'] = ''
-		cols['rx_dcs_invert'] = ''
-		cols['tx_power'] = 'High'
-		cols['tx_offset'] = '-0.6'
-		cols['tx_ctcss'] = '100.0'
-		cols['tx_dcs'] = ''
-		cols['tx_dcs_invert'] = ''
-		cols['digital_timeslot'] = ''
-		cols['digital_color'] = ''
-		cols['digital_contact_id'] = ''
-		channel = RadioChannelD878(cols, self.digital_contacts, self.digital_ids)
+		self.cols['name'] = 'Some Repeater'
+		self.cols['medium_name'] = 'Some Rpt'
+		self.cols['short_name'] = 'SOMERPT'
+		self.cols['rx_freq'] = '145.310'
+		self.cols['tx_power'] = 'High'
+		self.cols['tx_offset'] = '-0.6'
+		self.cols['tx_ctcss'] = '100.0'
+		channel = RadioChannelD878(self.cols, self.digital_contacts, self.digital_ids)
 		result = channel.output(3)
 		self.assertEqual(
 			[
@@ -135,24 +121,15 @@ class D878Test(BaseTestSetup):
 		)
 
 	def test_positive_offset(self):
-		cols = dict()
-		cols['name'] = 'Some Repeater'
-		cols['medium_name'] = 'Some Rpt'
-		cols['short_name'] = 'SOMERPT'
-		cols['zone_id'] = ''
-		cols['rx_freq'] = '442.125'
-		cols['rx_ctcss'] = '127.3'
-		cols['rx_dcs'] = ''
-		cols['rx_dcs_invert'] = ''
-		cols['tx_power'] = 'High'
-		cols['tx_offset'] = '5.0'
-		cols['tx_ctcss'] = '100.0'
-		cols['tx_dcs'] = ''
-		cols['tx_dcs_invert'] = ''
-		cols['digital_timeslot'] = ''
-		cols['digital_color'] = ''
-		cols['digital_contact_id'] = ''
-		channel = RadioChannelD878(cols, self.digital_contacts, self.digital_ids)
+		self.cols['name'] = 'Some Repeater'
+		self.cols['medium_name'] = 'Some Rpt'
+		self.cols['short_name'] = 'SOMERPT'
+		self.cols['rx_freq'] = '442.125'
+		self.cols['rx_ctcss'] = '127.3'
+		self.cols['tx_power'] = 'High'
+		self.cols['tx_offset'] = '5.0'
+		self.cols['tx_ctcss'] = '100.0'
+		channel = RadioChannelD878(self.cols, self.digital_contacts, self.digital_ids)
 		result = channel.output(4)
 
 		self.assertEqual(
@@ -165,24 +142,15 @@ class D878Test(BaseTestSetup):
 		)
 
 	def test_dcs_repeater(self):
-		cols = dict()
-		cols['name'] = 'Dcs Repeater'
-		cols['medium_name'] = 'Dcs Rpt'
-		cols['short_name'] = 'DCS RPT'
-		cols['zone_id'] = ''
-		cols['rx_freq'] = '447.075'
-		cols['rx_ctcss'] = ''
-		cols['rx_dcs'] = '165'
-		cols['rx_dcs_invert'] = ''
-		cols['tx_power'] = 'High'
-		cols['tx_offset'] = '-5'
-		cols['tx_ctcss'] = ''
-		cols['tx_dcs'] = '165'
-		cols['tx_dcs_invert'] = ''
-		cols['digital_timeslot'] = ''
-		cols['digital_color'] = ''
-		cols['digital_contact_id'] = ''
-		channel = RadioChannelD878(cols, self.digital_contacts, self.digital_ids)
+		self.cols['name'] = 'Dcs Repeater'
+		self.cols['medium_name'] = 'Dcs Rpt'
+		self.cols['short_name'] = 'DCS RPT'
+		self.cols['rx_freq'] = '447.075'
+		self.cols['rx_dcs'] = '165'
+		self.cols['tx_power'] = 'High'
+		self.cols['tx_offset'] = '-5'
+		self.cols['tx_dcs'] = '165'
+		channel = RadioChannelD878(self.cols, self.digital_contacts, self.digital_ids)
 		result = channel.output(5)
 		self.assertEqual(
 			[
@@ -194,24 +162,16 @@ class D878Test(BaseTestSetup):
 		)
 
 	def test_dcs_invert(self):
-		cols = dict()
-		cols['name'] = 'Dcs Repeater'
-		cols['medium_name'] = 'Dcs Rpt'
-		cols['short_name'] = 'DCS RPT'
-		cols['zone_id'] = ''
-		cols['rx_freq'] = '447.075'
-		cols['rx_ctcss'] = ''
-		cols['rx_dcs'] = '23'
-		cols['rx_dcs_invert'] = 'true'
-		cols['tx_power'] = 'High'
-		cols['tx_offset'] = '-5'
-		cols['tx_ctcss'] = ''
-		cols['tx_dcs'] = '23'
-		cols['tx_dcs_invert'] = ''
-		cols['digital_timeslot'] = ''
-		cols['digital_color'] = ''
-		cols['digital_contact_id'] = ''
-		channel = RadioChannelD878(cols, self.digital_contacts, self.digital_ids)
+		self.cols['name'] = 'Dcs Repeater'
+		self.cols['medium_name'] = 'Dcs Rpt'
+		self.cols['short_name'] = 'DCS RPT'
+		self.cols['rx_freq'] = '447.075'
+		self.cols['rx_dcs'] = '23'
+		self.cols['rx_dcs_invert'] = 'true'
+		self.cols['tx_power'] = 'High'
+		self.cols['tx_offset'] = '-5'
+		self.cols['tx_dcs'] = '23'
+		channel = RadioChannelD878(self.cols, self.digital_contacts, self.digital_ids)
 		result = channel.output(6)
 		self.assertEqual(
 			[
@@ -223,24 +183,16 @@ class D878Test(BaseTestSetup):
 		)
 
 	def test_dmr(self):
-		cols = dict()
-		cols['name'] = 'Dmr Repeater'
-		cols['medium_name'] = 'Dmr Rpt'
-		cols['short_name'] = 'DMR RPT'
-		cols['zone_id'] = ''
-		cols['rx_freq'] = '447.075'
-		cols['rx_ctcss'] = ''
-		cols['rx_dcs'] = ''
-		cols['rx_dcs_invert'] = ''
-		cols['tx_power'] = 'High'
-		cols['tx_offset'] = '-5'
-		cols['tx_ctcss'] = ''
-		cols['tx_dcs'] = ''
-		cols['tx_dcs_invert'] = ''
-		cols['digital_timeslot'] = '2'
-		cols['digital_color'] = '3'
-		cols['digital_contact_id'] = '54321'
-		channel = RadioChannelD878(cols, self.digital_contacts, self.digital_ids)
+		self.cols['name'] = 'Dmr Repeater'
+		self.cols['medium_name'] = 'Dmr Rpt'
+		self.cols['short_name'] = 'DMR RPT'
+		self.cols['rx_freq'] = '447.075'
+		self.cols['tx_power'] = 'High'
+		self.cols['tx_offset'] = '-5'
+		self.cols['digital_timeslot'] = '2'
+		self.cols['digital_color'] = '3'
+		self.cols['digital_contact_id'] = '54321'
+		channel = RadioChannelD878(self.cols, self.digital_contacts, self.digital_ids)
 		result = channel.output(6)
 		self.assertEqual(
 			[

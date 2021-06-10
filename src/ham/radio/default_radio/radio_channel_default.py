@@ -27,6 +27,8 @@ class RadioChannelDefault(RadioChannel):
 		output.append(f"{self.digital_timeslot.get_alias(radio_types.DEFAULT)}")
 		output.append(f"{self.digital_color.get_alias(radio_types.DEFAULT)}")
 		output.append(f"{self.digital_contact_id.get_alias(radio_types.DEFAULT)}")
+		output.append(f"{self.latitude.get_alias(radio_types.DEFAULT)}")
+		output.append(f"{self.longitude.get_alias(radio_types.DEFAULT)}")
 		return output
 
 	def output(self, channel_number):
@@ -47,4 +49,6 @@ class RadioChannelDefault(RadioChannel):
 		output.append(f"{self.digital_timeslot.fmt_val('')}")
 		output.append(f"{self.digital_color.fmt_val('')}")
 		output.append(f"{self.digital_contact_id.fmt_val('')}")
+		output.append(f"{self.latitude.fmt_val('')}")
+		output.append(f"{self.longitude.fmt_val('')}")
 		return output

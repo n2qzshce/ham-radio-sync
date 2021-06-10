@@ -62,6 +62,8 @@ class Wizard(object):
 			'digital_timeslot': '',
 			'digital_color': '',
 			'digital_contact_id': '',
+			'latitude': '',
+			'longitude': '',
 		}, digital_contacts=None, dmr_ids=None)
 		second_channel = RadioChannelDefault({
 			'name': 'Basic Repeater',
@@ -80,6 +82,8 @@ class Wizard(object):
 			'digital_timeslot': '',
 			'digital_color': '',
 			'digital_contact_id': '',
+			'latitude': '',
+			'longitude': '',
 		}, digital_contacts=None, dmr_ids=None)
 		third_channel = RadioChannelDefault({
 			'name': 'DMR Repeater',
@@ -98,11 +102,34 @@ class Wizard(object):
 			'digital_timeslot': '1',
 			'digital_color': '4',
 			'digital_contact_id': '99999',
+			'latitude': '',
+			'longitude': '',
+		}, digital_contacts=None, dmr_ids=None)
+		fourth_channel = RadioChannelDefault({
+			'name': 'Has lat and long',
+			'medium_name': 'lat long',
+			'short_name': 'latlong',
+			'zone_id': '',
+			'rx_freq': '146.520',
+			'rx_ctcss': '',
+			'rx_dcs': '',
+			'rx_dcs_invert': '',
+			'tx_power': 'Low',
+			'tx_offset': '',
+			'tx_ctcss': '',
+			'tx_dcs': '',
+			'tx_dcs_invert': '',
+			'digital_timeslot': '',
+			'digital_color': '',
+			'digital_contact_id': '',
+			'latitude': '38.903450',
+			'longitude': '-77.007470',
 		}, digital_contacts=None, dmr_ids=None)
 		channel_file.writerow(first_channel.headers())
 		channel_file.writerow(RadioChannelBuilder.casted(first_channel, radio_types.DEFAULT).output(1))
 		channel_file.writerow(RadioChannelBuilder.casted(second_channel, radio_types.DEFAULT).output(2))
 		channel_file.writerow(RadioChannelBuilder.casted(third_channel, radio_types.DEFAULT).output(3))
+		channel_file.writerow(RadioChannelBuilder.casted(fourth_channel, radio_types.DEFAULT).output(4))
 		channel_file.close()
 
 	def _create_dmr_data(self):

@@ -53,7 +53,6 @@ class MigrationManager:
 		writer.close()
 
 		original_name = PathManager.get_input_path(file_name)
-		backup_name = f'{original_name}.bak'
 		temp_name = f'{original_name}.tmp'
 
 		os.remove(original_name)
@@ -178,6 +177,7 @@ class MigrationManager:
 		self._migrate_two()
 		self._migrate_three()
 		self._migrate_four()
+		self._migrate_five()
 		logging.info('Migrations are complete. Your original files have been renamed to have a `.bak` extension.')
 
 	def _migrate_one(self):
@@ -227,11 +227,14 @@ class MigrationManager:
 
 		zone_columns = ['number', 'name']
 		self._add_cols_to_file('zones.csv', zone_columns)
-		return
 
 	def _migrate_four(self):
 		logging.info("Running migration step 4: removing 'number' columns")
 		self._delete_col(PathManager.get_input_path('input.csv'), 'number')
 		self._delete_col(PathManager.get_input_path('dmr_id.csv'), 'number')
 		self._delete_col(PathManager.get_input_path('digital_contacts.csv'), 'number')
-		return
+
+	def _migrate_five(self):
+		logging.info("Running migration step 5: adding 'latitude' and 'longitude' columns")
+		self._add_col(PathManager.get_input_path('input.csv'), 'latitude', None)
+		self._add_col(PathManager.get_input_path('input.csv'), 'longitude', None)
