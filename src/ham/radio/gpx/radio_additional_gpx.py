@@ -22,10 +22,50 @@ class RadioAdditionalGpx(RadioAdditional):
 			gpx_waypoint.latitude = channel.latitude.fmt_val()
 			gpx_waypoint.longitude = channel.longitude.fmt_val()
 			gpx_waypoint.name = channel.name.fmt_val()
-			gpx_waypoint.description = f"Rx: {channel.rx_freq.fmt_val():0.03f} Tx offset: {channel.tx_offset.fmt_val(0):0.03f}"
+			gpx_waypoint.description = self._get_description(channel)
 			gpx.waypoints.append(gpx_waypoint)
 
 		xml = gpx.to_xml()
 		writer = RadioWriter.output_writer(f'{radio_types.GPX}/{radio_types.GPX}.gpx', '\r\n')
 		writer.write_raw(xml)
 		writer.close()
+
+	def _get_description(self, channel):
+		if channel.is_digital():
+			return self._get_digital_description(channel)
+		else:
+			return self._get_analog_description(channel)
+
+	def _get_digital_description(self, channel):
+		digital_contact = self._digital_contacts[channel.digital_contact_id.fmt_val(0)]
+
+		description = f'Rx: {channel.rx_freq.fmt_val():0.03f}\tTx offset: {channel.tx_offset.fmt_val(0):0.03f}\n' \
+						f'Color: {channel.digital_color.fmt_val()}\tTimeslot: {channel.digital_timeslot.fmt_val()}\n' \
+						f'Contact: {digital_contact.name.fmt_val()} {digital_contact.digital_id.fmt_val()}\n'\
+						f'Call Type: {digital_contact.call_type.fmt_val()}'
+		return description
+
+	def _get_analog_description(self, channel):
+		rx_tone = "-"
+		tx_tone = "-"
+		if channel.rx_ctcss.fmt_val() is not None:
+			rx_tone = f'{channel.rx_ctcss.fmt_val():0.1f}hz'
+		if channel.rx_dcs.fmt_val() is not None:
+			reverse_tone = 'N'
+			if channel.rx_dcs_invert.fmt_val() is not None:
+				reverse_tone = 'R'
+			rx_tone = f'{channel.rx_dcs.fmt_val()}{reverse_tone}'
+
+		if channel.tx_ctcss.fmt_val() is not None:
+			tx_tone = f'{channel.tx_ctcss.fmt_val():0.1f}hz'
+		if channel.tx_dcs.fmt_val() is not None:
+			reverse_tone = 'N'
+			if channel.tx_dcs_invert.fmt_val() is not None:
+				reverse_tone = 'R'
+			tx_tone = f'{channel.tx_dcs.fmt_val()}{reverse_tone}'
+
+		description = f'Rx: {channel.rx_freq.fmt_val():0.03f}\tTx offset: {channel.tx_offset.fmt_val(0):0.03f}\n' \
+						f'Rx tone: {rx_tone}\tTx tone: {tx_tone}'
+		return description
+
+
