@@ -6,7 +6,7 @@ class RadioChannelGpx(RadioChannel):
 		super().__init__(cols, digital_contacts, dmr_ids)
 
 	def skip_radio_csv(self):
-		return False
+		return True
 
 	def headers(self):
 		output = list()

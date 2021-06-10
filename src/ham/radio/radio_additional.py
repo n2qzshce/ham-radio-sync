@@ -5,8 +5,6 @@ class RadioAdditional:
 		self._digital_contacts = digital_contacts
 		self._zones = zones
 		self._users = users
-		self._style = None
-		return
 
 	def output(self):
 		raise Exception("Base method cannot be called!")

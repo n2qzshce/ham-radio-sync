@@ -14,6 +14,7 @@ from src.ham.radio.default_radio.dmr_user_default import DmrUserDefault
 from src.ham.radio.default_radio.radio_channel_default import RadioChannelDefault
 from src.ham.radio.default_radio.radio_zone_default import RadioZoneDefault
 from src.ham.radio.ftm400.radio_channel_ftm400 import RadioChannelFtm400
+from src.ham.radio.gpx.radio_channel_gpx import RadioChannelGpx
 from src.ham.util import radio_types
 
 
@@ -27,6 +28,7 @@ class RadioChannelBuilder:
 			radio_types.D878: RadioChannelD878(radio_channel.cols, radio_channel.digital_contacts, radio_channel.dmr_ids),
 			radio_types.CS800: RadioChannelCS800(radio_channel.cols, radio_channel.digital_contacts, radio_channel.dmr_ids),
 			radio_types.D710: RadioChannelD710(radio_channel.cols, radio_channel.digital_contacts, radio_channel.dmr_ids),
+			radio_types.GPX: RadioChannelGpx(radio_channel.cols, radio_channel.digital_contacts, radio_channel.dmr_ids),
 		}
 
 		return switch[style]

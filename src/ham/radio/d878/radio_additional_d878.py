@@ -14,9 +14,6 @@ from src.ham.util.file_util import RadioWriter
 class RadioAdditionalD878(RadioAdditional):
 	def __init__(self, channels, dmr_ids, digital_contacts, zones, users):
 		super().__init__(channels, dmr_ids, digital_contacts, zones, users)
-		
-		self._style = radio_types.D878
-		return
 
 	def output(self):
 		self._output_radioids()
@@ -25,12 +22,12 @@ class RadioAdditionalD878(RadioAdditional):
 		self._output_user()
 
 	def _output_radioids(self):
-		logging.info(f"Writing {self._style} radio IDs")
+		logging.info(f"Writing {radio_types.D878} radio IDs")
 		if self._dmr_ids is None:
-			logging.error(f"No DMR ids found for {self._style}.")
+			logging.error(f"No DMR ids found for {radio_types.D878}.")
 			return
 
-		radio_id_file = RadioWriter.output_writer(f'{self._style}/{self._style}_radioid.csv', '\r\n')
+		radio_id_file = RadioWriter.output_writer(f'{radio_types.D878}/{radio_types.D878}_radioid.csv', '\r\n')
 
 		headers = DmrIdD878.create_empty()
 		radio_id_file.writerow(headers.headers())
@@ -44,18 +41,18 @@ class RadioAdditionalD878(RadioAdditional):
 		return
 
 	def _output_contacts(self):
-		logging.info(f"Writing {self._style} contacts")
+		logging.info(f"Writing {radio_types.D878} contacts")
 		if self._digital_contacts is None:
-			logging.error(f"No digital contacts found for {self._style}.")
+			logging.error(f"No digital contacts found for {radio_types.D878}.")
 			return
 
-		dmr_contact_file = RadioWriter.output_writer(f'{self._style}/{self._style}_talkgroup.csv', '\r\n')
+		dmr_contact_file = RadioWriter.output_writer(f'{radio_types.D878}/{radio_types.D878}_talkgroup.csv', '\r\n')
 
 		headers = DmrContactD878.create_empty()
 		dmr_contact_file.writerow(headers.headers())
 		number = 1
 		for dmr_contact in self._digital_contacts.values():
-			casted_contact = DmrContactBuilder.casted(dmr_contact, self._style)
+			casted_contact = DmrContactBuilder.casted(dmr_contact, radio_types.D878)
 			row_data = casted_contact.output(number)
 			dmr_contact_file.writerow(row_data)
 			number += 1
@@ -63,37 +60,37 @@ class RadioAdditionalD878(RadioAdditional):
 		dmr_contact_file.close()
 
 	def _output_zones(self):
-		logging.info(f"Writing {self._style} zones")
+		logging.info(f"Writing {radio_types.D878} zones")
 		if self._zones is None:
-			logging.error(f"No zones list found for {self._style}.")
+			logging.error(f"No zones list found for {radio_types.D878}.")
 			return
 
-		zone_file = RadioWriter.output_writer(f'{self._style}/{self._style}_zone.csv', '\r\n')
+		zone_file = RadioWriter.output_writer(f'{radio_types.D878}/{radio_types.D878}_zone.csv', '\r\n')
 
 		headers = RadioZoneD878.create_empty()
 		zone_file.writerow(headers.headers())
 		for zone in self._zones.values():
 			if not zone.has_channels():
 				continue
-			casted_zone = RadioZoneBuilder.casted(zone.cols, zone._associated_channels, self._style)
+			casted_zone = RadioZoneBuilder.casted(zone.cols, zone._associated_channels, radio_types.D878)
 			zone_file.writerow(casted_zone.output())
 
 		zone_file.close()
 
 	def _output_user(self):
-		logging.info(f"Writing {self._style} users")
+		logging.info(f"Writing {radio_types.D878} users")
 		if self._users is None:
-			logging.error(f"No zones list found for {self._style}.")
+			logging.error(f"No zones list found for {radio_types.D878}.")
 			return
 
-		users_file = RadioWriter.output_writer(f'{self._style}/{self._style}_digital_contacts.csv', '\n')
+		users_file = RadioWriter.output_writer(f'{radio_types.D878}/{radio_types.D878}_digital_contacts.csv', '\n')
 
 		headers = DmrUserD878.create_empty()
 		users_file.writerow(headers.headers())
 
 		rows_processed = 1
 		for user in self._users.values():
-			casted_user = DmrUserBuilder.casted(user.cols, self._style)
+			casted_user = DmrUserBuilder.casted(user.cols, radio_types.D878)
 			users_file.writerow(casted_user.output(None))
 			rows_processed += 1
 			logging.debug(f"Writing user row {rows_processed}")
