@@ -3,6 +3,7 @@ import os
 import sys
 import unittest
 
+from src.ham.util.file_util import FileUtil
 from src.ham.util.path_manager import PathManager
 
 
@@ -23,5 +24,9 @@ class BaseTestSetup(unittest.TestCase):
 		logger.addHandler(handler)
 
 	def setUp(self):
+		FileUtil.safe_delete_dir('in')
+		FileUtil.safe_delete_dir('out')
+		FileUtil.safe_create_dir('in')
+		FileUtil.safe_create_dir('out')
 		PathManager.set_input_path('./in')
 		PathManager.set_output_path('./out')
