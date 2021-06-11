@@ -36,6 +36,8 @@ class ValidatorTest(BaseTestSetup):
 		cols['digital_timeslot'] = ''
 		cols['digital_color'] = ''
 		cols['digital_contact_id'] = ''
+		cols['latitude'] = ''
+		cols['longitude'] = ''
 		self.radio_cols = cols
 
 	def test_validate_no_files_exist(self):
@@ -93,6 +95,8 @@ class ValidatorTest(BaseTestSetup):
 		radio_cols['digital_timeslot'] = '1'
 		radio_cols['digital_color'] = '2'
 		radio_cols['digital_contact_id'] = '314'
+		radio_cols['latitude'] = ''
+		radio_cols['longitude'] = ''
 
 		digital_contact_cols = dict()
 		digital_contact_cols['number'] = '1'
@@ -146,3 +150,47 @@ class ValidatorTest(BaseTestSetup):
 		zones = {1: zone}
 		errors = self.validator.validate_radio_channel(self.radio_cols, 1, 'FILE_NO_EXIST_UNITTEST', {}, zones)
 		self.assertEqual(len(errors), 0)
+
+	def test_validate_lat_long_present(self):
+		self.radio_cols['latitude'] = '0.0'
+		self.radio_cols['longitude'] = '0.0'
+		errors = self.validator.validate_radio_channel(self.radio_cols, 1, 'LAT_LONG_UNITTEST', {}, {})
+		self.assertEqual(len(errors), 0)
+
+	def test_validate_lat_long_not_present(self):
+		self.radio_cols['latitude'] = ''
+		self.radio_cols['longitude'] = ''
+		errors = self.validator.validate_radio_channel(self.radio_cols, 1, 'LAT_LONG_UNITTEST', {}, {})
+		self.assertEqual(len(errors), 0)
+
+	def test_validate_lat_only_present(self):
+		self.radio_cols['latitude'] = '0.0'
+		self.radio_cols['longitude'] = ''
+		errors = self.validator.validate_radio_channel(self.radio_cols, 1, 'LAT_LONG_UNITTEST', {}, {})
+		self.assertEqual(len(errors), 1)
+		found = errors[0].args[0].find('Only one of latitude or longitude provided')
+		self.assertEqual(found, 0)
+
+	def test_validate_long_only_present(self):
+		self.radio_cols['latitude'] = ''
+		self.radio_cols['longitude'] = '0.0'
+		errors = self.validator.validate_radio_channel(self.radio_cols, 1, 'LAT_LONG_UNITTEST', {}, {})
+		self.assertEqual(len(errors), 1)
+		found = errors[0].args[0].find('Only one of latitude or longitude provided')
+		self.assertEqual(found, 0)
+
+	def test_validate_bad_lat(self):
+		self.radio_cols['latitude'] = '-91.0'
+		self.radio_cols['longitude'] = '0.0'
+		errors = self.validator.validate_radio_channel(self.radio_cols, 1, 'LAT_LONG_UNITTEST', {}, {})
+		self.assertEqual(len(errors), 1)
+		found = errors[0].args[0].find('Latitude must be between')
+		self.assertEqual(found, 0)
+
+	def test_validate_bad_long(self):
+		self.radio_cols['latitude'] = '0.0'
+		self.radio_cols['longitude'] = '-181.0'
+		errors = self.validator.validate_radio_channel(self.radio_cols, 1, 'LAT_LONG_UNITTEST', {}, {})
+		self.assertEqual(len(errors), 1)
+		found = errors[0].args[0].find('Longitude must be between')
+		self.assertEqual(found, 0)

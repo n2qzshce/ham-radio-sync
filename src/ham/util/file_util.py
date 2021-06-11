@@ -28,6 +28,9 @@ class RadioWriter:
 	def writerow(self, row):
 		return self._csv_writer.writerow(row)
 
+	def write_raw(self, data):
+		return self._writer.write(data)
+
 	def close(self):
 		return self._writer.close()
 

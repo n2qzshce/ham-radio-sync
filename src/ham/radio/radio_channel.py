@@ -21,6 +21,8 @@ class RadioChannel:
 		col_vals['digital_timeslot'] = ''
 		col_vals['digital_color'] = ''
 		col_vals['digital_contact_id'] = ''
+		col_vals['latitude'] = ''
+		col_vals['longitude'] = ''
 		return cls(col_vals, digital_contacts=None, dmr_ids=None)
 
 	def __init__(self, cols, digital_contacts, dmr_ids):
@@ -40,6 +42,8 @@ class RadioChannel:
 		self.digital_color = DataColumn(fmt_name='digital_color', fmt_val=cols['digital_color'], shape=int)
 		self.digital_contact_id = DataColumn(fmt_name='digital_contact_id', fmt_val=cols['digital_contact_id'], shape=int)
 		self.tx_power = DataColumn(fmt_name='tx_power', fmt_val=cols['tx_power'], shape=str)
+		self.latitude = DataColumn(fmt_name='latitude', fmt_val=cols['latitude'], shape=float)
+		self.longitude = DataColumn(fmt_name='longitude', fmt_val=cols['longitude'], shape=float)
 
 		self.cols = cols
 		self.digital_contacts = digital_contacts

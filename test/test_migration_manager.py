@@ -121,5 +121,15 @@ class MigrationTest(BaseTestSetup):
 		self.assertFalse('number' in dict_reader.fieldnames)
 		f.close()
 
-	def text_expected_col_definitions(self):
-		self.fail("test not implemented")
+	def test_migrate_five(self):
+		self.manager._migrate_one()
+		self.manager._migrate_two()
+		self.manager._migrate_three()
+		self.manager._migrate_four()
+		self.manager._migrate_five()
+
+		f = PathManager.open_input_file('input.csv', 'r')
+		dict_reader = DictReader(f)
+		self.assertTrue('latitude' in dict_reader.fieldnames)
+		self.assertTrue('longitude' in dict_reader.fieldnames)
+		f.close()

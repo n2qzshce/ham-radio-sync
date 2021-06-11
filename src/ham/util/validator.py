@@ -1,4 +1,5 @@
 import logging
+import operator
 
 from src.ham.radio.default_radio.dmr_contact_default import DmrContactDefault
 from src.ham.radio.default_radio.dmr_id_default import DmrIdDefault
@@ -137,6 +138,28 @@ class Validator:
 		if channel.zone_id.fmt_val() is not None and channel.zone_id.fmt_val() not in zones.keys():
 			err = ValidationError(
 							f"Zone ID not found: `{channel.zone_id.fmt_val()}`. in `zones.csv` and was not left empty."
+							, line_num, file_name
+			)
+			errors.append(err)
+
+		if operator.xor(channel.latitude.fmt_val() is None, channel.longitude.fmt_val() is None):
+			err = ValidationError(
+							f"Only one of latitude or longitude provided. Lat: `{channel.latitude.fmt_val()}` "
+							f"Long: `{channel.longitude.fmt_val()}"
+							, line_num, file_name
+			)
+			errors.append(err)
+
+		if channel.latitude.fmt_val() is not None and not -90 <= channel.latitude.fmt_val() <= 90:
+			err = ValidationError(
+							f"Latitude must be between -90 and 90. Lat: `{channel.latitude.fmt_val()}`"
+							, line_num, file_name
+			)
+			errors.append(err)
+
+		if channel.longitude.fmt_val() is not None and not -180 <= channel.longitude.fmt_val() <= 180:
+			err = ValidationError(
+							f"Longitude must be between -180 and 180. Lat: `{channel.longitude.fmt_val()}`"
 							, line_num, file_name
 			)
 			errors.append(err)
