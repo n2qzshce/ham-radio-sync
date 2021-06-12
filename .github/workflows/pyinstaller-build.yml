@@ -4,7 +4,7 @@
 name: Build executeable
 
 env:
-  semver: 1.9.0.${{ github.run_number }}
+  semver: 1.10.0.${{ github.run_number }}
   python-version: 3.8
   KIVY_GL_BACKEND: 'angle_sdl2'
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

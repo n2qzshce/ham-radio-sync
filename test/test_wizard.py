@@ -11,7 +11,7 @@ class WizardTest(BaseTestSetup):
 	wizard = None
 
 	def setUp(self):
-		super(WizardTest, self).setUp()
+		super().setUp()
 		FileUtil.safe_delete_dir('in')
 		FileUtil.safe_delete_dir('out')
 		self.wizard = Wizard()

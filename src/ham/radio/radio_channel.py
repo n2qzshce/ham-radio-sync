@@ -4,6 +4,11 @@ from src.ham.util.data_column import DataColumn
 class RadioChannel:
 	@classmethod
 	def create_empty(cls):
+		col_vals = cls.generate_empty_dict()
+		return cls(col_vals, digital_contacts=None, dmr_ids=None)
+
+	@classmethod
+	def generate_empty_dict(cls):
 		col_vals = dict()
 		col_vals['name'] = ''
 		col_vals['medium_name'] = ''
@@ -23,7 +28,7 @@ class RadioChannel:
 		col_vals['digital_contact_id'] = ''
 		col_vals['latitude'] = ''
 		col_vals['longitude'] = ''
-		return cls(col_vals, digital_contacts=None, dmr_ids=None)
+		return col_vals
 
 	def __init__(self, cols, digital_contacts, dmr_ids):
 		self.name = DataColumn(fmt_name='name', fmt_val=cols['name'], shape=str)

@@ -9,7 +9,7 @@ from test.base_test_setup import BaseTestSetup
 
 class PathManagerTest(BaseTestSetup):
 	def setUp(self):
-		super(PathManagerTest, self).setUp()
+		super().setUp()
 		logging.getLogger().setLevel(logging.ERROR)
 		FileUtil.safe_delete_dir('./in')
 		FileUtil.safe_delete_dir('./out')

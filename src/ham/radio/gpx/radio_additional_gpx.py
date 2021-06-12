@@ -26,7 +26,7 @@ class RadioAdditionalGpx(RadioAdditional):
 			gpx.waypoints.append(gpx_waypoint)
 
 		xml = gpx.to_xml()
-		writer = RadioWriter.output_writer(f'{radio_types.GPX}/{radio_types.GPX}.gpx', '\r\n')
+		writer = RadioWriter.output_writer(f'{radio_types.GPX}/ham_radio_sync.gpx', '\r\n')
 		writer.write_raw(xml)
 		writer.close()
 

@@ -10,7 +10,7 @@ from test.base_test_setup import BaseTestSetup
 
 class MigrationTest(BaseTestSetup):
 	def setUp(self):
-		super(MigrationTest, self).setUp()
+		super().setUp()
 		logging.getLogger().setLevel(logging.ERROR)
 		FileUtil.safe_delete_dir('in')
 		FileUtil.safe_delete_dir('out')

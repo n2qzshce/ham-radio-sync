@@ -10,7 +10,7 @@ from test.base_test_setup import BaseTestSetup
 
 class ValidatorTest(BaseTestSetup):
 	def setUp(self):
-		super(ValidatorTest, self).setUp()
+		super().setUp()
 		self.validator = Validator()
 		self.validator.flush_names()
 		logging.getLogger().setLevel(logging.CRITICAL)

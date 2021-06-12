@@ -9,7 +9,7 @@ from test.base_test_setup import BaseTestSetup
 
 class GpxTest(BaseTestSetup):
 	def setUp(self):
-		super(GpxTest, self).setUp()
+		super().setUp()
 		FileUtil.safe_create_dir(PathManager.get_output_path('gpx'))
 		self.radio_channel = RadioChannelGpx.create_empty()
 		self.digital_contacts = dict()
@@ -77,7 +77,7 @@ Rx tone: -	Tx tone: 100.0hz</desc>
 		channel = RadioChannelGpx(self.cols, self.digital_contacts, self.digital_ids)
 		additional = RadioAdditionalGpx([channel], self.digital_ids, self.digital_contacts, None, None)
 		additional.output()
-		f = open('out/gpx/gpx.gpx')
+		f = open('out/gpx/ham_radio_sync.gpx')
 		result = f.read()
 		self.assertEqual(expected, result)
 
@@ -111,6 +111,6 @@ Call Type: group</desc>
 		channel = RadioChannelGpx(self.cols, self.digital_contacts, self.digital_ids)
 		additional = RadioAdditionalGpx([channel], self.digital_ids, self.digital_contacts, None, None)
 		additional.output()
-		f = open('out/gpx/gpx.gpx')
+		f = open('out/gpx/ham_radio_sync.gpx')
 		result = f.read()
 		self.assertEqual(expected, result)

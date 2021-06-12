@@ -6,6 +6,8 @@ class PathManager:
 	output_folder_label = None
 	_input_folder_path = None
 	_output_folder_path = None
+	_import_file_path = None
+	_import_file_style = None
 
 	@classmethod
 	def set_input_folder_label(cls, label):
@@ -64,6 +66,20 @@ class PathManager:
 	def open_output_file(cls, file_name, mode):
 		full_path = os.path.join(cls.get_output_path(), file_name)
 		return cls._open_file(full_path, mode)
+
+	@classmethod
+	def set_import_file(cls, file_name, style):
+		full_path = os.path.abspath(file_name)
+		cls._import_file_path = full_path
+		cls._import_file_style = style
+
+	@classmethod
+	def get_import_path(cls):
+		return cls._import_file_path
+
+	@classmethod
+	def get_import_style(cls):
+		return cls._import_file_style
 
 	@classmethod
 	def _open_file(cls, file_name, mode):
