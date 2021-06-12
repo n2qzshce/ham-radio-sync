@@ -62,6 +62,13 @@ class RadioGenerator:
 			logging.warning("Migrations check is under the 'File' menu.")
 			sleep(1)
 
+		for radio in radio_types.radio_choices():
+			radio_folder = PathManager.get_output_path(radio)
+			if not os.path.exists(radio_folder):
+				continue
+			logging.info(f'Deleting old output folder `{radio}`')
+			FileUtil.safe_delete_dir(radio_folder)
+
 		digital_contacts, digi_contact_errors = self._generate_digital_contact_data()
 		dmr_ids, dmr_id_errors = self._generate_dmr_id_data()
 		zones, zone_errors = self._generate_zone_data()

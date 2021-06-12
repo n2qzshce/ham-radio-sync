@@ -77,7 +77,7 @@ Rx tone: -	Tx tone: 100.0hz</desc>
 		channel = RadioChannelGpx(self.cols, self.digital_contacts, self.digital_ids)
 		additional = RadioAdditionalGpx([channel], self.digital_ids, self.digital_contacts, None, None)
 		additional.output()
-		f = open('out/gpx/gpx.gpx')
+		f = open('out/gpx/ham_radio_sync.gpx')
 		result = f.read()
 		self.assertEqual(expected, result)
 
@@ -111,6 +111,6 @@ Call Type: group</desc>
 		channel = RadioChannelGpx(self.cols, self.digital_contacts, self.digital_ids)
 		additional = RadioAdditionalGpx([channel], self.digital_ids, self.digital_contacts, None, None)
 		additional.output()
-		f = open('out/gpx/gpx.gpx')
+		f = open('out/gpx/ham_radio_sync.gpx')
 		result = f.read()
 		self.assertEqual(expected, result)

@@ -10,7 +10,6 @@ At the moment, all fields are case-sensitive and all csv's are required.
 ### input.csv
 | **Column Name** | Description |
 |---|---|
-|number|The sequence in your radio, starts at 1.|
 |name|What you would like to call your channel, unlimited characters|
 |medium_name| Name (truncated to 8 characters) `FFO ElDorado -> FFO Eldo`
 |short_name| Name (truncated to 7 characters) `FFO Eldorado -> FFO ELD`
@@ -26,6 +25,8 @@ At the moment, all fields are case-sensitive and all csv's are required.
 |digital_timeslot | DMR Timeslot, should be either 1 or 2 |
 |digital_color | Color parameter of DMR channel |
 |digital_contact_id | Contact to call on DMR channel |
+|latitude | Geographic latitude of transmitter for GPX (DD.dddddd format, optional)
+|longitude | Geographic latitude of transmitter for GPX (DD.dddddd format, optional)
 ### zones.csv
 | **Column Name** | Description |
 |---|---|
@@ -34,13 +35,11 @@ At the moment, all fields are case-sensitive and all csv's are required.
 ### dmr_id.csv
 | **Column Name** | Description |
 |---|---|
-|number | number of DMR ID, starting at 1|
 |radio_id | ID number from radioid.net
 |name | nickname of DMR ID|
 ### digital_contacts.csv
 | **Column Name** | Description |
 |---|---|
-|number|Number of talkgroup/zone, starting at 1|
 |digital_id|Talkgroup or contact ID|
 |name|Name of contact|
 |call_type|Either `group` or `all`
@@ -84,6 +83,10 @@ This is the "RT Systems" branded sync software.
     * Be sure to select the `*.hmk` file type or you may not see your output!
 1. Navigate to and import your HMK file.
 1. Final user touchup.
+
+### GPX
+1. Navigate to your GPX-supported application.
+1. Import `gpx.gpx`
 
 ***
 # Known radio issues:

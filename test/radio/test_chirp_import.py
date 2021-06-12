@@ -1,3 +1,5 @@
+import logging
+
 from src.ham.radio.radio_importer import RadioImporter
 from src.ham.util import radio_types
 from src.ham.util.path_manager import PathManager
@@ -93,7 +95,6 @@ class TestChirpImport(BaseTestSetup):
 		f.write("""Location,Name,Frequency,Duplex,Offset,Tone,rToneFreq,cToneFreq,DtcsCode,DtcsPolarity,Mode,TStep,Skip,Comment,URCALL,RPT1CALL,RPT2CALL,DVCODE
 0,DCSRPT,447.075000,-,5.000000,DTCS,67.0,67.0,165,NN,FM,5.00,,,,,,""")
 		f.close()
-		PathManager.set_import_file('in/import_chirp.csv', radio_types.CHIRP)
 
 		channel = self.importer.run_import(radio_types.CHIRP, 'in/import_chirp.csv')[0]
 		self.assertEqual('DCSRPT', channel.name.fmt_val())
@@ -119,10 +120,10 @@ class TestChirpImport(BaseTestSetup):
 		f.write("""Location,Name,Frequency,Duplex,Offset,Tone,rToneFreq,cToneFreq,DtcsCode,DtcsPolarity,Mode,TStep,Skip,Comment,URCALL,RPT1CALL,RPT2CALL,DVCODE
 0,RPTR1,the bad value is here,-,0.600000,Tone,88.5,67.0,023,NN,FM,5.00,,,,,,""")
 		f.close()
-		PathManager.set_import_file('in/import_chirp.csv', radio_types.CHIRP)
 
 		with self.assertRaises(BaseException) as e:
 			channel = self.importer.run_import(radio_types.CHIRP, 'in/import_chirp.csv')[0]
+			logging.info(f'Output channel: {channel}')
 
 		self.assertEqual('Cannot import file.', e.exception.args[0])
 

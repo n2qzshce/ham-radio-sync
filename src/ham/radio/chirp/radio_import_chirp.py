@@ -2,7 +2,6 @@ import logging
 
 from src.ham.radio.chirp.radio_channel_chirp import RadioChannelChirp
 from src.ham.radio.radio_channel import RadioChannel
-from src.ham.util.path_manager import PathManager
 from src.ham.util.validation_error import ValidationError
 from src.ham.util.validator import Validator
 
@@ -12,7 +11,7 @@ class RadioImportChirp:
 		self.validator = Validator()
 		self.validator.flush_names()
 
-	def run_import(self, cols):
+	def run_import(self, cols, import_path):
 		radio_channel_cols = RadioChannel.generate_empty_dict()
 		radio_channel_cols['name'] = cols['Name']
 		radio_channel_cols['medium_name'] = cols['Name']
@@ -44,10 +43,10 @@ class RadioImportChirp:
 
 		line_num = int(cols['Location']) + 1
 
-		errors = self.validator.validate_radio_channel(radio_channel_cols, line_num, PathManager.get_import_path(), None, None)
+		errors = self.validator.validate_radio_channel(radio_channel_cols, line_num, import_path, None, None)
 		for err in errors:
 			logging.error(f'\t\tline:{err.line_num} validation error: {err.message}')
-			raise ValidationError("Import line failed to parse.", line_num, PathManager.get_import_path())
+			raise ValidationError("Import line failed to parse.", line_num, import_path)
 
 		channel = RadioChannelChirp(radio_channel_cols, None, None)
 		return channel

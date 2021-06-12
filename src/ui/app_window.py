@@ -65,6 +65,7 @@ class LayoutIds:
 	getting_started = 'getting_started'
 	input_folder = 'input_folder'
 	input_folder_select = 'input_folder_select'
+	import_file = 'import_file'
 	output_folder = 'output_folder'
 	output_folder_select = 'output_folder_select'
 	log_output = 'log_output'
@@ -107,6 +108,9 @@ BoxLayout:
 				ActionButton:
 					id: {LayoutIds.output_folder_select}
 					text: "Set output directory"
+				ActionButton:
+					id: {LayoutIds.import_file}
+					text: "Import from CHiRP"
 				ActionButton:
 					id: {LayoutIds.clear_log}
 					text: "Clear screen log"
@@ -295,6 +299,7 @@ class AppWindow(App):
 		PathManager.output_folder_label = output_folder
 		PathManager.set_input_path('./in')
 		PathManager.set_output_path('./out')
+		PathManager.set_import_file('./in/import.csv', radio_types.CHIRP)
 
 		logger = logging.getLogger('radio_sync')
 		formatter = GlobalConstants.logging_formatter
@@ -313,15 +318,18 @@ class AppWindow(App):
 		check_migrations_button = layout.ids[LayoutIds.check_migrations]
 		check_migrations_button.bind(on_press=self._async_wrapper.check_migrations)
 
-		clear_console_button = layout.ids[LayoutIds.clear_log]
-		clear_console_button.bind(on_press=self._clear_console)
-
-		self.popup_manager = PopupManager()
+		self.popup_manager = PopupManager(self._async_wrapper)
 		input_folder_button = layout.ids[LayoutIds.input_folder_select]
 		input_folder_button.bind(on_press=self.popup_manager.select_input_folder_dialog)
 
 		output_folder_button = layout.ids[LayoutIds.output_folder_select]
 		output_folder_button.bind(on_press=self.popup_manager.select_output_folder_dialog)
+
+		import_button = layout.ids[LayoutIds.import_file]
+		import_button.bind(on_press=self.popup_manager.select_import_file_dialog)
+
+		clear_console_button = layout.ids[LayoutIds.clear_log]
+		clear_console_button.bind(on_press=self._clear_console)
 
 		exit_button = layout.ids[LayoutIds.exit_button]
 		exit_button.bind(on_press=self.stop)
@@ -422,6 +430,9 @@ BoxLayout:
 
 
 class PopupManager:
+	def __init__(self, async_wrapper):
+		self._async_wrapper = async_wrapper
+
 	def select_input_folder_dialog(self, event):
 		self._select_folder_dialog(event, 'Set input directory', PathManager.get_input_path(), self._select_input_folder)
 
@@ -463,6 +474,32 @@ class PopupManager:
 	def _select_output_folder(self, event):
 		path = self._get_selected_path()
 		PathManager.set_output_path(path)
+		self._dismiss_popup(None)
+
+	def select_import_file_dialog(self, event):
+		dialog_content = Builder.load_string(load_dialog)
+		file_chooser = dialog_content.ids[PopupIds.file_chooser]
+		file_chooser.dirselect = False
+		file_chooser.filters = "*.csv"
+		file_chooser.path = PathManager.get_import_path()
+		file_chooser.bind(selection=self._update_display_path)
+
+		file_label = dialog_content.ids[PopupIds.file_path]
+		file_label.text = file_chooser.path
+		file_label.bind(on_text_validate=self._update_file_browser)
+
+		self._popup = Popup(title="Select CHiRP file", content=dialog_content, size_hint=(0.9, 0.9))
+		dialog_content.ids[PopupIds.cancel_button].bind(on_press=self._dismiss_popup)
+
+		dialog_content.ids[PopupIds.load_button].bind(on_press=self._import_trigger_event)
+
+		self._popup.open()
+		return
+
+	def _import_trigger_event(self, event):
+		file_label = self._popup.content.ids[PopupIds.file_path]
+		PathManager.set_import_file(file_label.text, radio_types.CHIRP)
+		self._async_wrapper.import_file()
 		self._dismiss_popup(None)
 
 	def _dismiss_popup(self, event):
