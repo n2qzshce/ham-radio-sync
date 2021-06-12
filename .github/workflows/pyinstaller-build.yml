@@ -62,7 +62,7 @@ jobs:
         name: radio_sync-${{ matrix.short-name }}-${{ env.semver }}
         path: radio_sync-${{ matrix.short-name }}-${{ env.semver }}.zip
   release:
-#    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-20.04
     outputs:
       upload_url: ${{ steps.create_release.outputs.upload_url }}
@@ -76,10 +76,10 @@ jobs:
           tag_name: ${{ env.semver }}
           release_name: Release ${{ env.semver }}
           body: |
-            ${{ github.event.head_commit.message }}
+            release ${{ env.semver }} description
 
             # Changelog:
-            * ${{ github.event.commits }}
+            *
           draft: true
           prerelease: false
   release-assets:
