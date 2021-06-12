@@ -9,7 +9,7 @@ from test.base_test_setup import BaseTestSetup
 
 class GpxTest(BaseTestSetup):
 	def setUp(self):
-		super(GpxTest, self).setUp()
+		super().setUp()
 		FileUtil.safe_create_dir(PathManager.get_output_path('gpx'))
 		self.radio_channel = RadioChannelGpx.create_empty()
 		self.digital_contacts = dict()
