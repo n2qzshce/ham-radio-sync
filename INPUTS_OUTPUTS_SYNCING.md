@@ -86,7 +86,7 @@ This is the "RT Systems" branded sync software.
 
 ### GPX
 1. Navigate to your GPX-supported application.
-1. Import `gpx.gpx`
+1. Import `ham_radio_sync.gpx`
 
 ***
 # Known radio issues:
