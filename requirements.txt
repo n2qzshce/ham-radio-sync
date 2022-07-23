@@ -2,6 +2,6 @@ gpxpy == 1.4.2 #gpx output
 Kivy == 2.0.0 #gui
 kivy-garden.contextmenu == 0.1.0.dev1 #app context menu
 openpyxl == 3.0.7 #xlsx support
-pyinstaller == 5.2 #compilation
+pyinstaller == 4.10 #compilation
 requests == 2.25.1 #version checking
 semantic-version == 2.8.5 #semantic version comparing
