@@ -14,6 +14,9 @@ from src.ham.util.validation_error import ValidationError
 
 
 class Validator:
+	MAX_MEDIUM_NAME_LENGTH = 8
+	MAX_SHORT_NAME_LENGTH = 7
+
 	def __init__(self):
 		self._radio_channel_template = RadioChannelDefault.create_empty()
 		self._digital_contact_template = DmrContactDefault.create_empty()
@@ -75,7 +78,21 @@ class Validator:
 			return errors
 
 		channel = RadioChannel(cols, None, None)
-		if channel.short_name.fmt_val().lower() in self._short_names.keys():
+
+		if len(channel.medium_name.fmt_val()) > self.MAX_MEDIUM_NAME_LENGTH:
+			err = ValidationError(f"Line {line_num} '{channel.medium_name.get_alias(radio_types.DEFAULT)}' greater than {self.MAX_MEDIUM_NAME_LENGTH} characters in length", line_num, file_name)
+			logging.debug(err.message)
+			errors.append(err)
+		if len(channel.short_name.fmt_val()) > self.MAX_SHORT_NAME_LENGTH:
+			err = ValidationError(f"Line {line_num} '{channel.short_name.get_alias(radio_types.DEFAULT)}' greater than {self.MAX_MEDIUM_NAME_LENGTH} characters in length", line_num, file_name)
+			logging.debug(err.message)
+			errors.append(err)
+
+		if channel.short_name.fmt_val() is None:
+			err = ValidationError(f"'medium_name' column cannot be empty", line_num, file_name)
+			logging.debug(err.message)
+			errors.append(err)
+		elif channel.short_name.fmt_val().lower() in self._short_names.keys():
 			err = ValidationError(
 							f"Collision in {channel.short_name.get_alias(radio_types.DEFAULT)} "
 							f"(value: `{channel.short_name.fmt_val()}`) found with line"
@@ -86,7 +103,11 @@ class Validator:
 		else:
 			self._short_names[channel.short_name.fmt_val().lower()] = line_num
 
-		if channel.medium_name.fmt_val().lower() in self._medium_names.keys():
+		if channel.medium_name.fmt_val() is None:
+			err = ValidationError(f"'medium_name' column cannot be empty", line_num, file_name)
+			logging.debug(err.message)
+			errors.append(err)
+		elif channel.medium_name.fmt_val().lower() in self._medium_names.keys():
 			err = ValidationError(
 							f"Collision in {channel.medium_name.get_alias(radio_types.DEFAULT)} "
 							f"(value: `{channel.medium_name.fmt_val()}`) found with line"
@@ -97,7 +118,11 @@ class Validator:
 		else:
 			self._medium_names[channel.medium_name.fmt_val().lower()] = line_num
 
-		if channel.name.fmt_val().lower() in self._long_names.keys():
+		if channel.name.fmt_val() is None:
+			err = ValidationError(f"'name' column cannot be empty", line_num, file_name)
+			logging.debug(err.message)
+			errors.append(err)
+		elif channel.name.fmt_val().lower() in self._long_names.keys():
 			err = ValidationError(
 							f"Collision in {channel.name.get_alias(radio_types.DEFAULT)} "
 							f"(value: `{channel.name.fmt_val()}`) found with line"
@@ -172,7 +197,6 @@ class Validator:
 
 		for val in needed_cols_dict_gen.values():
 			if not isinstance(val, DataColumn):
-				logging.debug(f"Skipping adding `{val}` to needed cols")
 				continue
 			needed_cols[val.get_alias(radio_types.DEFAULT)] = val
 
