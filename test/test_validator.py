@@ -194,3 +194,9 @@ class ValidatorTest(BaseTestSetup):
 		self.assertEqual(len(errors), 1)
 		found = errors[0].args[0].find('Longitude must be between')
 		self.assertEqual(found, 0)
+
+	def test_name_missing(self):
+		self.radio_cols['name'] = ''
+		errors = self.validator.validate_radio_channel(self.radio_cols, 1, 'LAT_LONG_UNITTEST', {}, {})
+		self.assertEqual(len(errors), 1)
+
